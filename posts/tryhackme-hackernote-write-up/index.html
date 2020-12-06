@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+    <title>TryHackMe Hackernote Write-Up :: Mark Ramige: Appsec and Bug Bounties</title>
+  
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="This TryHackMe challenge gives you an IP address to attack and takes you through each step of the process until you get root on the box. It covers recon, investigation, exploitation, user enumeration, password brute-forcing, and privilege escalation. It requires some basic linux skills to get started.
+Contents  Task 1 - Reconnaissance Task 2 - Investigate Task 3 - Exploit Task 4 - Attack Passwords Task 5 - Escalate  Task 1 - Reconnaissance  Which ports are open?" />
+<meta name="keywords" content="nmap, appsec, python, ssh, brute-forcing, enumeration" />
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="https://markramige.com/posts/tryhackme-hackernote-write-up/" />
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-178664934-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+
+
+<link rel="stylesheet" href="https://markramige.com/assets/style.css">
+
+  <link rel="stylesheet" href="https://markramige.com/assets/blue.css">
+
+
+
+
+
+
+<link rel="apple-touch-icon" href="https://markramige.com/img/apple-touch-icon-192x192.png">
+
+  <link rel="shortcut icon" href="https://markramige.com/favicon.png">
+
+
+
+<meta name="twitter:card" content="summary" />
+
+  
+    <meta name="twitter:site" content="markramige" />
+  
+    <meta name="twitter:creator" content="markramige" />
+
+
+
+<meta property="og:locale" content="en" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="TryHackMe Hackernote Write-Up">
+<meta property="og:description" content="[This TryHackMe challenge](https://tryhackme.com/room/hackernote) gives you an IP address to attack and takes you through each step of the process until you get root on the box. It covers recon, investigation, exploitation, user enumeration, password brute forcing, and privilege escalation. It requires some basic linux skills to get started." />
+<meta property="og:url" content="https://markramige.com/posts/tryhackme-hackernote-write-up/" />
+<meta property="og:site_name" content="Mark Ramige: Appsec and Bug Bounties" />
+
+  <meta property="og:image" content="https://markramige.com/">
+
+<meta property="og:image:width" content="2048">
+<meta property="og:image:height" content="1024">
+
+
+  <meta property="article:published_time" content="2020-02-28 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+<body class="blue">
+
+
+<div class="container center headings--one-size">
+
+  <header class="header">
+  <div class="header__inner">
+    <div class="header__logo">
+      <a href="/">
+  <div class="logo">
+    &gt;_ Mark Ramige
+  </div>
+</a>
+
+    </div>
+    
+      <div class="menu-trigger">menu</div>
+    
+  </div>
+  
+    <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="/about">About</a></li>
+        
+      
+        
+          <li><a href="https://github.com/markramige">GitHub</a></li>
+        
+      
+        
+          <li><a href="https://twitter.com/markramige">Twitter</a></li>
+        
+      
+      
+    
+
+    
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="/about">About</a></li>
+      
+    
+      
+        <li><a href="https://github.com/markramige">GitHub</a></li>
+      
+    
+      
+        <li><a href="https://twitter.com/markramige">Twitter</a></li>
+      
+    
+    
+  </ul>
+</nav>
+
+  
+</header>
+
+
+  <div class="content">
+    
+<div class="post">
+  <h1 class="post-title">
+    <a href="https://markramige.com/posts/tryhackme-hackernote-write-up/">TryHackMe Hackernote Write-Up</a></h1>
+  <div class="post-meta">
+    
+      <span class="post-date">
+        2020-02-28 
+      </span>
+    
+    
+    <span class="post-author">:: Mark Ramige</span>
+    
+  </div>
+
+  
+  <span class="post-tags">
+    
+    #<a href="https://markramige.com/tags/nmap/">nmap</a>&nbsp;
+    
+    #<a href="https://markramige.com/tags/appsec/">appsec</a>&nbsp;
+    
+    #<a href="https://markramige.com/tags/python/">python</a>&nbsp;
+    
+    #<a href="https://markramige.com/tags/ssh/">ssh</a>&nbsp;
+    
+    #<a href="https://markramige.com/tags/brute-forcing/">brute-forcing</a>&nbsp;
+    
+    #<a href="https://markramige.com/tags/enumeration/">enumeration</a>&nbsp;
+    
+  </span>
+  
+
+  
+
+  
+
+  <div class="post-content"><div>
+        <p><a href="https://tryhackme.com/room/hackernote">This TryHackMe challenge</a> gives you an IP address to attack and takes you through each step of the process until you get root on the box. It covers recon, investigation, exploitation, user enumeration, password brute-forcing, and privilege escalation. It requires some basic linux skills to get started.</p>
+<h2 id="contents">Contents<a href="#contents" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<ul>
+<li><a href="#task-1-reconnaissance">Task 1 - Reconnaissance</a></li>
+<li><a href="#task-2-investigate">Task 2 - Investigate</a></li>
+<li><a href="#task-3-exploit">Task 3 - Exploit</a></li>
+<li><a href="#task-4-attack-passwords">Task 4 - Attack Passwords</a></li>
+<li><a href="#task-5-escalate">Task 5 - Escalate</a></li>
+</ul>
+<h2 id="task-1---reconnaissance">Task 1 - Reconnaissance<a href="#task-1---reconnaissance" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<ul>
+<li>Which ports are open? (in numerical order)</li>
+</ul>
+<p>We can run <code>man nmap</code> to check for the options we need to scan for ports and service identification (next question).</p>
+<p><code>nmap -A -T4 MACHINE_IP</code> seems to be what we&rsquo;re looking for. The output is:</p>
+<pre><code>Starting Nmap 7.91 ( https://nmap.org ) at 2020-02-28 17:17 EST
+Nmap scan report for MACHINE_IP
+Host is up (0.11s latency).
+Not shown: 997 closed ports
+PORT     STATE SERVICE VERSION
+22/tcp   open  ssh     OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey:
+|   2048 10:a6:95:34:62:b0:56:2a:38:15:77:58:f4:f3:6c:ac (RSA)
+|   256 6f:18:27:a4:e7:21:9d:4e:6d:55:b3:ac:c5:2d:d5:d3 (ECDSA)
+|_  256 2d:c3:1b:58:4d:c3:5d:8e:6a:f6:37:9d:ca:ad:20:7c (ED25519)
+80/tcp   open  http    Golang net/http server (Go-IPFS json-rpc or InfluxDB API)
+|_http-title: Home - hackerNote
+8080/tcp open  http    Golang net/http server (Go-IPFS json-rpc or InfluxDB API)
+|_http-open-proxy: Proxy might be redirecting requests
+|_http-title: Home - hackerNote
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Nmap done: 1 IP address (1 host up) scanned in 24.41 seconds
+</code></pre><ul>
+<li>What programming language is the backend written in?</li>
+</ul>
+<p>Notice the service listed on port 80.</p>
+<h2 id="task-2---investigate">Task 2 - Investigate<a href="#task-2---investigate" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p>Follow the instructions to set up your user account and test the web app. I&rsquo;m proxying the traffic through Burp Suite.</p>
+<h2 id="task-3---exploit">Task 3 - Exploit<a href="#task-3---exploit" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p>Download the <a href="https://raw.githubusercontent.com/NinjaJc01/hackerNoteExploits/master/exploit.py">exploit</a> and <a href="https://raw.githubusercontent.com/NinjaJc01/hackerNoteExploits/master/names.txt">list of user names</a></p>
+<p>Change the value of the URL variable in the exploit script to <code>&quot;http://MACHINE_IP/api/user/login&quot;</code></p>
+<p>Add your user name to the top of the names.txt file to increase the accuracy of the exploit.</p>
+<p>Run <code>python3 exploit.py</code> and answer the two questions based on the output:</p>
+<ul>
+<li>
+<p>How many usernames from the list are valid?</p>
+</li>
+<li>
+<p>What are/is the valid username(s)?</p>
+</li>
+</ul>
+<h2 id="task-4---attack-passwords">Task 4 - Attack Passwords<a href="#task-4---attack-passwords" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p>Download the wordlists.zip file. We&rsquo;re running Kali Linux and the hashcat-utils package is installed so we can just run:</p>
+<p><code>/usr/bin/hashcat-utils/combinator.bin colors.txt numbers.txt &gt; wordlist.txt</code></p>
+<p>Next we run hydra to bruteforce our passwords: (replace <code>USERNAME</code> and <code>MACHINE_IP</code>)</p>
+<p><code>hydra -l USERNAME -P wordlist.txt MACHINE_IP http-post-form &quot;/api/user/login:username=^USER^&amp;password=^PASS^:Invalid Username Or Password&quot;</code></p>
+<ul>
+<li>How many passwords were in your wordlist?</li>
+</ul>
+<p><code>wc -l wordlist.txt</code></p>
+<ul>
+<li>What was the user&rsquo;s password?</li>
+</ul>
+<p>Taken from the output of <code>hydra</code></p>
+<ul>
+<li>What is the user&rsquo;s SSH password?</li>
+</ul>
+<p>Log in to the web app and the password is shown</p>
+<ul>
+<li>What&rsquo;s the user flag?</li>
+</ul>
+<p><code>ssh USERNAME@MACHINE_IP</code></p>
+<p><code>cat user.txt</code></p>
+<h2 id="task-5---escalate">Task 5 - Escalate<a href="#task-5---escalate" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<ul>
+<li>What is the CVE number for the exploit?</li>
+</ul>
+<p>Google <code>pwdfeedback</code> and we <a href="https://www.sudo.ws/alerts/pwfeedback.html">find a page</a> that explains the vulnerability and gives us the CVE number.</p>
+<ul>
+<li>What is the root flag?</li>
+</ul>
+<p>Follow the instructions on the page to download the exploit, compile it, scp to the server, and run it.</p>
+<p>Run <code>cat /root/root.txt</code> to get the flag.</p>
+
+      </div></div>
+
+  
+  
+<div class="pagination">
+    <div class="pagination__title">
+        <span class="pagination__title-h">Read other posts</span>
+        <hr />
+    </div>
+    <div class="pagination__buttons">
+        
+        <span class="button previous">
+            <a href="https://markramige.com/posts/tryhackme-webappsec-101-write-up/">
+                <span class="button__icon">←</span>
+                <span class="button__text">TryHackMe WebAppSec 101 Write-Up</span>
+            </a>
+        </span>
+        
+        
+    </div>
+</div>
+
+  
+
+  
+
+</div>
+
+  </div>
+
+  
+    <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright copyright--user">
+        <span>© 2020 <a href='https://github.com/markramige/markramigecom'>Mark Ramige</a> :: <a href='https://creativecommons.org/licenses/by/4.0/?ref=chooser-v1'>CC BY 4.0</a> Licensed :: Powered by <a href='http://gohugo.io'>Hugo</a></span>
+    
+        <span>:: Theme made by <a href="https://twitter.com/panr">panr</a></span>
+      </div>
+  </div>
+</footer>
+
+<script src="https://markramige.com/assets/main.js"></script>
+<script src="https://markramige.com/assets/prism.js"></script>
+
+
+
+
+
+
+
+  
+</div>
+
+</body>
+</html>

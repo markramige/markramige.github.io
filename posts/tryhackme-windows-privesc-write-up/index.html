@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+    <title>TryHackMe Windows PrivEsc Write-Up :: Mark Ramige: Appsec and Bug Bounties</title>
+  
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="This TryHackMe room gives us a vulnerable Windows Server 2019 virtual machine and demonstrates many different types of Windows privilege escalation techniques. There aren&amp;rsquo;t many challenges included in the room, but just knowing how many different ways attackers can gain elevated privileges on a Windows machine is valuable. In addition, several tools are provided that show us how easy it is to automate checking for privesc vulnerabilities on Windows.
+Contents  Service Exploits Registry Passwords Scheduled Tasks Insecure GUI Apps Startup Apps Token Impersonation Privilege Escalation Scripts  Service Exploits Task 3 First off, we&amp;rsquo;re checking permission on the daclsvc service." />
+<meta name="keywords" content="windows, privesc, registry, authentication, permissions, services, rdp" />
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="https://markramige.com/posts/tryhackme-windows-privesc-write-up/" />
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-178664934-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+
+
+<link rel="stylesheet" href="https://markramige.com/assets/style.css">
+
+  <link rel="stylesheet" href="https://markramige.com/assets/blue.css">
+
+
+
+
+
+
+<link rel="apple-touch-icon" href="https://markramige.com/img/apple-touch-icon-192x192.png">
+
+  <link rel="shortcut icon" href="https://markramige.com/favicon.png">
+
+
+
+<meta name="twitter:card" content="summary" />
+
+  
+    <meta name="twitter:site" content="markramige" />
+  
+    <meta name="twitter:creator" content="markramige" />
+
+
+
+<meta property="og:locale" content="en" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="TryHackMe Windows PrivEsc Write-Up">
+<meta property="og:description" content="This [TryHackMe room](https://tryhackme.com/room/windows10privesc) gives us a vulnerable Windows Server 2019 virtual machine and demonstrates many different types of Windows privilege escalation techniques. There aren&#39;t many challenges included in the room, but just knowing how many different ways attackers can gain elevated privileges on a Windows machine is valuable. In addition, several tools are provided that show us how easy it is to automate checking for privesc vulnerabilities on Windows." />
+<meta property="og:url" content="https://markramige.com/posts/tryhackme-windows-privesc-write-up/" />
+<meta property="og:site_name" content="Mark Ramige: Appsec and Bug Bounties" />
+
+  <meta property="og:image" content="https://markramige.com/">
+
+<meta property="og:image:width" content="2048">
+<meta property="og:image:height" content="1024">
+
+
+  <meta property="article:published_time" content="2020-06-30 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+<body class="blue">
+
+
+<div class="container center headings--one-size">
+
+  <header class="header">
+  <div class="header__inner">
+    <div class="header__logo">
+      <a href="/">
+  <div class="logo">
+    &gt;_ Mark Ramige
+  </div>
+</a>
+
+    </div>
+    
+      <div class="menu-trigger">menu</div>
+    
+  </div>
+  
+    <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="/about">About</a></li>
+        
+      
+        
+          <li><a href="https://github.com/markramige">GitHub</a></li>
+        
+      
+        
+          <li><a href="https://twitter.com/markramige">Twitter</a></li>
+        
+      
+      
+    
+
+    
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="/about">About</a></li>
+      
+    
+      
+        <li><a href="https://github.com/markramige">GitHub</a></li>
+      
+    
+      
+        <li><a href="https://twitter.com/markramige">Twitter</a></li>
+      
+    
+    
+  </ul>
+</nav>
+
+  
+</header>
+
+
+  <div class="content">
+    
+<div class="post">
+  <h1 class="post-title">
+    <a href="https://markramige.com/posts/tryhackme-windows-privesc-write-up/">TryHackMe Windows PrivEsc Write-Up</a></h1>
+  <div class="post-meta">
+    
+      <span class="post-date">
+        2020-06-30 
+      </span>
+    
+    
+    <span class="post-author">:: Mark Ramige</span>
+    
+  </div>
+
+  
+  <span class="post-tags">
+    
+    #<a href="https://markramige.com/tags/windows/">windows</a>&nbsp;
+    
+    #<a href="https://markramige.com/tags/privesc/">privesc</a>&nbsp;
+    
+    #<a href="https://markramige.com/tags/registry/">registry</a>&nbsp;
+    
+    #<a href="https://markramige.com/tags/authentication/">authentication</a>&nbsp;
+    
+    #<a href="https://markramige.com/tags/permissions/">permissions</a>&nbsp;
+    
+    #<a href="https://markramige.com/tags/services/">services</a>&nbsp;
+    
+    #<a href="https://markramige.com/tags/rdp/">rdp</a>&nbsp;
+    
+  </span>
+  
+
+  
+
+  
+
+  <div class="post-content"><div>
+        <p>This <a href="https://tryhackme.com/room/windows10privesc">TryHackMe room</a> gives us a vulnerable Windows Server 2019 virtual machine and demonstrates many different types of Windows privilege escalation techniques. There aren&rsquo;t many challenges included in the room, but just knowing how many different ways attackers can gain elevated privileges on a Windows machine is valuable. In addition, several tools are provided that show us how easy it is to automate checking for privesc vulnerabilities on Windows.</p>
+<h2 id="contents">Contents<a href="#contents" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<ul>
+<li><a href="#service-exploits">Service Exploits</a></li>
+<li><a href="#registry">Registry</a></li>
+<li><a href="#passwords">Passwords</a></li>
+<li><a href="#scheduled-tasks">Scheduled Tasks</a></li>
+<li><a href="#insecure-gui-apps">Insecure GUI Apps</a></li>
+<li><a href="#startup-apps">Startup Apps</a></li>
+<li><a href="#token-impersonation">Token Impersonation</a></li>
+<li><a href="#privilege-escalation-scripts">Privilege Escalation Scripts</a></li>
+</ul>
+<h2 id="service-exploits">Service Exploits<a href="#service-exploits" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<h3 id="task-3">Task 3<a href="#task-3" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>First off, we&rsquo;re checking permission on the <code>daclsvc</code> service. We notice that we have <code>SERVICE_CHANGE_CONFIG</code> permissions and that the service runs with SYSTEM privileges. All we have to do is change the <code>BINARY_PATH_NAME</code> of the service to make it run our reverse shell when the service starts.</p>
+<h3 id="task-4">Task 4<a href="#task-4" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>Similar to Task 3, we check the permissions of the directory containing the <code>unquotedsvc</code> service and notice that we can write to the directory. Since the <code>BINARY_PATH_NAME</code> is unquoted, we copy our reverse shell to the directory and rename it to <code>common.exe</code>. Since Windows will find <code>common.exe</code> before <code>Common Files</code> it executes it instead of the intended service.</p>
+<h3 id="task-5">Task 5<a href="#task-5" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>We find that the registry entry for the <code>regsvc</code> service has weak permissions. We can change the location of the service executable in the registry so that it runs our reverse shell.</p>
+<h3 id="task-6">Task 6<a href="#task-6" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>The <code>filepermsvc</code> executable located at <code>C:\Program Files\File Permissions Service\filepermservice.exe</code> is writeable by all users. All we have to do is replace it with our reverse shell executable and start the service.</p>
+<h2 id="registry">Registry<a href="#registry" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<h3 id="task-7">Task 7<a href="#task-7" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>In this task we&rsquo;re checking the registry for programs that are set to run automatically at boot. These will be run with admin privileges. We notice that one program is writeable by all users. We can replace this program with our reverse shell and restart the machine to gain admin access.</p>
+<h3 id="task-8">Task 8<a href="#task-8" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>We query the registry and find that the <code>AlwaysInstallElevated</code> key is enabled. We can generate an installer that will automatically run with elevated privileges when it is installed.</p>
+<h2 id="passwords">Passwords<a href="#passwords" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<h3 id="task-9">Task 9<a href="#task-9" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>We can query the registry for the string <code>password</code> to find user credentials. We find admin AutoLogin credentials and use the <code>winexe</code> command in Kali to log on to the machine.</p>
+<h3 id="task-10">Task 10<a href="#task-10" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>A local admin user has saved their login credentials on the machine. We use the <code>cmdkey /list</code> command to check for credentials and then the <code>runas /savecred</code> command to take advantage of the saved credentials to run our reverse shell with admin privileges.</p>
+<h3 id="task-11">Task 11<a href="#task-11" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>We have access to backup copies of the <code>SAM</code> and <code>SYSTEM</code> files for our machine. We can use <code>creddump7</code> to extract the NTLM hashes of the users on the system. We then use <code>hashcat</code> to crack the admin password using a wordlist.</p>
+<h3 id="task-12">Task 12<a href="#task-12" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>Since we have the NTLM hash, we can now use <code>pass the hash</code> to login to the system without even needing to crack the hash to obtain the password.</p>
+<h2 id="scheduled-tasks">Scheduled Tasks<a href="#scheduled-tasks" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<h3 id="task-13">Task 13<a href="#task-13" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>The machine has a task set to run a PowerShell script every minute with SYSTEM privileges. In addition, we have permission to write to this file. All we have to do is add a line to the script to run our reverse shell executable.</p>
+<h2 id="insecure-gui-apps">Insecure GUI Apps<a href="#insecure-gui-apps" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<h3 id="task-14">Task 14<a href="#task-14" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>Pasting in a file location in the navigation input of the file open dialog bypasses the file type check that the application usually performs when opening a file. Since the application is running with admin privileges, it will also run our <code>cmd.exe</code> with admin privileges.</p>
+<h2 id="startup-apps">Startup Apps<a href="#startup-apps" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<h3 id="task-15">Task 15<a href="#task-15" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>We have permissions to write to the admin startup directory. We&rsquo;re going to create a new shortcut to our reverse shell executable in the startup directory so that it will run the next time the admin user logs on.</p>
+<h2 id="token-impersonation">Token Impersonation<a href="#token-impersonation" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<h3 id="task-16">Task 16<a href="#task-16" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>For this task we&rsquo;re exploting a vulnerability in Windows to get local privilege execution. It turns out that if our user has <code>SeImpersonate</code> or <code>SeAssignPrimaryToken</code> privileges, we can use those to gain <code>SYSTEM</code> privileges.</p>
+<h3 id="task-17">Task 17<a href="#task-17" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>We&rsquo;re again abusing <code>SeImpersonatePrivilege</code> with the PrintSpoofer vulnerability to escalate local access to <code>SYSTEM</code>.</p>
+<h2 id="privilege-escalation-scripts">Privilege Escalation Scripts<a href="#privilege-escalation-scripts" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<h3 id="task-18">Task 18<a href="#task-18" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>All four of these tools check for most of the vulnerabilities that we&rsquo;ve experimented with. Automated tools make it extremely easy for an attacker or penetration tester to find vulnerabilities on a Windows machine.</p>
+
+      </div></div>
+
+  
+  
+<div class="pagination">
+    <div class="pagination__title">
+        <span class="pagination__title-h">Read other posts</span>
+        <hr />
+    </div>
+    <div class="pagination__buttons">
+        
+        <span class="button previous">
+            <a href="https://markramige.com/posts/tryhackme-owasp-top-10-write-up/">
+                <span class="button__icon">←</span>
+                <span class="button__text">TryHackMe OWASP Top 10 Write-up</span>
+            </a>
+        </span>
+        
+        
+        <span class="button next">
+            <a href="https://markramige.com/posts/tryhackme-linux-privesc-write-up/">
+                <span class="button__text">TryHackMe Linux PrivEsc Write-Up</span>
+                <span class="button__icon">→</span>
+            </a>
+        </span>
+        
+    </div>
+</div>
+
+  
+
+  
+
+</div>
+
+  </div>
+
+  
+    <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright copyright--user">
+        <span>© 2020 <a href='https://github.com/markramige/markramigecom'>Mark Ramige</a> :: <a href='https://creativecommons.org/licenses/by/4.0/?ref=chooser-v1'>CC BY 4.0</a> Licensed :: Powered by <a href='http://gohugo.io'>Hugo</a></span>
+    
+        <span>:: Theme made by <a href="https://twitter.com/panr">panr</a></span>
+      </div>
+  </div>
+</footer>
+
+<script src="https://markramige.com/assets/main.js"></script>
+<script src="https://markramige.com/assets/prism.js"></script>
+
+
+
+
+
+
+
+  
+</div>
+
+</body>
+</html>

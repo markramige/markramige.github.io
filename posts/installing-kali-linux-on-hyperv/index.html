@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+    <title>Installing and Optimizing Kali Linux on Hyper-V :: Mark Ramige: Appsec and Bug Bounties</title>
+  
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Kali Linux runs great on Windows if you’re using VirtualBox or VMware Workstation. You might have tried installing it on Hyper-V so that you can run WSL 2 distributions at the same time and experienced how poorly Hyper-V handles desktop Linux. Microsoft is working to fix this by enabling enhanced session mode on desktop linux distributions. I’ll show you how to set up Kali Linux on Hyper-V so that it runs faster and also to enable copying and pasting between the VM and host (including files)." />
+<meta name="keywords" content="kali, linux, hyper-v, windows" />
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="https://markramige.com/posts/installing-kali-linux-on-hyperv/" />
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-178664934-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+
+
+<link rel="stylesheet" href="https://markramige.com/assets/style.css">
+
+  <link rel="stylesheet" href="https://markramige.com/assets/blue.css">
+
+
+
+
+
+
+<link rel="apple-touch-icon" href="https://markramige.com/img/apple-touch-icon-192x192.png">
+
+  <link rel="shortcut icon" href="https://markramige.com/favicon.png">
+
+
+
+<meta name="twitter:card" content="summary" />
+
+  
+    <meta name="twitter:site" content="markramige" />
+  
+    <meta name="twitter:creator" content="markramige" />
+
+
+
+<meta property="og:locale" content="en" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Installing and Optimizing Kali Linux on Hyper-V">
+<meta property="og:description" content="Kali Linux runs great on Windows if you’re using VirtualBox or VMware Workstation. You might have tried installing it on Hyper-V so that you can run WSL 2 distributions at the same time and experienced how poorly Hyper-V handles desktop Linux. [Microsoft is working to fix this](https://github.com/microsoft/linux-vm-tools) by enabling enhanced session mode on desktop linux distributions. I’ll show you how to set up Kali Linux on Hyper-V so that it runs faster and also to enable copying and pasting between the VM and host (including files)." />
+<meta property="og:url" content="https://markramige.com/posts/installing-kali-linux-on-hyperv/" />
+<meta property="og:site_name" content="Mark Ramige: Appsec and Bug Bounties" />
+
+  
+    <meta property="og:image" content="https://markramige.com/favicon.png">
+  
+
+<meta property="og:image:width" content="2048">
+<meta property="og:image:height" content="1024">
+
+
+  <meta property="article:published_time" content="2020-10-04 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+<body class="blue">
+
+
+<div class="container center headings--one-size">
+
+  <header class="header">
+  <div class="header__inner">
+    <div class="header__logo">
+      <a href="/">
+  <div class="logo">
+    &gt;_ Mark Ramige
+  </div>
+</a>
+
+    </div>
+    
+      <div class="menu-trigger">menu</div>
+    
+  </div>
+  
+    <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="/about">About</a></li>
+        
+      
+        
+          <li><a href="https://github.com/markramige">GitHub</a></li>
+        
+      
+        
+          <li><a href="https://twitter.com/markramige">Twitter</a></li>
+        
+      
+      
+    
+
+    
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="/about">About</a></li>
+      
+    
+      
+        <li><a href="https://github.com/markramige">GitHub</a></li>
+      
+    
+      
+        <li><a href="https://twitter.com/markramige">Twitter</a></li>
+      
+    
+    
+  </ul>
+</nav>
+
+  
+</header>
+
+
+  <div class="content">
+    
+<div class="post">
+  <h1 class="post-title">
+    <a href="https://markramige.com/posts/installing-kali-linux-on-hyperv/">Installing and Optimizing Kali Linux on Hyper-V</a></h1>
+  <div class="post-meta">
+    
+      <span class="post-date">
+        2020-10-04 
+      </span>
+    
+    
+    <span class="post-author">:: Mark Ramige</span>
+    
+  </div>
+
+  
+  <span class="post-tags">
+    
+    #<a href="https://markramige.com/tags/kali/">kali</a>&nbsp;
+    
+    #<a href="https://markramige.com/tags/linux/">linux</a>&nbsp;
+    
+    #<a href="https://markramige.com/tags/hyper-v/">hyper-v</a>&nbsp;
+    
+    #<a href="https://markramige.com/tags/windows/">windows</a>&nbsp;
+    
+  </span>
+  
+
+  
+
+  
+
+  <div class="post-content"><div>
+        <p>Kali Linux runs great on Windows if you’re using VirtualBox or VMware Workstation. You might have tried installing it on Hyper-V so that you can run WSL 2 distributions at the same time and experienced how poorly Hyper-V handles desktop Linux. <a href="https://github.com/microsoft/linux-vm-tools">Microsoft is working to fix this</a> by enabling enhanced session mode on desktop linux distributions. I’ll show you how to set up Kali Linux on Hyper-V so that it runs faster and also to enable copying and pasting between the VM and host (including files).</p>
+<h2 id="contents">Contents<a href="#contents" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<ul>
+<li><a href="#hyper-v-network-setup">Hyper-V network setup</a></li>
+<li><a href="#create-a-new-virtual-machine">Create a new virtual machine</a></li>
+<li><a href="#create-a-virtual-hard-disk-and-enable-enhanced-session">Create a virtual hard disk and enable enhanced session</a></li>
+<li><a href="#open-and-adjust-vm-settings">Open and adjust VM settings</a></li>
+<li><a href="#create-partition-table-and-format-partitions">Create partition table and format partitions</a></li>
+<li><a href="#install-kali-linux">Install Kali Linux</a></li>
+<li><a href="#install-linux-vm-tools">Install linux-vm-tools</a></li>
+<li><a href="#adjust-xfce-settings">Adjust XFCE settings</a></li>
+<li><a href="#future-improvements">Future improvements</a></li>
+<li><a href="#conclusion">Conclusion</a></li>
+</ul>
+<p><code>*Open a PowerShell prompt with administrator privileges*</code></p>
+<h2 id="hyper-v-network-setup">Hyper-V network setup<a href="#hyper-v-network-setup" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p>We need to create a new network adapter called “External” that is bridged to your wifi or ethernet network adapter.</p>
+<p>Run <code>Get-NetAdapter</code> to get a list of your network adapters. Note the name of the one that connects to the Internet.</p>
+<p>Run <code>New-VMSwitch -Name &quot;External&quot; -AllowManagementOS $True -NetAdapterName &quot;YOURADAPTERNAME&quot;</code> and edit the name of your network adapter.</p>
+<p>You will be disconnected from the network when the adapter is added. If your connection isn’t working after a few seconds, then the settings from your real adapter didn’t copy over correctly to the new “External” adapter. Go and edit them manually to the correct values. My DNS server settings didn’t copy over and I had to add them manually.</p>
+<h2 id="create-a-new-virtual-machine">Create a new virtual machine<a href="#create-a-new-virtual-machine" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p>Open up the Hyper-V Manager by running <code>C:\Windows\System32\virtmgmt.msc</code></p>
+<p><img src="/images/installing-kali-linux-on-hyperv/hyper-v-manager.png" alt="Hyper-V Manager"></p>
+<p>Click on “New” and then “Virtual Machine”</p>
+<p>Choose a name for the new VM.</p>
+<p><img src="/images/installing-kali-linux-on-hyperv/new-vm-name.png" alt="Create VM name"></p>
+<p>Select “Generation 2”</p>
+<p><img src="/images/installing-kali-linux-on-hyperv/new-vm-generation-2.png" alt="Create VM select generation 2"></p>
+<p>Choose how much memory you want to give the machine on startup. Since we’re also selecting “Dynamic Memory” it can go higher depending on what you set as the maximum later.</p>
+<p><img src="/images/installing-kali-linux-on-hyperv/new-vm-assign-memory.png" alt="Create VM assign memory"></p>
+<p>Choose the External adapter that we created earlier.</p>
+<p><img src="/images/installing-kali-linux-on-hyperv/new-vm-network-connection.png" alt="Create VM select external connection"></p>
+<p>We’re going to create a virtual hard disk manually and attach it later.</p>
+<p><img src="/images/installing-kali-linux-on-hyperv/new-vm-attach-vhd-later.png" alt="Create VM attach VHD later"></p>
+<h2 id="create-a-virtual-hard-disk-and-enable-enhanced-session">Create a virtual hard disk and enable enhanced session<a href="#create-a-virtual-hard-disk-and-enable-enhanced-session" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p>Since we’re creating a dynamic vhdx file, we want to lower the block size so that it <a href="https://docs.microsoft.com/en-us/windows-server/virtualization/hyper-v/best-practices-for-running-linux-on-hyper-v">will use up less real space</a>. The path and file name can be anything you want. You can set the SizeBytes (maximum size of the disk) value to anything over 32GB.</p>
+<p><code>New-VHD -Path C:\VHDs\Kali.vhdx -SizeBytes 128GB -Dynamic -BlockSizeBytes 1MB</code></p>
+<p>Run <code>Set-VM -VMName Kali -EnhancedSessionTransportType HvSocket</code> to enable enhanced session mode.</p>
+<h2 id="open-and-adjust-vm-settings">Open and adjust VM settings<a href="#open-and-adjust-vm-settings" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p><img src="/images/installing-kali-linux-on-hyperv/vm-open-settings.png" alt="VM open settings"></p>
+<p>Disable secure boot</p>
+<p><img src="/images/installing-kali-linux-on-hyperv/vm-settings-turn-off-secure-boot.png" alt="VM settings turn off secure boot"></p>
+<p>Set the maximum RAM that you can assign to this VM.</p>
+<p><img src="/images/installing-kali-linux-on-hyperv/vm-settings-memory-size.png" alt="VM settings memory size"></p>
+<p>Set the number of processors you want to give the VM.</p>
+<p><img src="/images/installing-kali-linux-on-hyperv/vm-settings-processors.png" alt="VM settings processors"></p>
+<p>I always turn off automatic checkpoints because I like to do them manually.</p>
+<p><img src="/images/installing-kali-linux-on-hyperv/vm-settings-checkpoints.png" alt="VM settings checkpoints"></p>
+<p>I don’t want this machine starting at boot.</p>
+<p><img src="/images/installing-kali-linux-on-hyperv/vm-settings-no-automatic-start.png" alt="VM settings startup"></p>
+<p>Browse to the vhdx file you created earlier.</p>
+<p><img src="/images/installing-kali-linux-on-hyperv/vm-settings-select-vhd.png" alt="VM settings select VHD"></p>
+<p>Add a DVD drive for installation.</p>
+<p><img src="/images/installing-kali-linux-on-hyperv/vm-settings-add-dvd-drive.png" alt="VM settings add DVD drive"></p>
+<p>Select the Kali live iso you downloaded earlier.</p>
+<p><img src="/images/installing-kali-linux-on-hyperv/vm-settings-select-kali-live-iso.png" alt="VM settings select Kali live iso"></p>
+<p>Set the boot order so that it will boot from the iso automatically.</p>
+<p><img src="/images/installing-kali-linux-on-hyperv/vm-settings-set-boot-order.png" alt="VM Settings set boot order"></p>
+<h2 id="create-partition-table-and-format-partitions">Create partition table and format partitions<a href="#create-partition-table-and-format-partitions" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p>Boot the default option in the menu</p>
+<p><img src="/images/installing-kali-linux-on-hyperv/kali-live-boot-menu.png" alt="Kali live boot menu"></p>
+<p>Open a terminal and run <code>sudo gdisk /dev/sda</code></p>
+<p>Type <code>o</code> to create a new partition table</p>
+<p><img src="/images/installing-kali-linux-on-hyperv/kali-live-gdisk-new.png" alt="Kali live gdisk create partition table"></p>
+<p>Type <code>n</code> and for the last sector type <code>+128M</code>, then for the partition type enter <code>ef00</code></p>
+<p><img src="/images/installing-kali-linux-on-hyperv/kali-live-gdisk-new-efi.png" alt="Kali live gdisk new efi partition"></p>
+<p>Type <code>n</code> and choose all the default options to create a linux partition with the remainder of the space.</p>
+<p>Type <code>p</code> to print the partition table to verify everything is correct.</p>
+<p><img src="/images/installing-kali-linux-on-hyperv/kali-live-gdisk-new-linux.png" alt="Kali live gdisk new linux partition"></p>
+<p>Type <code>w</code> to save the partition table and exit gdisk.</p>
+<p>Run <code>mkdosfs -F 32 -n EFI /dev/sda1</code> to format the EFI partition.</p>
+<p>Run <code>mkfs.ext4 -G 4096 /dev/sda2</code> to format the Kali partition. <a href="https://docs.microsoft.com/en-us/windows-server/virtualization/hyper-v/best-practices-for-running-linux-on-hyper-v">Microsoft recommends</a> setting the number of groups to 4096.</p>
+<p><img src="/images/installing-kali-linux-on-hyperv/kali-live-gdisk-save-and-mkfs-ext4.png" alt="Kali live gdisk save partitions and format"></p>
+<h2 id="install-kali-linux">Install Kali Linux<a href="#install-kali-linux" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p>Open the VM settings and change the image file to the Kali netinstall iso that you downloaded earlier.</p>
+<p><img src="/images/installing-kali-linux-on-hyperv/vm-settings-select-kali-netinst.png" alt="VM settings select kali netinstall iso"></p>
+<p>Run the VM and choose the default boot option.</p>
+<p><img src="/images/installing-kali-linux-on-hyperv/kali-netinstall-boot-menu.png" alt="Kali netinstall boot menu"></p>
+<p>Set your language, location, and keyboard.</p>
+<p><img src="/images/installing-kali-linux-on-hyperv/kali-netinstall-language.png" alt="Kali netinstall select language"></p>
+<p><img src="/images/installing-kali-linux-on-hyperv/kali-netinstall-location.png" alt="Kali netinstall select location"></p>
+<p><img src="/images/installing-kali-linux-on-hyperv/kali-netinstall-keyboard.png" alt="Kali netinstall select keyboard"></p>
+<p>Choose your hostname and domain name (I left domain blank).</p>
+<p><img src="/images/installing-kali-linux-on-hyperv/kali-netinstall-host-name.png" alt="Kali netinstall set host name"></p>
+<p><img src="/images/installing-kali-linux-on-hyperv/kali-netinstall-domain-name.png" alt="Kali netinstall set domain name"></p>
+<p>Enter your name, user name, and password.</p>
+<p><img src="/images/installing-kali-linux-on-hyperv/kali-netinstall-user-full-name.png" alt="Kali netinstall set full user name"></p>
+<p><img src="/images/installing-kali-linux-on-hyperv/kali-netinstall-user-name.png" alt="Kali netinstall set user name"></p>
+<p><img src="/images/installing-kali-linux-on-hyperv/kali-netinstall-password.png" alt="Kali netinstall set password"></p>
+<p>Set your time zone.</p>
+<p><img src="/images/installing-kali-linux-on-hyperv/kali-netinstall-time-zone.png" alt="Kali netinstall set timezone"></p>
+<p>Choose manual partitioning because we already created the partition table and formatted.</p>
+<p><img src="/images/installing-kali-linux-on-hyperv/kali-netinstall-manual-partition.png" alt="Kali netinstall manual partition"></p>
+<p>The EFI partition is already set up so we want to edit the second partition for Kali.</p>
+<p><img src="/images/installing-kali-linux-on-hyperv/kali-netinstall-partition-select.png" alt="Kali netinstall select partition to change"></p>
+<p>Set it to ext4 partition, set the mount point as <code>/</code> and keep the existing data.</p>
+<p><img src="/images/installing-kali-linux-on-hyperv/kali-netinstall-partition-options.png" alt="Kali netinstall partition options"></p>
+<p>Write changes to disk.</p>
+<p><img src="/images/installing-kali-linux-on-hyperv/kali-netinstall-partition-finish.png" alt="Kali netinstall finish partitioning"></p>
+<p>Continue without a swap partition.</p>
+<p><img src="/images/installing-kali-linux-on-hyperv/kali-netinstall-partition-swap.png" alt="Kali netinstall continue without swap"></p>
+<p>Continue with installation.</p>
+<p><img src="/images/installing-kali-linux-on-hyperv/kali-netinstall-partition-continue.png" alt="Kali netinstall save partition settings and continue"></p>
+<p>Set up a network proxy (I left this blank.)</p>
+<p><img src="/images/installing-kali-linux-on-hyperv/kali-netinstall-proxy.png" alt="Kali netinstall enter proxy settings"></p>
+<p>Choose the software you want installed (I went with the default options)</p>
+<p><img src="/images/installing-kali-linux-on-hyperv/kali-netinstall-software-selection.png" alt="Kali netinstall select software to install"></p>
+<p>I had an error message after all of the packages downloaded. I hit continue a few times and it continued installing where it left off without giving another error.</p>
+<p><img src="/images/installing-kali-linux-on-hyperv/kali-netinstall-error.png" alt="Kali netinstall software installation error"></p>
+<p><img src="/images/installing-kali-linux-on-hyperv/kali-netinstall-continue-after-error.png" alt="Kali netinstall continue after error message"></p>
+<p>Kali is installed! Shut down the machine and remove the DVD drive in the settings.</p>
+<p><img src="/images/installing-kali-linux-on-hyperv/kali-netinstall-finished.png" alt="Kali netinstall finished"></p>
+<p><img src="/images/installing-kali-linux-on-hyperv/vm-settings-remove-dvd-drive.png" alt="VM settings remove DVD drive"></p>
+<h2 id="install-linux-vm-tools">Install linux-vm-tools<a href="#install-linux-vm-tools" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p>Start up the Kali VM and log in.</p>
+<p><img src="/images/installing-kali-linux-on-hyperv/kali-boot-menu.png" alt="Kali Linux boot menu"></p>
+<p><img src="/images/installing-kali-linux-on-hyperv/kali-login-screen.png" alt="Kali Linux login screen"></p>
+<p>Open a terminal and run <code>git clone https://github.com/markramige/linux-vm-tools</code> to download the install script</p>
+<p>Now run <code>sudo linux-vm-tools/kali/install.sh</code></p>
+<p>This script will update Kali, install xrdp, and change some settings that are necessary for the enhanced session mode to activate. Reboot the machine when it finishes.</p>
+<p><img src="/images/installing-kali-linux-on-hyperv/kali-linux-vm-tools-install.png" alt="Kali Linux tools install"></p>
+<p>You can now set the resolution of the RDP session. This screen will pop up every time you boot unless you save the settings. If this screen doesn’t pop up the first time you reboot, try shutting down the machine completely and starting it again. Alternatively you can save the machine state at the kali login screen and the next time you start it up it will switch to the enhanced session.</p>
+<p><img src="/images/installing-kali-linux-on-hyperv/hyperv-enhance-resolution.png" alt="Hyper-V enhanced session menu"></p>
+<p>You should see the xrdp login screen instead of the default Kali login screen.</p>
+<p><img src="/images/installing-kali-linux-on-hyperv/xrdp-login-screen.png" alt="Xrdp login screen"></p>
+<h2 id="adjust-xfce-settings">Adjust XFCE settings<a href="#adjust-xfce-settings" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p>I’ve found that disabling desktop compositing makes it feel much faster.</p>
+<p><img src="/images/installing-kali-linux-on-hyperv/xfce-disable-compositing.png" alt="XFCE disable compositing"></p>
+<p>Disable desktop blanking and locking</p>
+<p><img src="/images/installing-kali-linux-on-hyperv/xfce-disable-display-blanking.png" alt="XFCE disable display blanking"></p>
+<p>Set the desktop background to a solid color</p>
+<p><img src="/images/installing-kali-linux-on-hyperv/xfce-desktop-background.png" alt="XFCE desktop background set to black"></p>
+<p>All done!</p>
+<p><img src="/images/installing-kali-linux-on-hyperv/kali-finished-desktop.png" alt="Kali desktop finished"></p>
+<h2 id="future-improvements">Future improvements<a href="#future-improvements" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p>It’s possible to enable sound with <a href="https://github.com/neutrinolabs/pulseaudio-module-xrdp">pulseaudio-module-xrdp</a>. I might try getting that to work if I ever need sound support. Also, usb-over-ip might be a possibility, but I don’t know what types of devices are supported with that.</p>
+<h2 id="conclusion">Conclusion<a href="#conclusion" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p>If you need to run Windows as your host OS and aren’t willing to give up WSL 2, then Hyper-V is a decent alternative to VirtualBox and VMware Workstation. It’s not quite as polished as the other options for desktop Linux, but hopefully Microsoft makes some improvements in the future to make it run more smoothly.</p>
+
+      </div></div>
+
+  
+  
+<div class="pagination">
+    <div class="pagination__title">
+        <span class="pagination__title-h">Read other posts</span>
+        <hr />
+    </div>
+    <div class="pagination__buttons">
+        
+        
+        <span class="button next">
+            <a href="https://markramige.com/posts/using-ssh-on-windows-10-and-wsl-2/">
+                <span class="button__text">Using SSH on Windows 10 and WSL 2</span>
+                <span class="button__icon">→</span>
+            </a>
+        </span>
+        
+    </div>
+</div>
+
+  
+
+  
+
+</div>
+
+  </div>
+
+  
+    <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright copyright--user">
+        <span>© 2020 <a href='https://github.com/markramige/markramigecom'>Mark Ramige</a> :: <a href='https://creativecommons.org/licenses/by/4.0/?ref=chooser-v1'>CC BY 4.0</a> Licensed :: Powered by <a href='http://gohugo.io'>Hugo</a></span>
+    
+        <span>:: Theme made by <a href="https://twitter.com/panr">panr</a></span>
+      </div>
+  </div>
+</footer>
+
+<script src="https://markramige.com/assets/main.js"></script>
+<script src="https://markramige.com/assets/prism.js"></script>
+
+
+
+
+
+
+
+  
+</div>
+
+</body>
+</html>

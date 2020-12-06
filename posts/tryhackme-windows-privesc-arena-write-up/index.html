@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+    <title>TryHackMe Windows PrivEsc Arena Write-Up :: Mark Ramige: Appsec and Bug Bounties</title>
+  
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="The Windows PrivEsc Arena TryHackMe room includes a vulnerable Windows 7 virtual machine and demonstrates several types of privilege escalation techniques. There aren&amp;rsquo;t many challenges included in the room, but just knowing how many different ways attackers can gain elevated privileges on a Windows machine is valuable. Also, many of the tasks show us how to use features of Metasploit to exploit Windows machines.
+Contents  Registry Escalation Service Escalation Privilege Escalation Potato Escalation Password Mining Escalation  Registry Escalation Task 3 In this task we notice that C:\Program Files\Autorun Program\program." />
+<meta name="keywords" content="windows, privesc, registry, authentication, permissions, services, rdp" />
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="https://markramige.com/posts/tryhackme-windows-privesc-arena-write-up/" />
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-178664934-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+
+
+<link rel="stylesheet" href="https://markramige.com/assets/style.css">
+
+  <link rel="stylesheet" href="https://markramige.com/assets/blue.css">
+
+
+
+
+
+
+<link rel="apple-touch-icon" href="https://markramige.com/img/apple-touch-icon-192x192.png">
+
+  <link rel="shortcut icon" href="https://markramige.com/favicon.png">
+
+
+
+<meta name="twitter:card" content="summary" />
+
+  
+    <meta name="twitter:site" content="markramige" />
+  
+    <meta name="twitter:creator" content="markramige" />
+
+
+
+<meta property="og:locale" content="en" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="TryHackMe Windows PrivEsc Arena Write-Up">
+<meta property="og:description" content="The Windows PrivEsc Arena [TryHackMe room](https://tryhackme.com/room/windowsprivescarena) includes a vulnerable Windows 7 virtual machine and demonstrates several types of privilege escalation techniques. There aren&#39;t many challenges included in the room, but just knowing how many different ways attackers can gain elevated privileges on a Windows machine is valuable. Also, many of the tasks show us how to use features of Metasploit to exploit Windows machines." />
+<meta property="og:url" content="https://markramige.com/posts/tryhackme-windows-privesc-arena-write-up/" />
+<meta property="og:site_name" content="Mark Ramige: Appsec and Bug Bounties" />
+
+  <meta property="og:image" content="https://markramige.com/">
+
+<meta property="og:image:width" content="2048">
+<meta property="og:image:height" content="1024">
+
+
+  <meta property="article:published_time" content="2020-05-10 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+<body class="blue">
+
+
+<div class="container center headings--one-size">
+
+  <header class="header">
+  <div class="header__inner">
+    <div class="header__logo">
+      <a href="/">
+  <div class="logo">
+    &gt;_ Mark Ramige
+  </div>
+</a>
+
+    </div>
+    
+      <div class="menu-trigger">menu</div>
+    
+  </div>
+  
+    <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="/about">About</a></li>
+        
+      
+        
+          <li><a href="https://github.com/markramige">GitHub</a></li>
+        
+      
+        
+          <li><a href="https://twitter.com/markramige">Twitter</a></li>
+        
+      
+      
+    
+
+    
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="/about">About</a></li>
+      
+    
+      
+        <li><a href="https://github.com/markramige">GitHub</a></li>
+      
+    
+      
+        <li><a href="https://twitter.com/markramige">Twitter</a></li>
+      
+    
+    
+  </ul>
+</nav>
+
+  
+</header>
+
+
+  <div class="content">
+    
+<div class="post">
+  <h1 class="post-title">
+    <a href="https://markramige.com/posts/tryhackme-windows-privesc-arena-write-up/">TryHackMe Windows PrivEsc Arena Write-Up</a></h1>
+  <div class="post-meta">
+    
+      <span class="post-date">
+        2020-05-10 
+      </span>
+    
+    
+    <span class="post-author">:: Mark Ramige</span>
+    
+  </div>
+
+  
+  <span class="post-tags">
+    
+    #<a href="https://markramige.com/tags/windows/">windows</a>&nbsp;
+    
+    #<a href="https://markramige.com/tags/privesc/">privesc</a>&nbsp;
+    
+    #<a href="https://markramige.com/tags/registry/">registry</a>&nbsp;
+    
+    #<a href="https://markramige.com/tags/authentication/">authentication</a>&nbsp;
+    
+    #<a href="https://markramige.com/tags/permissions/">permissions</a>&nbsp;
+    
+    #<a href="https://markramige.com/tags/services/">services</a>&nbsp;
+    
+    #<a href="https://markramige.com/tags/rdp/">rdp</a>&nbsp;
+    
+  </span>
+  
+
+  
+
+  
+
+  <div class="post-content"><div>
+        <p>The Windows PrivEsc Arena <a href="https://tryhackme.com/room/windowsprivescarena">TryHackMe room</a> includes a vulnerable Windows 7 virtual machine and demonstrates several types of privilege escalation techniques. There aren&rsquo;t many challenges included in the room, but just knowing how many different ways attackers can gain elevated privileges on a Windows machine is valuable. Also, many of the tasks show us how to use features of Metasploit to exploit Windows machines.</p>
+<h2 id="contents">Contents<a href="#contents" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<ul>
+<li><a href="#registry-escalation">Registry Escalation</a></li>
+<li><a href="#service-escalation">Service Escalation</a></li>
+<li><a href="#privilege-escalation">Privilege Escalation</a></li>
+<li><a href="#potato-escalation">Potato Escalation</a></li>
+<li><a href="#password-mining-escalation">Password Mining Escalation</a></li>
+</ul>
+<h2 id="registry-escalation">Registry Escalation<a href="#registry-escalation" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<h3 id="task-3">Task 3<a href="#task-3" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>In this task we notice that <code>C:\Program Files\Autorun Program\program.exe</code> is set to run at startup with administrator privileges. We also notice that the <code>Everyone</code> user group has <code>FILE_ALL_ACCESS</code> permission on <code>program.exe</code>. This means we can replace the file with our own version and have that run at startup instead. Next we use <code>Metasploit</code> to open a listener on our Kali box and generate a reverse shell to place on the Windows system as <code>program.exe</code>. The next time we log on the reverse shell will run and we will be connected with administrator privileges.</p>
+<h3 id="task-4">Task 4<a href="#task-4" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>We check the registry for the <code>AlwaysInstallElevated</code> key and notice that it is set to <code>1</code>. This means anything we install will have elevated privileges even if we install it as a normal user. We can generate a reverse shell installer with Metasploit and install it on our Windows machine. This will automatically connect to our listener and give us elevated permissions after installation.</p>
+<h2 id="service-escalation">Service Escalation<a href="#service-escalation" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<h3 id="task-5">Task 5<a href="#task-5" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>The ability to control the registry entry for a Windows service means we can replace that executable file that is run when the service starts. In this task, we create a custom service executable that adds our normal user to the <code>administrators</code> group. After we start the service, our user will have elevated privileges.</p>
+<h3 id="task-6">Task 6<a href="#task-6" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>This task is similar to Task 5, but we don&rsquo;t need registry permissions. We check the <code>filepermsvc</code> executable and notice that the <code>Everyone</code> group has <code>FILE_ALL_ACCESS</code> permissions. This means we can just replace the executable with the same one we used in Task 5 and then start the service.</p>
+<h3 id="task-8">Task 8<a href="#task-8" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>Using <code>procmon</code>, we notice that <code>dllsvc</code> is calling <code>C:\Temp\hijackme.dll</code>, but it is not found. We know that <code>C:\Temp</code> is a writeable location, so we generate a reverse shell using Metasploit and copy it to that location. We can then start <code>dllsvc</code> and our reverse shell will connect.</p>
+<h3 id="task-9">Task 9<a href="#task-9" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>Having permissions to configure a Windows service means we can change the command that runs when the service starts. We&rsquo;re going to change the <code>daclsvc</code> to run <code>net localgroup administrators user /add</code>. This will add our user to the administrators group so that we have elevated privileges.</p>
+<h3 id="task-10">Task 10<a href="#task-10" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>When looking at the details of the <code>unquotedsvc</code>, we notice that the <code>BINARY_PATH_NAME</code> is unquoted. Because there&rsquo;s a space in the path and we can write to that directory, we can make Windows execute <code>C:\Program Files\Unquoted Path Service\common.exe</code> instead of <code>C:\Program Files\Unquoted Path Service\Common Files\unquotedpathservice.exe</code></p>
+<h2 id="privilege-escalation">Privilege Escalation<a href="#privilege-escalation" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<h3 id="task-7">Task 7<a href="#task-7" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>We notice that as a normal user we can write to the <code>C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup</code> directory. Any programs that we add here will be run with administrator privileges. We create a reverse shell and place it in that directory and the log back in to connect to our listener with elevated privileges.</p>
+<h3 id="task-14">Task 14<a href="#task-14" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>In this task we&rsquo;re using Metasploit to suggest exploits to use based on our Windows machine version and update status. It suggests using <code>exploit/windows/local/ms16_014_wmi_recv_notif</code>. We then run the exploit and gain elevated privileges in our reverse shell.</p>
+<h2 id="potato-escalation">Potato Escalation<a href="#potato-escalation" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<h3 id="task-11">Task 11<a href="#task-11" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>The <a href="https://github.com/foxglovesec/Potato">Potato exploit</a> allows us to run an abritrary command with elevated privileges. For this task we&rsquo;re going to use Potato to run <code>net localgroup administrators user /add</code> which gives our normal user administrator privileges.</p>
+<h2 id="password-mining-escalation">Password Mining Escalation<a href="#password-mining-escalation" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<h3 id="task-12">Task 12<a href="#task-12" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>This task has us look at a config file for possible secrets. We notice that the <code>&lt;Password&gt;</code> property value is base64 encoded. We can decode it to find the account password in clear text.</p>
+<h3 id="task-13">Task 13<a href="#task-13" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>We&rsquo;re going to capture a memory dump of the running <code>iexplore.exe</code> process. Running <code>strings</code> on the dump file allows us to extract base64 encoded passwords that have been sent to a website.</p>
+
+      </div></div>
+
+  
+  
+<div class="pagination">
+    <div class="pagination__title">
+        <span class="pagination__title-h">Read other posts</span>
+        <hr />
+    </div>
+    <div class="pagination__buttons">
+        
+        <span class="button previous">
+            <a href="https://markramige.com/posts/tryhackme-linux-privesc-write-up/">
+                <span class="button__icon">←</span>
+                <span class="button__text">TryHackMe Linux PrivEsc Write-Up</span>
+            </a>
+        </span>
+        
+        
+        <span class="button next">
+            <a href="https://markramige.com/posts/tryhackme-webappsec-101-write-up/">
+                <span class="button__text">TryHackMe WebAppSec 101 Write-Up</span>
+                <span class="button__icon">→</span>
+            </a>
+        </span>
+        
+    </div>
+</div>
+
+  
+
+  
+
+</div>
+
+  </div>
+
+  
+    <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright copyright--user">
+        <span>© 2020 <a href='https://github.com/markramige/markramigecom'>Mark Ramige</a> :: <a href='https://creativecommons.org/licenses/by/4.0/?ref=chooser-v1'>CC BY 4.0</a> Licensed :: Powered by <a href='http://gohugo.io'>Hugo</a></span>
+    
+        <span>:: Theme made by <a href="https://twitter.com/panr">panr</a></span>
+      </div>
+  </div>
+</footer>
+
+<script src="https://markramige.com/assets/main.js"></script>
+<script src="https://markramige.com/assets/prism.js"></script>
+
+
+
+
+
+
+
+  
+</div>
+
+</body>
+</html>

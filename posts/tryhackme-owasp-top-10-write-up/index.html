@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+    <title>TryHackMe OWASP Top 10 Write-up :: Mark Ramige: Appsec and Bug Bounties</title>
+  
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="This challenge on TryHackMe was initially released over a period of ten days covering one of the OWASP Top Ten vulnerabilities per day. In includes an introduction and explanation of each vulnerability type and one or multiple exercises for each. It is beginner friendly.
+Contents  Day 1 - Injection Day 2 - Broken Authentication Day 3 - Sensitive Data Exposure Day 4 - XML External Entities Day 5 - Broken Access Control Day 6 - Security Misconfiguration Day 7 - Cross-site Scripting (XSS) Day 8 - Insecure Deserialization Day 9 - Using Components with Known Vulnerabilities Day 10 - Insufficient Logging and Monitoring  Day 1 - Injection Task 5 Visit http://MACHINE_IP/evilshell." />
+<meta name="keywords" content="appsec, owasp, xss, idor, injection" />
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="https://markramige.com/posts/tryhackme-owasp-top-10-write-up/" />
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-178664934-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+
+
+<link rel="stylesheet" href="https://markramige.com/assets/style.css">
+
+  <link rel="stylesheet" href="https://markramige.com/assets/blue.css">
+
+
+
+
+
+
+<link rel="apple-touch-icon" href="https://markramige.com/img/apple-touch-icon-192x192.png">
+
+  <link rel="shortcut icon" href="https://markramige.com/favicon.png">
+
+
+
+<meta name="twitter:card" content="summary" />
+
+  
+    <meta name="twitter:site" content="markramige" />
+  
+    <meta name="twitter:creator" content="markramige" />
+
+
+
+<meta property="og:locale" content="en" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="TryHackMe OWASP Top 10 Write-up">
+<meta property="og:description" content="[This challenge](https://tryhackme.com/room/owasptop10) on TryHackMe was initially released over a period of ten days covering one of the OWASP Top Ten vulnerabilities per day. In includes an introduction and explanation of each vulnerability type and one or multiple exercises for each. It is beginner friendly." />
+<meta property="og:url" content="https://markramige.com/posts/tryhackme-owasp-top-10-write-up/" />
+<meta property="og:site_name" content="Mark Ramige: Appsec and Bug Bounties" />
+
+  <meta property="og:image" content="https://markramige.com/">
+
+<meta property="og:image:width" content="2048">
+<meta property="og:image:height" content="1024">
+
+
+  <meta property="article:published_time" content="2020-07-25 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+<body class="blue">
+
+
+<div class="container center headings--one-size">
+
+  <header class="header">
+  <div class="header__inner">
+    <div class="header__logo">
+      <a href="/">
+  <div class="logo">
+    &gt;_ Mark Ramige
+  </div>
+</a>
+
+    </div>
+    
+      <div class="menu-trigger">menu</div>
+    
+  </div>
+  
+    <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="/about">About</a></li>
+        
+      
+        
+          <li><a href="https://github.com/markramige">GitHub</a></li>
+        
+      
+        
+          <li><a href="https://twitter.com/markramige">Twitter</a></li>
+        
+      
+      
+    
+
+    
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="/about">About</a></li>
+      
+    
+      
+        <li><a href="https://github.com/markramige">GitHub</a></li>
+      
+    
+      
+        <li><a href="https://twitter.com/markramige">Twitter</a></li>
+      
+    
+    
+  </ul>
+</nav>
+
+  
+</header>
+
+
+  <div class="content">
+    
+<div class="post">
+  <h1 class="post-title">
+    <a href="https://markramige.com/posts/tryhackme-owasp-top-10-write-up/">TryHackMe OWASP Top 10 Write-up</a></h1>
+  <div class="post-meta">
+    
+      <span class="post-date">
+        2020-07-25 
+      </span>
+    
+    
+    <span class="post-author">:: Mark Ramige</span>
+    
+  </div>
+
+  
+  <span class="post-tags">
+    
+    #<a href="https://markramige.com/tags/appsec/">appsec</a>&nbsp;
+    
+    #<a href="https://markramige.com/tags/owasp/">owasp</a>&nbsp;
+    
+    #<a href="https://markramige.com/tags/xss/">xss</a>&nbsp;
+    
+    #<a href="https://markramige.com/tags/idor/">idor</a>&nbsp;
+    
+    #<a href="https://markramige.com/tags/injection/">injection</a>&nbsp;
+    
+  </span>
+  
+
+  
+
+  
+
+  <div class="post-content"><div>
+        <p><a href="https://tryhackme.com/room/owasptop10">This challenge</a> on TryHackMe was initially released over a period of ten days covering one of the OWASP Top Ten vulnerabilities per day. In includes an introduction and explanation of each vulnerability type and one or multiple exercises for each. It is beginner friendly.</p>
+<h2 id="contents">Contents<a href="#contents" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<ul>
+<li><a href="#day-1---injection">Day 1 - Injection</a></li>
+<li><a href="#day-2---broken-authentication">Day 2 - Broken Authentication</a></li>
+<li><a href="#day-3---sensitive-data-exposure">Day 3 - Sensitive Data Exposure</a></li>
+<li><a href="#day-4---xml-external-entities">Day 4 - XML External Entities</a></li>
+<li><a href="#day-5---broken-access-control">Day 5 - Broken Access Control</a></li>
+<li><a href="#day-6---security-misconfiguration">Day 6 - Security Misconfiguration</a></li>
+<li><a href="#day-7---cross-site-scripting-(xss)">Day 7 - Cross-site Scripting (XSS)</a></li>
+<li><a href="#day-8---insecure-deserialization">Day 8 - Insecure Deserialization</a></li>
+<li><a href="#day-9---using-components-with-known-vulnerabilities">Day 9 - Using Components with Known Vulnerabilities</a></li>
+<li><a href="#day-10---insufficient-logging-and-monitoring">Day 10 - Insufficient Logging and Monitoring</a></li>
+</ul>
+<h2 id="day-1---injection">Day 1 - Injection<a href="#day-1---injection" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<h3 id="task-5">Task 5<a href="#task-5" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p><em>Visit <code>http://MACHINE_IP/evilshell.php</code> to complete the following:</em></p>
+<ul>
+<li>What strange text file is in the website root directory?</li>
+</ul>
+<p><code>ls /var/www/html</code></p>
+<ul>
+<li>How many non-root/non-service/non-daemon users are there?</li>
+</ul>
+<p><code>cat /etc/passwd</code> and look for regular user accounts</p>
+<ul>
+<li>What user is this app running as?</li>
+</ul>
+<p><code>whoami</code></p>
+<ul>
+<li>What is the user&rsquo;s shell set as?</li>
+</ul>
+<p><code>grep USERNAME /etc/passwd</code> (replace USERNAME with the previous answer&rsquo;s user name)</p>
+<ul>
+<li>What version of Ubuntu is running?</li>
+</ul>
+<p><code>lsb_release -a</code></p>
+<ul>
+<li>Print out the MOTD. What favorite beverage is shown?</li>
+</ul>
+<p><code>cat /etc/update-motd.d/00-header</code></p>
+<h2 id="day-2---broken-authentication">Day 2 - Broken Authentication<a href="#day-2---broken-authentication" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<h3 id="task-7">Task 7<a href="#task-7" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p><em>Visit <code>http://MACHINE_IP:8888</code> to complete the following:</em></p>
+<ul>
+<li>What is the flag that you found in darren&rsquo;s account?</li>
+</ul>
+<p>Follow the instructions to create an account &quot; darren&quot; and set the password. Log in as that account with your password and the flag will be shown.</p>
+<ul>
+<li>
+<p>Now try to do the same trick and see if you can login as arthur.</p>
+</li>
+<li>
+<p>What is the flag that you found in arthur&rsquo;s account?</p>
+</li>
+</ul>
+<p>Follow the instructions to create an account &quot; arthur&quot; and set the password. Log in as that account with your password and the flag will be shown.</p>
+<h2 id="day-3---sensitive-data-exposure">Day 3 - Sensitive Data Exposure<a href="#day-3---sensitive-data-exposure" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<h3 id="task-11">Task 11<a href="#task-11" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p><em>Visit <code>http://MACHINE_IP</code> to complete the following:</em></p>
+<ul>
+<li>What is the name of the mentioned directory?</li>
+</ul>
+<p>Look at the source of the /login page and the answer is commented out.</p>
+<ul>
+<li>Navigate to the directory you found in question one. What file stands out as being likely to contain sensitive data?</li>
+</ul>
+<p>There is a database file listed in the directory.</p>
+<ul>
+<li>Use the supporting material to access the sensitive data. What is the password hash of the admin user?</li>
+</ul>
+<p>Running the <code>file</code> command on the database file reveals that it is a sqlite3 file. We can now use the <code>sqlite3</code> command to access the sensitive data. We use the instructions in Task 9 to get the password hash.</p>
+<ul>
+<li>Crack the hash. What is the admin&rsquo;s plaintext password?</li>
+</ul>
+<p>Use <a href="https://crackstation.net/">Crackstation</a> to crack the password hash.</p>
+<ul>
+<li>Login as the admin. What is the flag?</li>
+</ul>
+<p>Use the credentials from the cracked hash to get the flag.</p>
+<h2 id="day-4---xml-external-entities">Day 4 - XML External Entities<a href="#day-4---xml-external-entities" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<h3 id="task-16">Task 16<a href="#task-16" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p><em>Visit <code>http://MACHINE_IP</code> to complete the following:</em></p>
+<ul>
+<li>Try to display your own name using any payload.</li>
+</ul>
+<p>I used a modified payload from Task 15 to display my name:</p>
+<pre><code>&lt;!DOCTYPE replace [&lt;!ENTITY name &quot;Mark&quot;&gt; ]&gt;
+ &lt;userInfo&gt;
+  &lt;firstName&gt;&amp;name;&lt;/firstName&gt;
+ &lt;/userInfo&gt;
+</code></pre><ul>
+<li>See if you can read the /etc/passwd</li>
+</ul>
+<p>We can use the payload from Task 15 as is:</p>
+<pre><code>&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;!DOCTYPE root [&lt;!ENTITY read SYSTEM 'file:///etc/passwd'&gt;]&gt;
+&lt;root&gt;&amp;read;&lt;/root&gt;
+</code></pre><ul>
+<li>What is the name of the user in /etc/passwd</li>
+</ul>
+<p>The user with id 1000 is the one they&rsquo;re looking for.</p>
+<ul>
+<li>Where is falcon&rsquo;s SSH key located?</li>
+</ul>
+<p>We can modify the previous payload slightly to read a different file where we think the SSH key is located:</p>
+<pre><code>&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;!DOCTYPE root [&lt;!ENTITY read SYSTEM 'file:///home/falcon/.ssh/id_rsa'&gt;]&gt;
+&lt;root&gt;&amp;read;&lt;/root&gt;
+</code></pre><ul>
+<li>What are the first 18 characters for falcon&rsquo;s private key</li>
+</ul>
+<p>We already successfully read the private key in the previous answer so we just copy and paste the first 18 characters.</p>
+<h2 id="day-5---broken-access-control">Day 5 - Broken Access Control<a href="#day-5---broken-access-control" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<h3 id="task-18">Task 18<a href="#task-18" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p><em>Visit <code>http://MACHINE_IP</code> to answer the following:</em></p>
+<ul>
+<li>Look at other users notes. What is the flag?</li>
+</ul>
+<p>After logging in, the URL changes to <code>http://MACHINE_IP/note.php?note=1</code>. We can change the note parameter to different numbers to access other users' notes.</p>
+<h2 id="day-6---security-misconfiguration">Day 6 - Security Misconfiguration<a href="#day-6---security-misconfiguration" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<h3 id="task-19">Task 19<a href="#task-19" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p><em>Visit <code>http://MACHINE_IP</code> to answer the following:</em></p>
+<ul>
+<li>Hack into the webapp, and find the flag!</li>
+</ul>
+<p>This challenge focuses on default credentials. We can search the web for the source code for this web app and see if there is a default user account that hasn&rsquo;t been deleted or whose password hasn&rsquo;t been changed.</p>
+<p>We find the source on <a href="https://github.com/NinjaJc01/PensiveNotes">Github</a>. The documentation gives us the default user name and password.</p>
+<p>Logging in with those credentials gives us the flag.</p>
+<h2 id="day-7---cross-site-scripting-xss">Day 7 - Cross-site Scripting (XSS)<a href="#day-7---cross-site-scripting-xss" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<h3 id="task-20">Task 20<a href="#task-20" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<ul>
+<li>Navigate to <code>http://MACHINE_IP/</code> in your browser and click on the &ldquo;Reflected XSS&rdquo; tab on the navbar; craft a reflected XSS payload that will cause a popup saying &ldquo;Hello&rdquo;.</li>
+</ul>
+<p>We can submit <code>alert('Hello')</code> in the search box to demonstrate reflected XSS because there is no filtering on the search input.</p>
+<ul>
+<li>On the same reflective page, craft a reflected XSS payload that will cause a popup with your machines IP address.</li>
+</ul>
+<p>First we need to find out how to get the hostname with javascript. <a href="https://www.w3schools.com/js/js_window_location.asp">w3schools</a> comes through with the first result.</p>
+<p>We try <code>alert(window.location.hostname)</code> in the search box and the flag is returned.</p>
+<ul>
+<li>Now navigate to <code>http://MACHINE_IP/stored</code> in your browser and make an account.
+Then add a comment and see if you can insert some of your own HTML.</li>
+</ul>
+<p>We can use <code>&lt;h1&gt;test&lt;/h1&gt;</code> in the comment box to insert HTML on the page and the flag is returned.</p>
+<ul>
+<li>On the same page, create an alert popup box appear on the page with your document cookies.</li>
+</ul>
+<p>We check <a href="https://www.w3schools.com/js/js_cookies.asp">w3schools</a> again for how to get cookies in Javascript. The payload <code>&lt;script&gt;alert(document.cookie);&lt;/script&gt;</code> returns our cookies with an alert box and gives us the flag.</p>
+<ul>
+<li>Change &ldquo;XSS Playground&rdquo; to &ldquo;I am a hacker&rdquo; by adding a comment and using Javascript.</li>
+</ul>
+<p>We use <a href="https://www.w3schools.com/js/js_htmldom_html.asp">w3schools</a> again to find out how to change text on the page using javascript.</p>
+<p>Inspecting the page reveals that we need to change <code>&lt;span id=&quot;thm-title&quot;&gt;XSS Playground&lt;/span&gt;</code> to <code>&lt;span id=&quot;thm-title&quot;&gt;I am a hacker&lt;/span&gt;</code>.</p>
+<p>We can use <code>&lt;script&gt;document.getElementById(&quot;thm-title&quot;).innerHTML = &quot;I am a hacker&quot;;&lt;/script&gt;</code> to change the text and get the flag.</p>
+<h2 id="day-8---insecure-deserialization">Day 8 - Insecure Deserialization<a href="#day-8---insecure-deserialization" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<h3 id="task-21">Task 21<a href="#task-21" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<ul>
+<li>Who developed the Tomcat application?</li>
+</ul>
+<p>Google should give us the answer here.</p>
+<ul>
+<li>What type of attack that crashes services can be performed with insecure deserialization?</li>
+</ul>
+<p>The answer is given in the Task text.</p>
+<h3 id="task-22">Task 22<a href="#task-22" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<ul>
+<li>Select the correct term of the following statement:
+if a dog was sleeping, would this be:
+A) A State
+B) A Behaviour</li>
+</ul>
+<p>Read the task text and understand the difference between state and behavior.</p>
+<h3 id="task-23">Task 23<a href="#task-23" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<ul>
+<li>What is the name of the base-2 formatting that data is sent across a network as?</li>
+</ul>
+<p>Read the task text to find the answer.</p>
+<h3 id="task-24">Task 24<a href="#task-24" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<ul>
+<li>If a cookie had the path of webapp.com/login , what would the URL that the user has to visit be?</li>
+</ul>
+<p>Read the task text to find the answer.</p>
+<ul>
+<li>What is the acronym for the web technology that Secure cookies work over?</li>
+</ul>
+<p>Again the answer is in the text.</p>
+<h3 id="task-25">Task 25<a href="#task-25" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p><em>Visit <code>http://MACHINE_IP</code> to answer the following:</em></p>
+<ul>
+<li>1st flag (cookie value)</li>
+</ul>
+<p>We can use the instructions in the task text to view the cookies after we log in. The <code>sessionId</code> cookie is base64 encoded. We can visit <a href="https://gchq.github.io/CyberChef/">CyberChef</a> and use the <code>From Base64</code> recipe on the <code>sessionId</code> value to get the flag.</p>
+<ul>
+<li>2nd flag (admin dashboard)</li>
+</ul>
+<p>We change the <code>userType</code> cookie value to <code>admin</code> and navigate to <code>http://MACHINE_IP/admin</code> to get the admin flag.</p>
+<h3 id="task-26">Task 26<a href="#task-26" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<ul>
+<li>flag.txt</li>
+</ul>
+<p>Follow the instructions in the task text to get a remote shell. Next run <code>ls $HOME</code> to find the flag file and <code>cat $HOME/flag.txt</code> to get the flag text.</p>
+<h2 id="day-9---using-components-with-known-vulnerabilities">Day 9 - Using Components with Known Vulnerabilities<a href="#day-9---using-components-with-known-vulnerabilities" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<h3 id="task-29">Task 29<a href="#task-29" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<ul>
+<li>How many characters are in /etc/passwd (use wc -c /etc/passwd to get the answer)</li>
+</ul>
+<p>Googling for the name of the web application, <code>online bookstore</code> leads us to an <a href="https://www.exploit-db.com/exploits/47887">exploit</a>. We copy and paste the code into a file.</p>
+<p>Run the file <code>python3 test.py http://MACHINE_IP</code></p>
+<p>Run the command given at the prompt <code>wc -c /etc/passwd</code></p>
+<h2 id="day-10---insufficient-logging-and-monitoring">Day 10 - Insufficient Logging and Monitoring<a href="#day-10---insufficient-logging-and-monitoring" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<h3 id="task-30">Task 30<a href="#task-30" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<ul>
+<li>
+<p>What IP address is the attacker using?
+Look for unauthorized login attempts.</p>
+</li>
+<li>
+<p>What kind of attack is being carried out?
+The attacker is repeatedly trying different credentials to log in.</p>
+</li>
+</ul>
+
+      </div></div>
+
+  
+  
+<div class="pagination">
+    <div class="pagination__title">
+        <span class="pagination__title-h">Read other posts</span>
+        <hr />
+    </div>
+    <div class="pagination__buttons">
+        
+        <span class="button previous">
+            <a href="https://markramige.com/posts/using-ssh-on-windows-10-and-wsl-2/">
+                <span class="button__icon">←</span>
+                <span class="button__text">Using SSH on Windows 10 and WSL 2</span>
+            </a>
+        </span>
+        
+        
+        <span class="button next">
+            <a href="https://markramige.com/posts/tryhackme-windows-privesc-write-up/">
+                <span class="button__text">TryHackMe Windows PrivEsc Write-Up</span>
+                <span class="button__icon">→</span>
+            </a>
+        </span>
+        
+    </div>
+</div>
+
+  
+
+  
+
+</div>
+
+  </div>
+
+  
+    <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright copyright--user">
+        <span>© 2020 <a href='https://github.com/markramige/markramigecom'>Mark Ramige</a> :: <a href='https://creativecommons.org/licenses/by/4.0/?ref=chooser-v1'>CC BY 4.0</a> Licensed :: Powered by <a href='http://gohugo.io'>Hugo</a></span>
+    
+        <span>:: Theme made by <a href="https://twitter.com/panr">panr</a></span>
+      </div>
+  </div>
+</footer>
+
+<script src="https://markramige.com/assets/main.js"></script>
+<script src="https://markramige.com/assets/prism.js"></script>
+
+
+
+
+
+
+
+  
+</div>
+
+</body>
+</html>

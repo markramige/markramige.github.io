@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tags on Mark Ramige: Appsec and Bug Bounties</title>
+    <link>https://markramige.com/tags/</link>
+    <description>Recent content in Tags on Mark Ramige: Appsec and Bug Bounties</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>© 2020 &lt;a href=&#39;https://github.com/markramige/markramigecom&#39;&gt;Mark Ramige&lt;/a&gt; :: &lt;a href=&#39;https://creativecommons.org/licenses/by/4.0/?ref=chooser-v1&#39;&gt;CC BY 4.0&lt;/a&gt; Licensed :: Powered by &lt;a href=&#39;http://gohugo.io&#39;&gt;Hugo&lt;/a&gt;</copyright>
+    <lastBuildDate>Sun, 04 Oct 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://markramige.com/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>hyper-v</title>
+      <link>https://markramige.com/tags/hyper-v/</link>
+      <pubDate>Sun, 04 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://markramige.com/tags/hyper-v/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>kali</title>
+      <link>https://markramige.com/tags/kali/</link>
+      <pubDate>Sun, 04 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://markramige.com/tags/kali/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>linux</title>
+      <link>https://markramige.com/tags/linux/</link>
+      <pubDate>Sun, 04 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://markramige.com/tags/linux/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>windows</title>
+      <link>https://markramige.com/tags/windows/</link>
+      <pubDate>Sun, 04 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://markramige.com/tags/windows/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>git</title>
+      <link>https://markramige.com/tags/git/</link>
+      <pubDate>Sun, 20 Sep 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://markramige.com/tags/git/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>ssh</title>
+      <link>https://markramige.com/tags/ssh/</link>
+      <pubDate>Sun, 20 Sep 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://markramige.com/tags/ssh/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>wsl2</title>
+      <link>https://markramige.com/tags/wsl2/</link>
+      <pubDate>Sun, 20 Sep 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://markramige.com/tags/wsl2/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>appsec</title>
+      <link>https://markramige.com/tags/appsec/</link>
+      <pubDate>Sat, 25 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://markramige.com/tags/appsec/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>idor</title>
+      <link>https://markramige.com/tags/idor/</link>
+      <pubDate>Sat, 25 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://markramige.com/tags/idor/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>injection</title>
+      <link>https://markramige.com/tags/injection/</link>
+      <pubDate>Sat, 25 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://markramige.com/tags/injection/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>owasp</title>
+      <link>https://markramige.com/tags/owasp/</link>
+      <pubDate>Sat, 25 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://markramige.com/tags/owasp/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>xss</title>
+      <link>https://markramige.com/tags/xss/</link>
+      <pubDate>Sat, 25 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://markramige.com/tags/xss/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>authentication</title>
+      <link>https://markramige.com/tags/authentication/</link>
+      <pubDate>Tue, 30 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://markramige.com/tags/authentication/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>permissions</title>
+      <link>https://markramige.com/tags/permissions/</link>
+      <pubDate>Tue, 30 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://markramige.com/tags/permissions/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>privesc</title>
+      <link>https://markramige.com/tags/privesc/</link>
+      <pubDate>Tue, 30 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://markramige.com/tags/privesc/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>rdp</title>
+      <link>https://markramige.com/tags/rdp/</link>
+      <pubDate>Tue, 30 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://markramige.com/tags/rdp/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>registry</title>
+      <link>https://markramige.com/tags/registry/</link>
+      <pubDate>Tue, 30 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://markramige.com/tags/registry/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>services</title>
+      <link>https://markramige.com/tags/services/</link>
+      <pubDate>Tue, 30 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://markramige.com/tags/services/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>cron</title>
+      <link>https://markramige.com/tags/cron/</link>
+      <pubDate>Sat, 30 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://markramige.com/tags/cron/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>nfs</title>
+      <link>https://markramige.com/tags/nfs/</link>
+      <pubDate>Sat, 30 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://markramige.com/tags/nfs/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>suid</title>
+      <link>https://markramige.com/tags/suid/</link>
+      <pubDate>Sat, 30 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://markramige.com/tags/suid/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>directory traversal</title>
+      <link>https://markramige.com/tags/directory-traversal/</link>
+      <pubDate>Sun, 22 Mar 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://markramige.com/tags/directory-traversal/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>logic flaws</title>
+      <link>https://markramige.com/tags/logic-flaws/</link>
+      <pubDate>Sun, 22 Mar 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://markramige.com/tags/logic-flaws/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>sql injection</title>
+      <link>https://markramige.com/tags/sql-injection/</link>
+      <pubDate>Sun, 22 Mar 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://markramige.com/tags/sql-injection/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>weak credentials</title>
+      <link>https://markramige.com/tags/weak-credentials/</link>
+      <pubDate>Sun, 22 Mar 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://markramige.com/tags/weak-credentials/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>brute-forcing</title>
+      <link>https://markramige.com/tags/brute-forcing/</link>
+      <pubDate>Fri, 28 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://markramige.com/tags/brute-forcing/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>enumeration</title>
+      <link>https://markramige.com/tags/enumeration/</link>
+      <pubDate>Fri, 28 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://markramige.com/tags/enumeration/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>nmap</title>
+      <link>https://markramige.com/tags/nmap/</link>
+      <pubDate>Fri, 28 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://markramige.com/tags/nmap/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>python</title>
+      <link>https://markramige.com/tags/python/</link>
+      <pubDate>Fri, 28 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://markramige.com/tags/python/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

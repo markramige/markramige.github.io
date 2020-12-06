@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Mark Ramige: Appsec and Bug Bounties</title>
+    <link>https://markramige.com/</link>
+    <description>Recent content on Mark Ramige: Appsec and Bug Bounties</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>© 2020 &lt;a href=&#39;https://github.com/markramige/markramigecom&#39;&gt;Mark Ramige&lt;/a&gt; :: &lt;a href=&#39;https://creativecommons.org/licenses/by/4.0/?ref=chooser-v1&#39;&gt;CC BY 4.0&lt;/a&gt; Licensed :: Powered by &lt;a href=&#39;http://gohugo.io&#39;&gt;Hugo&lt;/a&gt;</copyright>
+    <lastBuildDate>Sun, 04 Oct 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://markramige.com/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Installing and Optimizing Kali Linux on Hyper-V</title>
+      <link>https://markramige.com/posts/installing-kali-linux-on-hyperv/</link>
+      <pubDate>Sun, 04 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://markramige.com/posts/installing-kali-linux-on-hyperv/</guid>
+      <description>Kali Linux runs great on Windows if you’re using VirtualBox or VMware Workstation. You might have tried installing it on Hyper-V so that you can run WSL 2 distributions at the same time and experienced how poorly Hyper-V handles desktop Linux. Microsoft is working to fix this by enabling enhanced session mode on desktop linux distributions. I’ll show you how to set up Kali Linux on Hyper-V so that it runs faster and also to enable copying and pasting between the VM and host (including files).</description>
+    </item>
+    
+    <item>
+      <title>About</title>
+      <link>https://markramige.com/about/</link>
+      <pubDate>Sun, 20 Sep 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://markramige.com/about/</guid>
+      <description>I have experience in Linux server administration and Python web development. I know bits and pieces in a lot of different areas, but those are the two that I know the most about.
+My goal is to share knowledge, ideas, and code as I learn more and gain more experience in information security.
+Twitter: @markramige (DMs are open)</description>
+    </item>
+    
+    <item>
+      <title>Using SSH on Windows 10 and WSL 2</title>
+      <link>https://markramige.com/posts/using-ssh-on-windows-10-and-wsl-2/</link>
+      <pubDate>Sun, 20 Sep 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://markramige.com/posts/using-ssh-on-windows-10-and-wsl-2/</guid>
+      <description>Since WSL was introduced several years ago, I&amp;rsquo;ve been using the same process for access my machines remotely. I&amp;rsquo;d run apt-get install openssh-server in WSL and open TCP port 22 in Windows Firewall. WSL 2 adds the extra step of needing to forward a port to the WSL VM. I decided to try using OpenSSH directly since it is now available natively on Windows.
+Contents  Install sshd, ssh, and ssh-agent Run sshd and ssh-agent at boot Start sshd and ssh-agent now Create ssh key and add to ssh-agent Add public keys to authorized_keys and set correct permissions Disable password login and restart sshd Make Git for Windows use ssh-agent Set up WSL distributions to use ssh-agent Future improvements Conclusion  *Open a PowerShell prompt with administrator privileges*</description>
+    </item>
+    
+    <item>
+      <title>TryHackMe OWASP Top 10 Write-up</title>
+      <link>https://markramige.com/posts/tryhackme-owasp-top-10-write-up/</link>
+      <pubDate>Sat, 25 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://markramige.com/posts/tryhackme-owasp-top-10-write-up/</guid>
+      <description>This challenge on TryHackMe was initially released over a period of ten days covering one of the OWASP Top Ten vulnerabilities per day. In includes an introduction and explanation of each vulnerability type and one or multiple exercises for each. It is beginner friendly.
+Contents  Day 1 - Injection Day 2 - Broken Authentication Day 3 - Sensitive Data Exposure Day 4 - XML External Entities Day 5 - Broken Access Control Day 6 - Security Misconfiguration Day 7 - Cross-site Scripting (XSS) Day 8 - Insecure Deserialization Day 9 - Using Components with Known Vulnerabilities Day 10 - Insufficient Logging and Monitoring  Day 1 - Injection Task 5 Visit http://MACHINE_IP/evilshell.</description>
+    </item>
+    
+    <item>
+      <title>TryHackMe Windows PrivEsc Write-Up</title>
+      <link>https://markramige.com/posts/tryhackme-windows-privesc-write-up/</link>
+      <pubDate>Tue, 30 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://markramige.com/posts/tryhackme-windows-privesc-write-up/</guid>
+      <description>This TryHackMe room gives us a vulnerable Windows Server 2019 virtual machine and demonstrates many different types of Windows privilege escalation techniques. There aren&amp;rsquo;t many challenges included in the room, but just knowing how many different ways attackers can gain elevated privileges on a Windows machine is valuable. In addition, several tools are provided that show us how easy it is to automate checking for privesc vulnerabilities on Windows.
+Contents  Service Exploits Registry Passwords Scheduled Tasks Insecure GUI Apps Startup Apps Token Impersonation Privilege Escalation Scripts  Service Exploits Task 3 First off, we&amp;rsquo;re checking permission on the daclsvc service.</description>
+    </item>
+    
+    <item>
+      <title>TryHackMe Linux PrivEsc Write-Up</title>
+      <link>https://markramige.com/posts/tryhackme-linux-privesc-write-up/</link>
+      <pubDate>Sat, 30 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://markramige.com/posts/tryhackme-linux-privesc-write-up/</guid>
+      <description>This TryHackMe room gives us a vulnerable Debian virtual machine and demonstrates many different types of Linux privilege escalation techniques. There aren&amp;rsquo;t many challenges included in the room, but just knowing how many different ways attackers can root Linux boxes is valuable. In addition, several tools are provided that show us how easy it is to automate checking for privesc vulnerabilities on Linux.
+Contents  Service Exploits Weak File Permissions Sudo Cron Jobs SUID/SGID Executables Passwords &amp;amp; Keys NFS Kernel Exploits Privilege Escalation Scripts  Service Exploits Task 2 Follow the instructions given and you will end up with a setuid copy of bash to use to escalate your privileges.</description>
+    </item>
+    
+    <item>
+      <title>TryHackMe Windows PrivEsc Arena Write-Up</title>
+      <link>https://markramige.com/posts/tryhackme-windows-privesc-arena-write-up/</link>
+      <pubDate>Sun, 10 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://markramige.com/posts/tryhackme-windows-privesc-arena-write-up/</guid>
+      <description>The Windows PrivEsc Arena TryHackMe room includes a vulnerable Windows 7 virtual machine and demonstrates several types of privilege escalation techniques. There aren&amp;rsquo;t many challenges included in the room, but just knowing how many different ways attackers can gain elevated privileges on a Windows machine is valuable. Also, many of the tasks show us how to use features of Metasploit to exploit Windows machines.
+Contents  Registry Escalation Service Escalation Privilege Escalation Potato Escalation Password Mining Escalation  Registry Escalation Task 3 In this task we notice that C:\Program Files\Autorun Program\program.</description>
+    </item>
+    
+    <item>
+      <title>TryHackMe WebAppSec 101 Write-Up</title>
+      <link>https://markramige.com/posts/tryhackme-webappsec-101-write-up/</link>
+      <pubDate>Sun, 22 Mar 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://markramige.com/posts/tryhackme-webappsec-101-write-up/</guid>
+      <description>This TryHackMe room contains a web application with multiple vulnerabilities. The tasks step us through different types of vulnerabilities with links to authoritative resources to learn more about each type. There is a good combination of hand-holding and do-it-yourself. The vulnerabilities include weak credentials, cross-site scripting (xss), command and sql injection, idor, directory traversal, and logic flaws.
+Contents  Task 2 - Walking through the application Task 4 - Authentication Task 5 - Cross Site Scripting (XSS) Task 6 - Injection Task 7 - Miscellaneous &amp;amp; Logic Flaws  Task 2 - Walking through the application We can proxy the traffic through Burp Suite to view all of the response headers.</description>
+    </item>
+    
+    <item>
+      <title>TryHackMe Hackernote Write-Up</title>
+      <link>https://markramige.com/posts/tryhackme-hackernote-write-up/</link>
+      <pubDate>Fri, 28 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://markramige.com/posts/tryhackme-hackernote-write-up/</guid>
+      <description>This TryHackMe challenge gives you an IP address to attack and takes you through each step of the process until you get root on the box. It covers recon, investigation, exploitation, user enumeration, password brute-forcing, and privilege escalation. It requires some basic linux skills to get started.
+Contents  Task 1 - Reconnaissance Task 2 - Investigate Task 3 - Exploit Task 4 - Attack Passwords Task 5 - Escalate  Task 1 - Reconnaissance  Which ports are open?</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+    <title>TryHackMe Linux PrivEsc Write-Up :: Mark Ramige: Appsec and Bug Bounties</title>
+  
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="This TryHackMe room gives us a vulnerable Debian virtual machine and demonstrates many different types of Linux privilege escalation techniques. There aren&amp;rsquo;t many challenges included in the room, but just knowing how many different ways attackers can root Linux boxes is valuable. In addition, several tools are provided that show us how easy it is to automate checking for privesc vulnerabilities on Linux.
+Contents  Service Exploits Weak File Permissions Sudo Cron Jobs SUID/SGID Executables Passwords &amp;amp; Keys NFS Kernel Exploits Privilege Escalation Scripts  Service Exploits Task 2 Follow the instructions given and you will end up with a setuid copy of bash to use to escalate your privileges." />
+<meta name="keywords" content="linux, privesc, suid, authentication, permissions, cron, nfs" />
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="https://markramige.com/posts/tryhackme-linux-privesc-write-up/" />
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-178664934-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+
+
+<link rel="stylesheet" href="https://markramige.com/assets/style.css">
+
+  <link rel="stylesheet" href="https://markramige.com/assets/blue.css">
+
+
+
+
+
+
+<link rel="apple-touch-icon" href="https://markramige.com/img/apple-touch-icon-192x192.png">
+
+  <link rel="shortcut icon" href="https://markramige.com/favicon.png">
+
+
+
+<meta name="twitter:card" content="summary" />
+
+  
+    <meta name="twitter:site" content="markramige" />
+  
+    <meta name="twitter:creator" content="markramige" />
+
+
+
+<meta property="og:locale" content="en" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="TryHackMe Linux PrivEsc Write-Up">
+<meta property="og:description" content="This [TryHackMe room](https://tryhackme.com/room/linuxprivesc) gives us a vulnerable Debian virtual machine and demonstrates many different types of Linux privilege escalation techniques. There aren&#39;t many challenges included in the room, but just knowing how many different ways attackers can root Linux boxes is valuable. In addition, several tools are provided that show us how easy it is to automate checking for privesc vulnerabilities on Linux." />
+<meta property="og:url" content="https://markramige.com/posts/tryhackme-linux-privesc-write-up/" />
+<meta property="og:site_name" content="Mark Ramige: Appsec and Bug Bounties" />
+
+  <meta property="og:image" content="https://markramige.com/">
+
+<meta property="og:image:width" content="2048">
+<meta property="og:image:height" content="1024">
+
+
+  <meta property="article:published_time" content="2020-05-30 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+<body class="blue">
+
+
+<div class="container center headings--one-size">
+
+  <header class="header">
+  <div class="header__inner">
+    <div class="header__logo">
+      <a href="/">
+  <div class="logo">
+    &gt;_ Mark Ramige
+  </div>
+</a>
+
+    </div>
+    
+      <div class="menu-trigger">menu</div>
+    
+  </div>
+  
+    <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="/about">About</a></li>
+        
+      
+        
+          <li><a href="https://github.com/markramige">GitHub</a></li>
+        
+      
+        
+          <li><a href="https://twitter.com/markramige">Twitter</a></li>
+        
+      
+      
+    
+
+    
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="/about">About</a></li>
+      
+    
+      
+        <li><a href="https://github.com/markramige">GitHub</a></li>
+      
+    
+      
+        <li><a href="https://twitter.com/markramige">Twitter</a></li>
+      
+    
+    
+  </ul>
+</nav>
+
+  
+</header>
+
+
+  <div class="content">
+    
+<div class="post">
+  <h1 class="post-title">
+    <a href="https://markramige.com/posts/tryhackme-linux-privesc-write-up/">TryHackMe Linux PrivEsc Write-Up</a></h1>
+  <div class="post-meta">
+    
+      <span class="post-date">
+        2020-05-30 
+      </span>
+    
+    
+    <span class="post-author">:: Mark Ramige</span>
+    
+  </div>
+
+  
+  <span class="post-tags">
+    
+    #<a href="https://markramige.com/tags/linux/">linux</a>&nbsp;
+    
+    #<a href="https://markramige.com/tags/privesc/">privesc</a>&nbsp;
+    
+    #<a href="https://markramige.com/tags/suid/">suid</a>&nbsp;
+    
+    #<a href="https://markramige.com/tags/authentication/">authentication</a>&nbsp;
+    
+    #<a href="https://markramige.com/tags/permissions/">permissions</a>&nbsp;
+    
+    #<a href="https://markramige.com/tags/cron/">cron</a>&nbsp;
+    
+    #<a href="https://markramige.com/tags/nfs/">nfs</a>&nbsp;
+    
+  </span>
+  
+
+  
+
+  
+
+  <div class="post-content"><div>
+        <p>This <a href="https://tryhackme.com/room/linuxprivesc">TryHackMe room</a> gives us a vulnerable Debian virtual machine and demonstrates many different types of Linux privilege escalation techniques. There aren&rsquo;t many challenges included in the room, but just knowing how many different ways attackers can root Linux boxes is valuable. In addition, several tools are provided that show us how easy it is to automate checking for privesc vulnerabilities on Linux.</p>
+<h2 id="contents">Contents<a href="#contents" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<ul>
+<li><a href="#service-exploits">Service Exploits</a></li>
+<li><a href="#weak-file-permissions">Weak File Permissions</a></li>
+<li><a href="#sudo">Sudo</a></li>
+<li><a href="#cron-jobs">Cron Jobs</a></li>
+<li><a href="#suidsgid-executables">SUID/SGID Executables</a></li>
+<li><a href="#passwords--keys">Passwords &amp; Keys</a></li>
+<li><a href="#nfs">NFS</a></li>
+<li><a href="#kernel-exploits">Kernel Exploits</a></li>
+<li><a href="#privilege-escalation-scripts">Privilege Escalation Scripts</a></li>
+</ul>
+<h2 id="service-exploits">Service Exploits<a href="#service-exploits" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<h3 id="task-2">Task 2<a href="#task-2" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>Follow the instructions given and you will end up with a setuid copy of bash to use to escalate your privileges.</p>
+<h2 id="weak-file-permissions">Weak File Permissions<a href="#weak-file-permissions" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<h3 id="task-3">Task 3<a href="#task-3" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<ul>
+<li>What is the root user&rsquo;s password hash?</li>
+</ul>
+<p>It&rsquo;s the text you copied from the <code>/etc/shadow</code> file between the first and second colons.</p>
+<ul>
+<li>What hashing algorithm was used to produce the root user&rsquo;s password hash?</li>
+</ul>
+<p>Run the john the ripper command given and the output will tell you what password hash was used. I had to <code>gunzip</code> the rockyou.txt.gz file on Kali before I could use it with <code>john</code>.</p>
+<ul>
+<li>What is the root user&rsquo;s password?</li>
+</ul>
+<p>The password is given in the output of <code>john</code>.</p>
+<h3 id="task-4">Task 4<a href="#task-4" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>Follow the instructions and you should end up being able to log in as <code>root</code> with your own password.</p>
+<h3 id="task-5">Task 5<a href="#task-5" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<ul>
+<li>Run the &ldquo;id&rdquo; command as the newroot user. What is the result?</li>
+</ul>
+<p>Follow the instructions and we can now log in as root using the password generated with <code>openssl</code> and inserted into <code>/etc/passwd</code>.</p>
+<h2 id="sudo">Sudo<a href="#sudo" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<h3 id="task-6">Task 6<a href="#task-6" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<ul>
+<li>How many programs is &ldquo;user&rdquo; allowed to run via sudo?</li>
+</ul>
+<p>Count up the number of programs listed at the bottom of the output from <code>sudo -l</code></p>
+<ul>
+<li>One program on the list doesn&rsquo;t have a shell escape sequence on <a href="https://gtfobins.github.io">GTFOBins</a>. Which is it?</li>
+</ul>
+<p>Search all the programs on <a href="https://gtfobins.github.io">GTFOBins</a> and find the one which doesn&rsquo;t provide any ways to escalate.</p>
+<h3 id="task-7">Task 7<a href="#task-7" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>Follow the instructions and you will end up with a root shell by abusing LD_PRELOAD to escalate privileges.</p>
+<h2 id="cron-jobs">Cron Jobs<a href="#cron-jobs" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<ul>
+<li>What is the value of the PATH variable in /etc/crontab?</li>
+</ul>
+<h3 id="task-8">Task 8<a href="#task-8" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>Follow the instructions given and you will end up with a root shell using netcat and cron.</p>
+<h3 id="task-9">Task 9<a href="#task-9" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<ul>
+<li>What is the value of the PATH variable in /etc/crontab?</li>
+</ul>
+<p>Look at the top of /etc/crontab to answer this. This is a problem because cron executes with root permissions, so if a normal user is able to drop a script or program in cron&rsquo;s path then it will be executed as root.</p>
+<h3 id="task-10">Task 10<a href="#task-10" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>Follow the instruction in the task text. You will use the fact that the <code>tar</code> command is run by cron with a wildcard <code>*</code> character. This allows you to generate a reverse shell binary that will connect to your netcat listener and give you root access.</p>
+<h2 id="suidsgid-executables">SUID/SGID Executables<a href="#suidsgid-executables" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<h3 id="task-11">Task 11<a href="#task-11" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>For this task we&rsquo;ll find that <code>exim</code> is SUID and the version included on this box is <a href="https://www.exploit-db.com/exploits/39535">vulnerable</a>. The script to exploit this vulnerability is already included on the box so we just have to run it to get root access.</p>
+<h3 id="task-12">Task 12<a href="#task-12" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>In this task we execute a SUID executable which is trying to open a shared object file in our home directory. We create an object file which spawns a root shell.</p>
+<h3 id="task-13">Task 13<a href="#task-13" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>This task takes advantage of a SUID executable that attempts to execute a program without specifying an absolute path. We can then create an executable in our path that the SUID program will call and give us a root shell.</p>
+<h3 id="task-14">Task 14<a href="#task-14" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>Similar to task 13, we have a SUID executable. This time it does specify an absolute path, but our version of Bash is not updated so it allows us to define a shell function that resembles that path and executable which will then run instead of the actual executable and give us a root shell.</p>
+<h3 id="task-15">Task 15<a href="#task-15" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>This task takes advantage of another flaw in older versions of Bash. We&rsquo;re going to run a SUID executable with bash debugging enabled which executes a copy of the bash executable with root privileges.</p>
+<h2 id="passwords--keys">Passwords &amp; Keys<a href="#passwords--keys" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<h3 id="task-16">Task 16<a href="#task-16" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<ul>
+<li>What is the full mysql command the user executed?
+The user should have executed the <code>mysql</code> command without the password included and it would&rsquo;ve prompted for a password that would not be included in the <code>.history</code> file.</li>
+</ul>
+<h3 id="task-17">Task 17<a href="#task-17" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>It&rsquo;s important to set the correct permissions on config files, especially those that contain credentials. This file is world readable which makes it easy to view the root password as a normal user.</p>
+<h3 id="task-18">Task 18<a href="#task-18" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>Usually <code>ssh</code> will give you an error if your keys do not have the correct permissions. In this case, a user backed up the root SSH keys without the correct permissions and the file ended up being world readable.</p>
+<h2 id="nfs">NFS<a href="#nfs" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<h3 id="task-19">Task 19<a href="#task-19" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>We have root on our Kali box, so we&rsquo;re going to create a SUID executable that will also have root permissions on our Debian VM since the /tmp directory doesn&rsquo;t have root squashing enabled.</p>
+<h2 id="kernel-exploits">Kernel Exploits<a href="#kernel-exploits" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<h3 id="task-20">Task 20<a href="#task-20" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>Our Debian VM is vulnerable to the Dirty COW vulnerability since it is running a kernel &lt;4.8.3 and hasn&rsquo;t been patched. We can exploit this vulnerability to gain a root shell.</p>
+<h2 id="privilege-escalation-scripts">Privilege Escalation Scripts<a href="#privilege-escalation-scripts" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<h3 id="task-21">Task 21<a href="#task-21" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>All three of these tools check for most of the vulnerabilities that we&rsquo;ve experimented with. Automated scanning tools make it extremely easy for an attacker or penetration tester to find vulnerabilities on a Linux box.</p>
+
+      </div></div>
+
+  
+  
+<div class="pagination">
+    <div class="pagination__title">
+        <span class="pagination__title-h">Read other posts</span>
+        <hr />
+    </div>
+    <div class="pagination__buttons">
+        
+        <span class="button previous">
+            <a href="https://markramige.com/posts/tryhackme-windows-privesc-write-up/">
+                <span class="button__icon">←</span>
+                <span class="button__text">TryHackMe Windows PrivEsc Write-Up</span>
+            </a>
+        </span>
+        
+        
+        <span class="button next">
+            <a href="https://markramige.com/posts/tryhackme-windows-privesc-arena-write-up/">
+                <span class="button__text">TryHackMe Windows PrivEsc Arena Write-Up</span>
+                <span class="button__icon">→</span>
+            </a>
+        </span>
+        
+    </div>
+</div>
+
+  
+
+  
+
+</div>
+
+  </div>
+
+  
+    <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright copyright--user">
+        <span>© 2020 <a href='https://github.com/markramige/markramigecom'>Mark Ramige</a> :: <a href='https://creativecommons.org/licenses/by/4.0/?ref=chooser-v1'>CC BY 4.0</a> Licensed :: Powered by <a href='http://gohugo.io'>Hugo</a></span>
+    
+        <span>:: Theme made by <a href="https://twitter.com/panr">panr</a></span>
+      </div>
+  </div>
+</footer>
+
+<script src="https://markramige.com/assets/main.js"></script>
+<script src="https://markramige.com/assets/prism.js"></script>
+
+
+
+
+
+
+
+  
+</div>
+
+</body>
+</html>

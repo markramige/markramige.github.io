@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>sql injection on Mark Ramige: Appsec and Bug Bounties</title>
+    <link>https://markramige.com/tags/sql-injection/</link>
+    <description>Recent content in sql injection on Mark Ramige: Appsec and Bug Bounties</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>© 2020 &lt;a href=&#39;https://github.com/markramige/markramigecom&#39;&gt;Mark Ramige&lt;/a&gt; :: &lt;a href=&#39;https://creativecommons.org/licenses/by/4.0/?ref=chooser-v1&#39;&gt;CC BY 4.0&lt;/a&gt; Licensed :: Powered by &lt;a href=&#39;http://gohugo.io&#39;&gt;Hugo&lt;/a&gt;</copyright>
+    <lastBuildDate>Sun, 22 Mar 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://markramige.com/tags/sql-injection/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>TryHackMe WebAppSec 101 Write-Up</title>
+      <link>https://markramige.com/posts/tryhackme-webappsec-101-write-up/</link>
+      <pubDate>Sun, 22 Mar 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://markramige.com/posts/tryhackme-webappsec-101-write-up/</guid>
+      <description>This TryHackMe room contains a web application with multiple vulnerabilities. The tasks step us through different types of vulnerabilities with links to authoritative resources to learn more about each type. There is a good combination of hand-holding and do-it-yourself. The vulnerabilities include weak credentials, cross-site scripting (xss), command and sql injection, idor, directory traversal, and logic flaws.
+Contents  Task 2 - Walking through the application Task 4 - Authentication Task 5 - Cross Site Scripting (XSS) Task 6 - Injection Task 7 - Miscellaneous &amp;amp; Logic Flaws  Task 2 - Walking through the application We can proxy the traffic through Burp Suite to view all of the response headers.</description>
+    </item>
+    
+  </channel>
+</rss>
