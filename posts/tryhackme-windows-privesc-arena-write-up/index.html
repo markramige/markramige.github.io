@@ -216,7 +216,7 @@ if (!doNotTrack) {
 <p>In this task we&rsquo;re using Metasploit to suggest exploits to use based on our Windows machine version and update status. It suggests using <code>exploit/windows/local/ms16_014_wmi_recv_notif</code>. We then run the exploit and gain elevated privileges in our reverse shell.</p>
 <h2 id="potato-escalation">Potato Escalation<a href="#potato-escalation" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
 <h3 id="task-11">Task 11<a href="#task-11" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
-<p>The <a href="https://github.com/foxglovesec/Potato">Potato exploit</a> allows us to run an abritrary command with elevated privileges. For this task we&rsquo;re going to use Potato to run <code>net localgroup administrators user /add</code> which gives our normal user administrator privileges.</p>
+<p>The <a href="https://github.com/foxglovesec/Potato">Potato exploit</a> allows us to run an arbitrary command with elevated privileges. For this task we&rsquo;re going to use Potato to run <code>net localgroup administrators user /add</code> which gives our normal user administrator privileges.</p>
 <h2 id="password-mining-escalation">Password Mining Escalation<a href="#password-mining-escalation" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
 <h3 id="task-12">Task 12<a href="#task-12" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
 <p>This task has us look at a config file for possible secrets. We notice that the <code>&lt;Password&gt;</code> property value is base64 encoded. We can decode it to find the account password in clear text.</p>
