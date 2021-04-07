@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>privesc on Mark Ramige: Appsec and Bug Bounties</title>
+    <title>privesc on Mark Ramige: Cybersecurity and Linux, mostly</title>
     <link>https://markramige.com/tags/privesc/</link>
-    <description>Recent content in privesc on Mark Ramige: Appsec and Bug Bounties</description>
+    <description>Recent content in privesc on Mark Ramige: Cybersecurity and Linux, mostly</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <copyright>© 2020 &lt;a href=&#39;https://github.com/markramige/markramigecom&#39;&gt;Mark Ramige&lt;/a&gt; :: &lt;a href=&#39;https://creativecommons.org/licenses/by/4.0/?ref=chooser-v1&#39;&gt;CC BY 4.0&lt;/a&gt; Licensed :: Powered by &lt;a href=&#39;http://gohugo.io&#39;&gt;Hugo&lt;/a&gt;</copyright>
+    <copyright>© 2021 &lt;a href=&#39;https://github.com/markramige/markramigecom&#39;&gt;Mark Ramige&lt;/a&gt; :: &lt;a href=&#39;https://creativecommons.org/licenses/by/4.0/?ref=chooser-v1&#39;&gt;CC BY 4.0&lt;/a&gt; Licensed :: Powered by &lt;a href=&#39;http://gohugo.io&#39;&gt;Hugo&lt;/a&gt;</copyright>
     <lastBuildDate>Tue, 30 Jun 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://markramige.com/tags/privesc/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>TryHackMe Windows PrivEsc Write-Up</title>

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Mark Ramige: Appsec and Bug Bounties</title>
+    <title>Mark Ramige: Cybersecurity and Linux, mostly</title>
     <link>https://markramige.com/</link>
-    <description>Recent content on Mark Ramige: Appsec and Bug Bounties</description>
+    <description>Recent content on Mark Ramige: Cybersecurity and Linux, mostly</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <copyright>© 2020 &lt;a href=&#39;https://github.com/markramige/markramigecom&#39;&gt;Mark Ramige&lt;/a&gt; :: &lt;a href=&#39;https://creativecommons.org/licenses/by/4.0/?ref=chooser-v1&#39;&gt;CC BY 4.0&lt;/a&gt; Licensed :: Powered by &lt;a href=&#39;http://gohugo.io&#39;&gt;Hugo&lt;/a&gt;</copyright>
+    <copyright>© 2021 &lt;a href=&#39;https://github.com/markramige/markramigecom&#39;&gt;Mark Ramige&lt;/a&gt; :: &lt;a href=&#39;https://creativecommons.org/licenses/by/4.0/?ref=chooser-v1&#39;&gt;CC BY 4.0&lt;/a&gt; Licensed :: Powered by &lt;a href=&#39;http://gohugo.io&#39;&gt;Hugo&lt;/a&gt;</copyright>
     <lastBuildDate>Sun, 04 Oct 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://markramige.com/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Installing and Optimizing Kali Linux on Hyper-V</title>
@@ -162,12 +162,12 @@
       <pubDate>Sun, 20 Sep 2020 00:00:00 +0000</pubDate>
       
       <guid>https://markramige.com/about/</guid>
-      <description>I have experience in Linux server administration and Python web development. I know bits and pieces in a lot of different areas, but those are the two that I know the most about.
-My goal is to share knowledge, ideas, and code as I learn more and gain more experience in information security.
-Twitter: @markramige (DMs are open)</description>
-      <content>&lt;p&gt;I have experience in Linux server administration and Python web development. I know bits and pieces in a lot of different areas, but those are the two that I know the most about.&lt;/p&gt;
-&lt;p&gt;My goal is to share knowledge, ideas, and &lt;a href=&#34;https://github.com/markramige&#34;&gt;code&lt;/a&gt; as I learn more and gain more experience in information security.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Twitter&lt;/strong&gt;: &lt;a href=&#34;https://twitter.com/markramige&#34;&gt;@markramige&lt;/a&gt; (DMs are open)&lt;/p&gt;
+      <description>I have experience in Linux server administration and Python/Bash scripting to automate tasks. I know bits and pieces in a lot of different areas, but those are the two that I know the most about.
+My goal is to share knowledge, ideas, and code as I learn more and gain more experience in cybersecurity.
+Twitter: @markramige</description>
+      <content>&lt;p&gt;I have experience in Linux server administration and Python/Bash scripting to automate tasks. I know bits and pieces in a lot of different areas, but those are the two that I know the most about.&lt;/p&gt;
+&lt;p&gt;My goal is to share knowledge, ideas, and &lt;a href=&#34;https://github.com/markramige&#34;&gt;code&lt;/a&gt; as I learn more and gain more experience in cybersecurity.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Twitter&lt;/strong&gt;: &lt;a href=&#34;https://twitter.com/markramige&#34;&gt;@markramige&lt;/a&gt;&lt;/p&gt;
 </content>
     </item>
     
