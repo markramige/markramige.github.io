@@ -16,6 +16,74 @@
       <guid>https://markramige.com/posts/using-ssh-on-windows-10-and-wsl-2/</guid>
       <description>Since WSL was introduced several years ago, I&amp;rsquo;ve been using the same process for access my machines remotely. I&amp;rsquo;d run apt-get install openssh-server in WSL and open TCP port 22 in Windows Firewall. WSL 2 adds the extra step of needing to forward a port to the WSL VM. I decided to try using OpenSSH directly since it is now available natively on Windows.
 Contents  Install sshd, ssh, and ssh-agent Run sshd and ssh-agent at boot Start sshd and ssh-agent now Create ssh key and add to ssh-agent Add public keys to authorized_keys and set correct permissions Disable password login and restart sshd Make Git for Windows use ssh-agent Set up WSL distributions to use ssh-agent Future improvements Conclusion  *Open a PowerShell prompt with administrator privileges*</description>
+      <content>&lt;p&gt;Since WSL was introduced several years ago, I&amp;rsquo;ve been using the same process for access my machines remotely. I&amp;rsquo;d run &lt;code&gt;apt-get install openssh-server&lt;/code&gt; in WSL and open TCP port 22 in Windows Firewall. WSL 2 adds the extra step of needing to &lt;a href=&#34;https://www.hanselman.com/blog/HowToSSHIntoWSL2OnWindows10FromAnExternalMachine.aspx&#34;&gt;forward a port to the WSL VM&lt;/a&gt;. I decided to try using OpenSSH directly since it is now available &lt;a href=&#34;https://github.com/PowerShell/Win32-OpenSSH&#34;&gt;natively on Windows&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;contents&#34;&gt;Contents&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#install-sshd-ssh-and-ssh-agent&#34;&gt;Install sshd, ssh, and ssh-agent&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#run-sshd-and-ssh-agent-at-boot&#34;&gt;Run sshd and ssh-agent at boot&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#start-sshd-and-ssh-agent-now&#34;&gt;Start sshd and ssh-agent now&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#create-ssh-key-and-add-to-ssh-agent&#34;&gt;Create ssh key and add to ssh-agent&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#add-public-keys-to-authorized_keys-and-set-correct-permissions&#34;&gt;Add public keys to authorized_keys and set correct permissions&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#disable-password-login-and-restart-sshd&#34;&gt;Disable password login and restart sshd&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#make-git-for-windows-use-ssh-agent&#34;&gt;Make Git for Windows use ssh-agent&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#set-up-wsl-2-distributions-to-use-ssh-agent&#34;&gt;Set up WSL distributions to use ssh-agent&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#future-improvements&#34;&gt;Future improvements&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#conclusion&#34;&gt;Conclusion&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;*Open a PowerShell prompt with administrator privileges*&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id=&#34;install-sshd-ssh-and-ssh-agent&#34;&gt;Install sshd, ssh, and ssh-agent&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
+Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;run-sshd-and-ssh-agent-at-boot&#34;&gt;Run sshd and ssh-agent at boot&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;Set-Service -Name sshd -StartupType &#39;Automatic&#39;
+Set-Service -Name ssh-agent -StartupType &#39;Automatic&#39;
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;start-sshd-and-ssh-agent-now&#34;&gt;Start sshd and ssh-agent now&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;Start-Service sshd
+Start-Service ssh-agent
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;create-ssh-key-and-add-to-ssh-agent&#34;&gt;Create SSH key and add to ssh-agent&lt;/h2&gt;
+&lt;p&gt;Ignore the &lt;code&gt;-t ed25519&lt;/code&gt; if you need to connect to servers running older OSes&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;ssh-keygen -t ed25519
+ssh-add
+ssh-add -L
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;add-public-keys-to-authorized_keys-and-set-correct-permissions&#34;&gt;Add public keys to authorized_keys and set correct permissions&lt;/h2&gt;
+&lt;p&gt;Windows sshd will read two different authorized_keys files depending on if your user account is an administrator.&lt;/p&gt;
+&lt;p&gt;The location for normal users is &lt;code&gt;%userprofile%\.ssh\authorized_keys&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;The location for administrators is &lt;code&gt;%programdata%\ssh\administrators_authorized_keys&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;administrators_authorized_keys&lt;/code&gt; file will need special permissions set before sshd will use it&lt;/p&gt;
+&lt;p&gt;Copy any public keys you want to grant access to your computer to the correct file and then set the administrators_authorized_keys file permissions if needed.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;icacls administrators_authorized_keys /inheritance:r
+icacls administrators_authorized_keys /grant SYSTEM:`(F`)
+icacls administrators_authorized_keys /grant BUILTIN\Administrators:`(F`)
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;disable-password-login-and-restart-sshd&#34;&gt;Disable password login and restart sshd&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;Stop-Service sshd
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Copy C:\ProgramData\ssh\sshd_config to your desktop and edit&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;#PasswordAuthentication yes
+PasswordAuthentication no
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Move the file back to %programdata%\ssh and then set the correct permissions&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Get-Acl sshd.pid | Set-Acl sshd_config
+Start-Service sshd
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;make-git-for-windows-use-ssh-agent&#34;&gt;Make Git for Windows use ssh-agent&lt;/h2&gt;
+&lt;p&gt;Search for &lt;code&gt;env&lt;/code&gt; in start and choose the &lt;code&gt;Edit environment variables for your account&lt;/code&gt; option.
+&lt;img src=&#34;https://markramige.com/images/using-ssh-on-windows-10-and-wsl-2/start-menu-edit-environment-variables.png&#34; alt=&#34;Search for env on the start menu and choose Edit the system environment variables&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Create a new variable named &lt;code&gt;GIT_SSH&lt;/code&gt; with a value of &lt;code&gt;C:\Windows\System32\OpenSSH\ssh.exe&lt;/code&gt;
+&lt;img src=&#34;https://markramige.com/images/using-ssh-on-windows-10-and-wsl-2/windows-add-git-ssh-environment-variable.png&#34; alt=&#34;Add the GIT_SSH variable&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;set-up-wsl-2-distributions-to-use-ssh-agent&#34;&gt;Set up WSL 2 distributions to use ssh-agent&lt;/h2&gt;
+&lt;p&gt;Download &lt;a href=&#34;https://github.com/rupor-github/wsl-ssh-agent/releases/download/v1.4.2/wsl-ssh-agent.7z&#34;&gt;wsl-ssh-agent.7z&lt;/a&gt; and extract &lt;code&gt;npiperelay.exe&lt;/code&gt; to a new directory called &lt;code&gt;.wsl&lt;/code&gt; in your Windows user&amp;rsquo;s home folder.&lt;/p&gt;
+&lt;p&gt;In your WSL distribution, run &lt;code&gt;ln -s /mnt/c/Users/YOURWINDOWSUSERNAME ~/winhome&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Create a &lt;code&gt;.ssh&lt;/code&gt; folder and &lt;code&gt;chmod 700 ~/.ssh&lt;/code&gt; if it doesn&amp;rsquo;t already exist.&lt;/p&gt;
+&lt;p&gt;Run &lt;code&gt;sudo apt install socat&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Add this snippet to the &lt;code&gt;.bashrc&lt;/code&gt; file in your WSL distribution.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;export SSH_AUTH_SOCK&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;$HOME/.ssh/agent.sock
+ss -a | grep -q $SSH_AUTH_SOCK
+&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt; $? -ne &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;   &lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt;; &lt;span style=&#34;color:#66d9ef&#34;&gt;then&lt;/span&gt;
+    rm -f $SSH_AUTH_SOCK
+    &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt; setsid socat UNIX-LISTEN:$SSH_AUTH_SOCK,fork EXEC:&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;$HOME&lt;span style=&#34;color:#e6db74&#34;&gt;/winhome/.wsl/npiperelay.exe -ei -s //./pipe/openssh-ssh-agent&amp;#34;&lt;/span&gt;,nofork &amp;amp; &lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; &amp;gt;/dev/null 2&amp;gt;&amp;amp;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;fi&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;future-improvements&#34;&gt;Future improvements&lt;/h2&gt;
+&lt;p&gt;I would like to sync up my ssh config file between Windows and WSL. Symlinking the file inside WSL doesn&amp;rsquo;t work because it needs 600 permissions or ssh will give you an error.&lt;/p&gt;
+&lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;I like the added benefit of being able to run native Windows commands via SSH and being able to access multiple WSL distributions with the same SSH server. I think if you are already using sshd inside a WSL distribution and don&amp;rsquo;t need these benefits, then it&amp;rsquo;s not worth switching to native Windows OpenSSH.&lt;/p&gt;
+</content>
     </item>
     
     <item>
@@ -26,6 +94,91 @@ Contents  Install sshd, ssh, and ssh-agent Run sshd and ssh-agent at boot Start 
       <guid>https://markramige.com/posts/tryhackme-hackernote-write-up/</guid>
       <description>This TryHackMe challenge gives you an IP address to attack and takes you through each step of the process until you get root on the box. It covers recon, investigation, exploitation, user enumeration, password brute-forcing, and privilege escalation. It requires some basic linux skills to get started.
 Contents  Task 1 - Reconnaissance Task 2 - Investigate Task 3 - Exploit Task 4 - Attack Passwords Task 5 - Escalate  Task 1 - Reconnaissance  Which ports are open?</description>
+      <content>&lt;p&gt;&lt;a href=&#34;https://tryhackme.com/room/hackernote&#34;&gt;This TryHackMe challenge&lt;/a&gt; gives you an IP address to attack and takes you through each step of the process until you get root on the box. It covers recon, investigation, exploitation, user enumeration, password brute-forcing, and privilege escalation. It requires some basic linux skills to get started.&lt;/p&gt;
+&lt;h2 id=&#34;contents&#34;&gt;Contents&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#task-1-reconnaissance&#34;&gt;Task 1 - Reconnaissance&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#task-2-investigate&#34;&gt;Task 2 - Investigate&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#task-3-exploit&#34;&gt;Task 3 - Exploit&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#task-4-attack-passwords&#34;&gt;Task 4 - Attack Passwords&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#task-5-escalate&#34;&gt;Task 5 - Escalate&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;task-1---reconnaissance&#34;&gt;Task 1 - Reconnaissance&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Which ports are open? (in numerical order)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We can run &lt;code&gt;man nmap&lt;/code&gt; to check for the options we need to scan for ports and service identification (next question).&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;nmap -A -T4 MACHINE_IP&lt;/code&gt; seems to be what we&amp;rsquo;re looking for. The output is:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Starting Nmap 7.91 ( https://nmap.org ) at 2020-02-28 17:17 EST
+Nmap scan report for MACHINE_IP
+Host is up (0.11s latency).
+Not shown: 997 closed ports
+PORT     STATE SERVICE VERSION
+22/tcp   open  ssh     OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey:
+|   2048 10:a6:95:34:62:b0:56:2a:38:15:77:58:f4:f3:6c:ac (RSA)
+|   256 6f:18:27:a4:e7:21:9d:4e:6d:55:b3:ac:c5:2d:d5:d3 (ECDSA)
+|_  256 2d:c3:1b:58:4d:c3:5d:8e:6a:f6:37:9d:ca:ad:20:7c (ED25519)
+80/tcp   open  http    Golang net/http server (Go-IPFS json-rpc or InfluxDB API)
+|_http-title: Home - hackerNote
+8080/tcp open  http    Golang net/http server (Go-IPFS json-rpc or InfluxDB API)
+|_http-open-proxy: Proxy might be redirecting requests
+|_http-title: Home - hackerNote
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Nmap done: 1 IP address (1 host up) scanned in 24.41 seconds
+&lt;/code&gt;&lt;/pre&gt;&lt;ul&gt;
+&lt;li&gt;What programming language is the backend written in?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Notice the service listed on port 80.&lt;/p&gt;
+&lt;h2 id=&#34;task-2---investigate&#34;&gt;Task 2 - Investigate&lt;/h2&gt;
+&lt;p&gt;Follow the instructions to set up your user account and test the web app. I&amp;rsquo;m proxying the traffic through Burp Suite.&lt;/p&gt;
+&lt;h2 id=&#34;task-3---exploit&#34;&gt;Task 3 - Exploit&lt;/h2&gt;
+&lt;p&gt;Download the &lt;a href=&#34;https://raw.githubusercontent.com/NinjaJc01/hackerNoteExploits/master/exploit.py&#34;&gt;exploit&lt;/a&gt; and &lt;a href=&#34;https://raw.githubusercontent.com/NinjaJc01/hackerNoteExploits/master/names.txt&#34;&gt;list of user names&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Change the value of the URL variable in the exploit script to &lt;code&gt;&amp;quot;http://MACHINE_IP/api/user/login&amp;quot;&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Add your user name to the top of the names.txt file to increase the accuracy of the exploit.&lt;/p&gt;
+&lt;p&gt;Run &lt;code&gt;python3 exploit.py&lt;/code&gt; and answer the two questions based on the output:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;How many usernames from the list are valid?&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;What are/is the valid username(s)?&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;task-4---attack-passwords&#34;&gt;Task 4 - Attack Passwords&lt;/h2&gt;
+&lt;p&gt;Download the wordlists.zip file. We&amp;rsquo;re running Kali Linux and the hashcat-utils package is installed so we can just run:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;/usr/bin/hashcat-utils/combinator.bin colors.txt numbers.txt &amp;gt; wordlist.txt&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Next we run hydra to bruteforce our passwords: (replace &lt;code&gt;USERNAME&lt;/code&gt; and &lt;code&gt;MACHINE_IP&lt;/code&gt;)&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;hydra -l USERNAME -P wordlist.txt MACHINE_IP http-post-form &amp;quot;/api/user/login:username=^USER^&amp;amp;password=^PASS^:Invalid Username Or Password&amp;quot;&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;How many passwords were in your wordlist?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;wc -l wordlist.txt&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What was the user&amp;rsquo;s password?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Taken from the output of &lt;code&gt;hydra&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What is the user&amp;rsquo;s SSH password?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Log in to the web app and the password is shown&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What&amp;rsquo;s the user flag?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;ssh USERNAME@MACHINE_IP&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;cat user.txt&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id=&#34;task-5---escalate&#34;&gt;Task 5 - Escalate&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;What is the CVE number for the exploit?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Google &lt;code&gt;pwdfeedback&lt;/code&gt; and we &lt;a href=&#34;https://www.sudo.ws/alerts/pwfeedback.html&#34;&gt;find a page&lt;/a&gt; that explains the vulnerability and gives us the CVE number.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What is the root flag?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Follow the instructions on the page to download the exploit, compile it, scp to the server, and run it.&lt;/p&gt;
+&lt;p&gt;Run &lt;code&gt;cat /root/root.txt&lt;/code&gt; to get the flag.&lt;/p&gt;
+</content>
     </item>
     
   </channel>

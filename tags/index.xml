@@ -15,6 +15,7 @@
       
       <guid>https://markramige.com/tags/hyper-v/</guid>
       <description></description>
+      <content></content>
     </item>
     
     <item>
@@ -24,6 +25,7 @@
       
       <guid>https://markramige.com/tags/kali/</guid>
       <description></description>
+      <content></content>
     </item>
     
     <item>
@@ -33,6 +35,7 @@
       
       <guid>https://markramige.com/tags/linux/</guid>
       <description></description>
+      <content></content>
     </item>
     
     <item>
@@ -42,6 +45,7 @@
       
       <guid>https://markramige.com/tags/windows/</guid>
       <description></description>
+      <content></content>
     </item>
     
     <item>
@@ -51,6 +55,7 @@
       
       <guid>https://markramige.com/tags/git/</guid>
       <description></description>
+      <content></content>
     </item>
     
     <item>
@@ -60,6 +65,7 @@
       
       <guid>https://markramige.com/tags/ssh/</guid>
       <description></description>
+      <content></content>
     </item>
     
     <item>
@@ -69,6 +75,7 @@
       
       <guid>https://markramige.com/tags/wsl2/</guid>
       <description></description>
+      <content></content>
     </item>
     
     <item>
@@ -78,6 +85,7 @@
       
       <guid>https://markramige.com/tags/appsec/</guid>
       <description></description>
+      <content></content>
     </item>
     
     <item>
@@ -87,6 +95,7 @@
       
       <guid>https://markramige.com/tags/idor/</guid>
       <description></description>
+      <content></content>
     </item>
     
     <item>
@@ -96,6 +105,7 @@
       
       <guid>https://markramige.com/tags/injection/</guid>
       <description></description>
+      <content></content>
     </item>
     
     <item>
@@ -105,6 +115,7 @@
       
       <guid>https://markramige.com/tags/owasp/</guid>
       <description></description>
+      <content></content>
     </item>
     
     <item>
@@ -114,6 +125,7 @@
       
       <guid>https://markramige.com/tags/xss/</guid>
       <description></description>
+      <content></content>
     </item>
     
     <item>
@@ -123,6 +135,7 @@
       
       <guid>https://markramige.com/tags/authentication/</guid>
       <description></description>
+      <content></content>
     </item>
     
     <item>
@@ -132,6 +145,7 @@
       
       <guid>https://markramige.com/tags/permissions/</guid>
       <description></description>
+      <content></content>
     </item>
     
     <item>
@@ -141,6 +155,7 @@
       
       <guid>https://markramige.com/tags/privesc/</guid>
       <description></description>
+      <content></content>
     </item>
     
     <item>
@@ -150,6 +165,7 @@
       
       <guid>https://markramige.com/tags/rdp/</guid>
       <description></description>
+      <content></content>
     </item>
     
     <item>
@@ -159,6 +175,7 @@
       
       <guid>https://markramige.com/tags/registry/</guid>
       <description></description>
+      <content></content>
     </item>
     
     <item>
@@ -168,6 +185,7 @@
       
       <guid>https://markramige.com/tags/services/</guid>
       <description></description>
+      <content></content>
     </item>
     
     <item>
@@ -177,6 +195,7 @@
       
       <guid>https://markramige.com/tags/cron/</guid>
       <description></description>
+      <content></content>
     </item>
     
     <item>
@@ -186,6 +205,7 @@
       
       <guid>https://markramige.com/tags/nfs/</guid>
       <description></description>
+      <content></content>
     </item>
     
     <item>
@@ -195,6 +215,7 @@
       
       <guid>https://markramige.com/tags/suid/</guid>
       <description></description>
+      <content></content>
     </item>
     
     <item>
@@ -204,6 +225,7 @@
       
       <guid>https://markramige.com/tags/directory-traversal/</guid>
       <description></description>
+      <content></content>
     </item>
     
     <item>
@@ -213,6 +235,7 @@
       
       <guid>https://markramige.com/tags/logic-flaws/</guid>
       <description></description>
+      <content></content>
     </item>
     
     <item>
@@ -222,6 +245,7 @@
       
       <guid>https://markramige.com/tags/sql-injection/</guid>
       <description></description>
+      <content></content>
     </item>
     
     <item>
@@ -231,6 +255,7 @@
       
       <guid>https://markramige.com/tags/weak-credentials/</guid>
       <description></description>
+      <content></content>
     </item>
     
     <item>
@@ -240,6 +265,7 @@
       
       <guid>https://markramige.com/tags/brute-forcing/</guid>
       <description></description>
+      <content></content>
     </item>
     
     <item>
@@ -249,6 +275,7 @@
       
       <guid>https://markramige.com/tags/enumeration/</guid>
       <description></description>
+      <content></content>
     </item>
     
     <item>
@@ -258,6 +285,7 @@
       
       <guid>https://markramige.com/tags/nmap/</guid>
       <description></description>
+      <content></content>
     </item>
     
     <item>
@@ -267,6 +295,7 @@
       
       <guid>https://markramige.com/tags/python/</guid>
       <description></description>
+      <content></content>
     </item>
     
   </channel>

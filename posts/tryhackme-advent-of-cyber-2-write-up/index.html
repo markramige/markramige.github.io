@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+    <title>TryHackMe Advent of Cyber 2 Write-Up :: Mark Ramige: Appsec and Bug Bounties</title>
+  
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Intro" />
+<meta name="keywords" content="" />
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="https://markramige.com/posts/tryhackme-advent-of-cyber-2-write-up/" />
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-178664934-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+
+<link rel="stylesheet" href="https://markramige.com/assets/style.css">
+
+  <link rel="stylesheet" href="https://markramige.com/assets/blue.css">
+
+
+
+
+
+
+<link rel="apple-touch-icon" href="https://markramige.com/img/apple-touch-icon-192x192.png">
+
+  <link rel="shortcut icon" href="https://markramige.com/favicon.png">
+
+
+
+<meta name="twitter:card" content="summary" />
+
+  
+    <meta name="twitter:site" content="markramige" />
+  
+    <meta name="twitter:creator" content="markramige" />
+
+
+
+<meta property="og:locale" content="en" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="TryHackMe Advent of Cyber 2 Write-Up">
+<meta property="og:description" content="Intro" />
+<meta property="og:url" content="https://markramige.com/posts/tryhackme-advent-of-cyber-2-write-up/" />
+<meta property="og:site_name" content="Mark Ramige: Appsec and Bug Bounties" />
+
+  <meta property="og:image" content="https://markramige.com/">
+
+<meta property="og:image:width" content="2048">
+<meta property="og:image:height" content="1024">
+
+
+  <meta property="article:published_time" content="2020-12-25 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+<body class="blue">
+
+
+<div class="container center headings--one-size">
+
+  <header class="header">
+  <div class="header__inner">
+    <div class="header__logo">
+      <a href="/">
+  <div class="logo">
+    &gt;_ Mark Ramige
+  </div>
+</a>
+
+    </div>
+    
+      <div class="menu-trigger">menu</div>
+    
+  </div>
+  
+    <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="/about">About</a></li>
+        
+      
+        
+          <li><a href="https://github.com/markramige">GitHub</a></li>
+        
+      
+        
+          <li><a href="https://twitter.com/markramige">Twitter</a></li>
+        
+      
+      
+    
+
+    
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="/about">About</a></li>
+      
+    
+      
+        <li><a href="https://github.com/markramige">GitHub</a></li>
+      
+    
+      
+        <li><a href="https://twitter.com/markramige">Twitter</a></li>
+      
+    
+    
+  </ul>
+</nav>
+
+  
+</header>
+
+
+  <div class="content">
+    
+<div class="post">
+  <h1 class="post-title">
+    <a href="https://markramige.com/posts/tryhackme-advent-of-cyber-2-write-up/">TryHackMe Advent of Cyber 2 Write-Up</a></h1>
+  <div class="post-meta">
+    
+      <span class="post-date">
+        2020-12-25 
+      </span>
+    
+    
+    <span class="post-author">:: Mark Ramige</span>
+    
+  </div>
+
+  
+  <span class="post-tags">
+    
+    #<a href="https://markramige.com/tags/"></a>&nbsp;
+    
+    #<a href="https://markramige.com/tags/"></a>&nbsp;
+    
+  </span>
+  
+
+  
+
+  
+
+  <div class="post-content"><div>
+        <p>Intro</p>
+<h2 id="contents">Contents<a href="#contents" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<ul>
+<li><a href="#day-1---a-christmas-crisis">Day 1 - A Christmas Crisis</a></li>
+<li><a href="#day-2---the-elf-strikes-back">Day 2 - The Elf Strikes Back!</a></li>
+<li><a href="#day-3---christmas-chaos">Day 3 - Christmas Chaos</a></li>
+<li><a href="#day-4---santas-watching">Day 4 - Santa&rsquo;s Watching</a></li>
+</ul>
+<h2 id="day-1---a-christmas-crisis">Day 1 - A Christmas Crisis<a href="#day-1---a-christmas-crisis" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<h3 id="task-6">Task 6<a href="#task-6" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<ul>
+<li>What is the name of the cookie used for authentication?</li>
+</ul>
+<p>Open Firefox devtools and go to the Network tab. There is only one cookie for this page.</p>
+<ul>
+<li>In what format is the value of this cookie encoded?</li>
+</ul>
+<p>If you don&rsquo;t immediately recognize the format, paste it into <a href="https://gchq.github.io/CyberChef/">CyberChef</a> and try decoding from different formats until the output makes sense.</p>
+<ul>
+<li>Having decoded the cookie, what format is the data stored in?</li>
+</ul>
+<p>This will be obvious once the cookie is decoded.</p>
+<ul>
+<li>What is the value of Santa&rsquo;s cookie?</li>
+</ul>
+<p>Replace the username of the cookie from your account and reencode it in the same format using CyberChef.</p>
+<ul>
+<li>What is the flag you&rsquo;re given when the line is fully active?</li>
+</ul>
+<p>Replace your cookie with Santa&rsquo;s cookie and reload the page. You should now be able to toggle all of the switches on and the flag will be shown.</p>
+<h2 id="day-2---the-elf-strikes-back">Day 2 - The Elf Strikes Back!<a href="#day-2---the-elf-strikes-back" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<h3 id="task-7">Task 7<a href="#task-7" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<ul>
+<li>What string of text needs adding to the URL to get access to the upload page?</li>
+</ul>
+<p>Based on the question we know that we need a GET request to gain access to the page. The name of the request is given on the webpage and the value of the request is given on the sticky note in the task text. The format of the request is <code>?name=value</code>.</p>
+<ul>
+<li>What type of file is accepted by the site?</li>
+</ul>
+<p>We can check in the page source to see what kind of files are accepted in the <code>&lt;input&gt;</code> tag. We can also just click on the file select button and the browser UI will show us what types of files are accepted. This doesn&rsquo;t necessarily mean that the server accepts the same types of files, or that there are any checks on the server-side at all.</p>
+<ul>
+<li>In which directory are the uploaded files stored?</li>
+</ul>
+<p>Once we&rsquo;ve uploaded a file successfully, we can enumerate directories and see if we can guess the correct one. If it turns out not to be easy to guess, then we could use a directory brute-forcing tool such as <code>ffuf</code>.</p>
+<ul>
+<li>Activate your reverse shell and catch it in a netcat listener!</li>
+</ul>
+<p>Assuming we&rsquo;ve configured the <code>php-remote-shell.php</code> file correctly and run our listening, then it&rsquo;s just a matter of navigating to the remote shell script in the browser and it will automatically connect to our listener.</p>
+<ul>
+<li>What is the flag in /var/www/flag.txt?</li>
+</ul>
+<p>Since our remote shell is now connected, we can just do <code>cat /var/www/flag.txt</code> to get the flag!</p>
+<h2 id="day-3---christmas-chaos">Day 3 - Christmas Chaos<a href="#day-3---christmas-chaos" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<h3 id="task-8">Task 8<a href="#task-8" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<ul>
+<li>What is the flag?</li>
+</ul>
+<p>This task is a good demonstration of the power of Burp Suite intruder. We are going to intercept the traffic with Burp Suite while using our browser to log in. After finding the login request in Burp Suite, we send it to intruder and input the user names and passwords for the payloads. After the attack finishes, we can check the responses to see which of them redirects us to the <code>/tracker</code> URL. We can now log in on the web page to get access to the Santa tracker. The flag is shown on the page.</p>
+<h2 id="day-4---santas-watching">Day 4 - Santa&rsquo;s Watching<a href="#day-4---santas-watching" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<h3 id="task-9">Task 9<a href="#task-9" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<ul>
+<li>Given the URL &ldquo;<a href="http://shibes.xyz/api.php%22,">http://shibes.xyz/api.php&quot;,</a> what would the entire wfuzz command look like to query the &ldquo;breed&rdquo; parameter using the wordlist &ldquo;big.txt&rdquo; (assume that &ldquo;big.txt&rdquo; is in your current directory)</li>
+</ul>
+<p>An example command <code>wfuzz -c -z file,mywordlist.txt -d “username=FUZZ&amp;password=FUZZ” -u http://shibes.thm/login.php</code> is given in the task text. We are going to keep the <code>-c</code> for color output and <code>-z</code> for specifying the wordlist.</p>
+<p>The URL will be replaced with the given URL in the question. The wordlist will be replaced with <code>big.txt</code></p>
+<p>We also need to add ?breed=FUZZ to the end of the URL so that <code>wfuzz</code> can work.</p>
+<ul>
+<li>Use GoBuster to find the API directory. What file is there?</li>
+</ul>
+<p>Running <code>gobuster dir -u MACHINE_IP -w /usr/share/wordlists/dirb/big.txt -x php,txt,html</code></p>
+<p>All we&rsquo;re doing here is running the same <code>gobuster</code> command as in the task text, but replacing the URL with our target IP and the wordlist with the <code>big.txt</code> wordlist from <a href="https://github.com/danielmiessler/SecLists">Seclists</a> which is included with Kali.</p>
+<p>We find that /api is found by gobuster. If we navigate to <code>http://MACHINE_IP/api</code> then we&rsquo;ll find the file that is asked about in the question.</p>
+<ul>
+<li>Fuzz the date parameter on the file you found in the API directory. What is the flag displayed in the correct post?</li>
+</ul>
+<p>Now we&rsquo;re going to change the wfuzz command that we used previously to find the flag. We&rsquo;re also going to use the included <code>wordlist</code> file to speed up the fuzzing.</p>
+<p><code>wfuzz -c -z file,wordlist http://MACHINE_IP/api/site-log.php?date=FUZZ</code></p>
+<p>We see from the output that one of the fuzzed dates returns 13 characters. If we enter <code>http://MACHINE_IP/api/site-log.php?date=DATEFOUNDBYWFUZZ</code> in our browser we get our flag.</p>
+
+      </div></div>
+
+  
+  
+<div class="pagination">
+    <div class="pagination__title">
+        <span class="pagination__title-h">Read other posts</span>
+        <hr />
+    </div>
+    <div class="pagination__buttons">
+        
+        
+        <span class="button next">
+            <a href="https://markramige.com/posts/installing-kali-linux-on-hyperv/">
+                <span class="button__text">Installing and Optimizing Kali Linux on Hyper-V</span>
+                <span class="button__icon">→</span>
+            </a>
+        </span>
+        
+    </div>
+</div>
+
+  
+
+  
+
+</div>
+
+  </div>
+
+  
+    <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright copyright--user">
+        <span>© 2020 <a href='https://github.com/markramige/markramigecom'>Mark Ramige</a> :: <a href='https://creativecommons.org/licenses/by/4.0/?ref=chooser-v1'>CC BY 4.0</a> Licensed :: Powered by <a href='http://gohugo.io'>Hugo</a></span>
+    
+        <span>:: Theme made by <a href="https://twitter.com/panr">panr</a></span>
+      </div>
+  </div>
+</footer>
+
+<script src="https://markramige.com/assets/main.js"></script>
+<script src="https://markramige.com/assets/prism.js"></script>
+
+
+
+
+
+
+
+  
+</div>
+
+</body>
+</html>

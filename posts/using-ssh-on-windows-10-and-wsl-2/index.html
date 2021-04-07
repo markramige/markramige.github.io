@@ -6,8 +6,7 @@
   
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Since WSL was introduced several years ago, I&amp;rsquo;ve been using the same process for access my machines remotely. I&amp;rsquo;d run apt-get install openssh-server in WSL and open TCP port 22 in Windows Firewall. WSL 2 adds the extra step of needing to forward a port to the WSL VM. I decided to try using OpenSSH directly since it is now available natively on Windows.
-Contents  Install sshd, ssh, and ssh-agent Run sshd and ssh-agent at boot Start sshd and ssh-agent now Create ssh key and add to ssh-agent Add public keys to authorized_keys and set correct permissions Disable password login and restart sshd Make Git for Windows use ssh-agent Set up WSL distributions to use ssh-agent Future improvements Conclusion  *Open a PowerShell prompt with administrator privileges*" />
+<meta name="description" content="Since WSL was introduced several years ago, I&#39;ve been using the same process for access my machines remotely. I&#39;d run `apt-get install openssh-server` in WSL and open TCP port 22 in Windows Firewall. WSL 2 adds the extra step of needing to [forward a port to the WSL VM](https://www.hanselman.com/blog/HowToSSHIntoWSL2OnWindows10FromAnExternalMachine.aspx). I decided to try using OpenSSH directly since it is now available [natively on Windows](https://github.com/PowerShell/Win32-OpenSSH)." />
 <meta name="keywords" content="wsl2, ssh, git, linux, windows" />
 <meta name="robots" content="noodp" />
 <link rel="canonical" href="https://markramige.com/posts/using-ssh-on-windows-10-and-wsl-2/" />
@@ -25,7 +24,6 @@ if (!doNotTrack) {
 	ga('send', 'pageview');
 }
 </script>
-
 
 
 <link rel="stylesheet" href="https://markramige.com/assets/style.css">

@@ -15,6 +15,145 @@
       
       <guid>https://markramige.com/posts/installing-kali-linux-on-hyperv/</guid>
       <description>Kali Linux runs great on Windows if you’re using VirtualBox or VMware Workstation. You might have tried installing it on Hyper-V so that you can run WSL 2 distributions at the same time and experienced how poorly Hyper-V handles desktop Linux. Microsoft is working to fix this by enabling enhanced session mode on desktop linux distributions. I’ll show you how to set up Kali Linux on Hyper-V so that it runs faster and also to enable copying and pasting between the VM and host (including files).</description>
+      <content>&lt;p&gt;Kali Linux runs great on Windows if you’re using VirtualBox or VMware Workstation. You might have tried installing it on Hyper-V so that you can run WSL 2 distributions at the same time and experienced how poorly Hyper-V handles desktop Linux. &lt;a href=&#34;https://github.com/microsoft/linux-vm-tools&#34;&gt;Microsoft is working to fix this&lt;/a&gt; by enabling enhanced session mode on desktop linux distributions. I’ll show you how to set up Kali Linux on Hyper-V so that it runs faster and also to enable copying and pasting between the VM and host (including files).&lt;/p&gt;
+&lt;h2 id=&#34;contents&#34;&gt;Contents&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#hyper-v-network-setup&#34;&gt;Hyper-V network setup&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#create-a-new-virtual-machine&#34;&gt;Create a new virtual machine&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#create-a-virtual-hard-disk-and-enable-enhanced-session&#34;&gt;Create a virtual hard disk and enable enhanced session&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#open-and-adjust-vm-settings&#34;&gt;Open and adjust VM settings&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#create-partition-table-and-format-partitions&#34;&gt;Create partition table and format partitions&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#install-kali-linux&#34;&gt;Install Kali Linux&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#install-linux-vm-tools&#34;&gt;Install linux-vm-tools&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#adjust-xfce-settings&#34;&gt;Adjust XFCE settings&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#future-improvements&#34;&gt;Future improvements&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#conclusion&#34;&gt;Conclusion&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;*Open a PowerShell prompt with administrator privileges*&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id=&#34;hyper-v-network-setup&#34;&gt;Hyper-V network setup&lt;/h2&gt;
+&lt;p&gt;We need to create a new network adapter called “External” that is bridged to your wifi or ethernet network adapter.&lt;/p&gt;
+&lt;p&gt;Run &lt;code&gt;Get-NetAdapter&lt;/code&gt; to get a list of your network adapters. Note the name of the one that connects to the Internet.&lt;/p&gt;
+&lt;p&gt;Run &lt;code&gt;New-VMSwitch -Name &amp;quot;External&amp;quot; -AllowManagementOS $True -NetAdapterName &amp;quot;YOURADAPTERNAME&amp;quot;&lt;/code&gt; and edit the name of your network adapter.&lt;/p&gt;
+&lt;p&gt;You will be disconnected from the network when the adapter is added. If your connection isn’t working after a few seconds, then the settings from your real adapter didn’t copy over correctly to the new “External” adapter. Go and edit them manually to the correct values. My DNS server settings didn’t copy over and I had to add them manually.&lt;/p&gt;
+&lt;h2 id=&#34;create-a-new-virtual-machine&#34;&gt;Create a new virtual machine&lt;/h2&gt;
+&lt;p&gt;Open up the Hyper-V Manager by running &lt;code&gt;C:\Windows\System32\virtmgmt.msc&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/hyper-v-manager.png&#34; alt=&#34;Hyper-V Manager&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Click on “New” and then “Virtual Machine”&lt;/p&gt;
+&lt;p&gt;Choose a name for the new VM.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/new-vm-name.png&#34; alt=&#34;Create VM name&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Select “Generation 2”&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/new-vm-generation-2.png&#34; alt=&#34;Create VM select generation 2&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Choose how much memory you want to give the machine on startup. Since we’re also selecting “Dynamic Memory” it can go higher depending on what you set as the maximum later.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/new-vm-assign-memory.png&#34; alt=&#34;Create VM assign memory&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Choose the External adapter that we created earlier.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/new-vm-network-connection.png&#34; alt=&#34;Create VM select external connection&#34;&gt;&lt;/p&gt;
+&lt;p&gt;We’re going to create a virtual hard disk manually and attach it later.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/new-vm-attach-vhd-later.png&#34; alt=&#34;Create VM attach VHD later&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;create-a-virtual-hard-disk-and-enable-enhanced-session&#34;&gt;Create a virtual hard disk and enable enhanced session&lt;/h2&gt;
+&lt;p&gt;Since we’re creating a dynamic vhdx file, we want to lower the block size so that it &lt;a href=&#34;https://docs.microsoft.com/en-us/windows-server/virtualization/hyper-v/best-practices-for-running-linux-on-hyper-v&#34;&gt;will use up less real space&lt;/a&gt;. The path and file name can be anything you want. You can set the SizeBytes (maximum size of the disk) value to anything over 32GB.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;New-VHD -Path C:\VHDs\Kali.vhdx -SizeBytes 128GB -Dynamic -BlockSizeBytes 1MB&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Run &lt;code&gt;Set-VM -VMName Kali -EnhancedSessionTransportType HvSocket&lt;/code&gt; to enable enhanced session mode.&lt;/p&gt;
+&lt;h2 id=&#34;open-and-adjust-vm-settings&#34;&gt;Open and adjust VM settings&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/vm-open-settings.png&#34; alt=&#34;VM open settings&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Disable secure boot&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/vm-settings-turn-off-secure-boot.png&#34; alt=&#34;VM settings turn off secure boot&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Set the maximum RAM that you can assign to this VM.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/vm-settings-memory-size.png&#34; alt=&#34;VM settings memory size&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Set the number of processors you want to give the VM.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/vm-settings-processors.png&#34; alt=&#34;VM settings processors&#34;&gt;&lt;/p&gt;
+&lt;p&gt;I always turn off automatic checkpoints because I like to do them manually.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/vm-settings-checkpoints.png&#34; alt=&#34;VM settings checkpoints&#34;&gt;&lt;/p&gt;
+&lt;p&gt;I don’t want this machine starting at boot.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/vm-settings-no-automatic-start.png&#34; alt=&#34;VM settings startup&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Browse to the vhdx file you created earlier.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/vm-settings-select-vhd.png&#34; alt=&#34;VM settings select VHD&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Add a DVD drive for installation.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/vm-settings-add-dvd-drive.png&#34; alt=&#34;VM settings add DVD drive&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Select the Kali live iso you downloaded earlier.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/vm-settings-select-kali-live-iso.png&#34; alt=&#34;VM settings select Kali live iso&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Set the boot order so that it will boot from the iso automatically.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/vm-settings-set-boot-order.png&#34; alt=&#34;VM Settings set boot order&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;create-partition-table-and-format-partitions&#34;&gt;Create partition table and format partitions&lt;/h2&gt;
+&lt;p&gt;Boot the default option in the menu&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-live-boot-menu.png&#34; alt=&#34;Kali live boot menu&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Open a terminal and run &lt;code&gt;sudo gdisk /dev/sda&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Type &lt;code&gt;o&lt;/code&gt; to create a new partition table&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-live-gdisk-new.png&#34; alt=&#34;Kali live gdisk create partition table&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Type &lt;code&gt;n&lt;/code&gt; and for the last sector type &lt;code&gt;+128M&lt;/code&gt;, then for the partition type enter &lt;code&gt;ef00&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-live-gdisk-new-efi.png&#34; alt=&#34;Kali live gdisk new efi partition&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Type &lt;code&gt;n&lt;/code&gt; and choose all the default options to create a linux partition with the remainder of the space.&lt;/p&gt;
+&lt;p&gt;Type &lt;code&gt;p&lt;/code&gt; to print the partition table to verify everything is correct.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-live-gdisk-new-linux.png&#34; alt=&#34;Kali live gdisk new linux partition&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Type &lt;code&gt;w&lt;/code&gt; to save the partition table and exit gdisk.&lt;/p&gt;
+&lt;p&gt;Run &lt;code&gt;mkdosfs -F 32 -n EFI /dev/sda1&lt;/code&gt; to format the EFI partition.&lt;/p&gt;
+&lt;p&gt;Run &lt;code&gt;mkfs.ext4 -G 4096 /dev/sda2&lt;/code&gt; to format the Kali partition. &lt;a href=&#34;https://docs.microsoft.com/en-us/windows-server/virtualization/hyper-v/best-practices-for-running-linux-on-hyper-v&#34;&gt;Microsoft recommends&lt;/a&gt; setting the number of groups to 4096.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-live-gdisk-save-and-mkfs-ext4.png&#34; alt=&#34;Kali live gdisk save partitions and format&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;install-kali-linux&#34;&gt;Install Kali Linux&lt;/h2&gt;
+&lt;p&gt;Open the VM settings and change the image file to the Kali netinstall iso that you downloaded earlier.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/vm-settings-select-kali-netinst.png&#34; alt=&#34;VM settings select kali netinstall iso&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Run the VM and choose the default boot option.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-netinstall-boot-menu.png&#34; alt=&#34;Kali netinstall boot menu&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Set your language, location, and keyboard.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-netinstall-language.png&#34; alt=&#34;Kali netinstall select language&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-netinstall-location.png&#34; alt=&#34;Kali netinstall select location&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-netinstall-keyboard.png&#34; alt=&#34;Kali netinstall select keyboard&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Choose your hostname and domain name (I left domain blank).&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-netinstall-host-name.png&#34; alt=&#34;Kali netinstall set host name&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-netinstall-domain-name.png&#34; alt=&#34;Kali netinstall set domain name&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Enter your name, user name, and password.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-netinstall-user-full-name.png&#34; alt=&#34;Kali netinstall set full user name&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-netinstall-user-name.png&#34; alt=&#34;Kali netinstall set user name&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-netinstall-password.png&#34; alt=&#34;Kali netinstall set password&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Set your time zone.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-netinstall-time-zone.png&#34; alt=&#34;Kali netinstall set timezone&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Choose manual partitioning because we already created the partition table and formatted.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-netinstall-manual-partition.png&#34; alt=&#34;Kali netinstall manual partition&#34;&gt;&lt;/p&gt;
+&lt;p&gt;The EFI partition is already set up so we want to edit the second partition for Kali.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-netinstall-partition-select.png&#34; alt=&#34;Kali netinstall select partition to change&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Set it to ext4 partition, set the mount point as &lt;code&gt;/&lt;/code&gt; and keep the existing data.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-netinstall-partition-options.png&#34; alt=&#34;Kali netinstall partition options&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Write changes to disk.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-netinstall-partition-finish.png&#34; alt=&#34;Kali netinstall finish partitioning&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Continue without a swap partition.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-netinstall-partition-swap.png&#34; alt=&#34;Kali netinstall continue without swap&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Continue with installation.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-netinstall-partition-continue.png&#34; alt=&#34;Kali netinstall save partition settings and continue&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Set up a network proxy (I left this blank.)&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-netinstall-proxy.png&#34; alt=&#34;Kali netinstall enter proxy settings&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Choose the software you want installed (I went with the default options)&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-netinstall-software-selection.png&#34; alt=&#34;Kali netinstall select software to install&#34;&gt;&lt;/p&gt;
+&lt;p&gt;I had an error message after all of the packages downloaded. I hit continue a few times and it continued installing where it left off without giving another error.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-netinstall-error.png&#34; alt=&#34;Kali netinstall software installation error&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-netinstall-continue-after-error.png&#34; alt=&#34;Kali netinstall continue after error message&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Kali is installed! Shut down the machine and remove the DVD drive in the settings.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-netinstall-finished.png&#34; alt=&#34;Kali netinstall finished&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/vm-settings-remove-dvd-drive.png&#34; alt=&#34;VM settings remove DVD drive&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;install-linux-vm-tools&#34;&gt;Install linux-vm-tools&lt;/h2&gt;
+&lt;p&gt;Start up the Kali VM and log in.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-boot-menu.png&#34; alt=&#34;Kali Linux boot menu&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-login-screen.png&#34; alt=&#34;Kali Linux login screen&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Open a terminal and run &lt;code&gt;git clone https://github.com/markramige/linux-vm-tools&lt;/code&gt; to download the install script&lt;/p&gt;
+&lt;p&gt;Now run &lt;code&gt;sudo linux-vm-tools/kali/install.sh&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;This script will update Kali, install xrdp, and change some settings that are necessary for the enhanced session mode to activate. Reboot the machine when it finishes.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-linux-vm-tools-install.png&#34; alt=&#34;Kali Linux tools install&#34;&gt;&lt;/p&gt;
+&lt;p&gt;You can now set the resolution of the RDP session. This screen will pop up every time you boot unless you save the settings. If this screen doesn’t pop up the first time you reboot, try shutting down the machine completely and starting it again. Alternatively you can save the machine state at the kali login screen and the next time you start it up it will switch to the enhanced session.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/hyperv-enhance-resolution.png&#34; alt=&#34;Hyper-V enhanced session menu&#34;&gt;&lt;/p&gt;
+&lt;p&gt;You should see the xrdp login screen instead of the default Kali login screen.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/xrdp-login-screen.png&#34; alt=&#34;Xrdp login screen&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;adjust-xfce-settings&#34;&gt;Adjust XFCE settings&lt;/h2&gt;
+&lt;p&gt;I’ve found that disabling desktop compositing makes it feel much faster.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/xfce-disable-compositing.png&#34; alt=&#34;XFCE disable compositing&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Disable desktop blanking and locking&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/xfce-disable-display-blanking.png&#34; alt=&#34;XFCE disable display blanking&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Set the desktop background to a solid color&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/xfce-desktop-background.png&#34; alt=&#34;XFCE desktop background set to black&#34;&gt;&lt;/p&gt;
+&lt;p&gt;All done!&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/installing-kali-linux-on-hyperv/kali-finished-desktop.png&#34; alt=&#34;Kali desktop finished&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;future-improvements&#34;&gt;Future improvements&lt;/h2&gt;
+&lt;p&gt;It’s possible to enable sound with &lt;a href=&#34;https://github.com/neutrinolabs/pulseaudio-module-xrdp&#34;&gt;pulseaudio-module-xrdp&lt;/a&gt;. I might try getting that to work if I ever need sound support. Also, usb-over-ip might be a possibility, but I don’t know what types of devices are supported with that.&lt;/p&gt;
+&lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;If you need to run Windows as your host OS and aren’t willing to give up WSL 2, then Hyper-V is a decent alternative to VirtualBox and VMware Workstation. It’s not quite as polished as the other options for desktop Linux, but hopefully Microsoft makes some improvements in the future to make it run more smoothly.&lt;/p&gt;
+</content>
     </item>
     
     <item>
@@ -25,6 +164,74 @@
       <guid>https://markramige.com/posts/using-ssh-on-windows-10-and-wsl-2/</guid>
       <description>Since WSL was introduced several years ago, I&amp;rsquo;ve been using the same process for access my machines remotely. I&amp;rsquo;d run apt-get install openssh-server in WSL and open TCP port 22 in Windows Firewall. WSL 2 adds the extra step of needing to forward a port to the WSL VM. I decided to try using OpenSSH directly since it is now available natively on Windows.
 Contents  Install sshd, ssh, and ssh-agent Run sshd and ssh-agent at boot Start sshd and ssh-agent now Create ssh key and add to ssh-agent Add public keys to authorized_keys and set correct permissions Disable password login and restart sshd Make Git for Windows use ssh-agent Set up WSL distributions to use ssh-agent Future improvements Conclusion  *Open a PowerShell prompt with administrator privileges*</description>
+      <content>&lt;p&gt;Since WSL was introduced several years ago, I&amp;rsquo;ve been using the same process for access my machines remotely. I&amp;rsquo;d run &lt;code&gt;apt-get install openssh-server&lt;/code&gt; in WSL and open TCP port 22 in Windows Firewall. WSL 2 adds the extra step of needing to &lt;a href=&#34;https://www.hanselman.com/blog/HowToSSHIntoWSL2OnWindows10FromAnExternalMachine.aspx&#34;&gt;forward a port to the WSL VM&lt;/a&gt;. I decided to try using OpenSSH directly since it is now available &lt;a href=&#34;https://github.com/PowerShell/Win32-OpenSSH&#34;&gt;natively on Windows&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;contents&#34;&gt;Contents&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#install-sshd-ssh-and-ssh-agent&#34;&gt;Install sshd, ssh, and ssh-agent&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#run-sshd-and-ssh-agent-at-boot&#34;&gt;Run sshd and ssh-agent at boot&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#start-sshd-and-ssh-agent-now&#34;&gt;Start sshd and ssh-agent now&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#create-ssh-key-and-add-to-ssh-agent&#34;&gt;Create ssh key and add to ssh-agent&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#add-public-keys-to-authorized_keys-and-set-correct-permissions&#34;&gt;Add public keys to authorized_keys and set correct permissions&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#disable-password-login-and-restart-sshd&#34;&gt;Disable password login and restart sshd&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#make-git-for-windows-use-ssh-agent&#34;&gt;Make Git for Windows use ssh-agent&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#set-up-wsl-2-distributions-to-use-ssh-agent&#34;&gt;Set up WSL distributions to use ssh-agent&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#future-improvements&#34;&gt;Future improvements&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#conclusion&#34;&gt;Conclusion&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;*Open a PowerShell prompt with administrator privileges*&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id=&#34;install-sshd-ssh-and-ssh-agent&#34;&gt;Install sshd, ssh, and ssh-agent&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
+Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;run-sshd-and-ssh-agent-at-boot&#34;&gt;Run sshd and ssh-agent at boot&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;Set-Service -Name sshd -StartupType &#39;Automatic&#39;
+Set-Service -Name ssh-agent -StartupType &#39;Automatic&#39;
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;start-sshd-and-ssh-agent-now&#34;&gt;Start sshd and ssh-agent now&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;Start-Service sshd
+Start-Service ssh-agent
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;create-ssh-key-and-add-to-ssh-agent&#34;&gt;Create SSH key and add to ssh-agent&lt;/h2&gt;
+&lt;p&gt;Ignore the &lt;code&gt;-t ed25519&lt;/code&gt; if you need to connect to servers running older OSes&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;ssh-keygen -t ed25519
+ssh-add
+ssh-add -L
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;add-public-keys-to-authorized_keys-and-set-correct-permissions&#34;&gt;Add public keys to authorized_keys and set correct permissions&lt;/h2&gt;
+&lt;p&gt;Windows sshd will read two different authorized_keys files depending on if your user account is an administrator.&lt;/p&gt;
+&lt;p&gt;The location for normal users is &lt;code&gt;%userprofile%\.ssh\authorized_keys&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;The location for administrators is &lt;code&gt;%programdata%\ssh\administrators_authorized_keys&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;administrators_authorized_keys&lt;/code&gt; file will need special permissions set before sshd will use it&lt;/p&gt;
+&lt;p&gt;Copy any public keys you want to grant access to your computer to the correct file and then set the administrators_authorized_keys file permissions if needed.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;icacls administrators_authorized_keys /inheritance:r
+icacls administrators_authorized_keys /grant SYSTEM:`(F`)
+icacls administrators_authorized_keys /grant BUILTIN\Administrators:`(F`)
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;disable-password-login-and-restart-sshd&#34;&gt;Disable password login and restart sshd&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;Stop-Service sshd
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Copy C:\ProgramData\ssh\sshd_config to your desktop and edit&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;#PasswordAuthentication yes
+PasswordAuthentication no
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Move the file back to %programdata%\ssh and then set the correct permissions&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Get-Acl sshd.pid | Set-Acl sshd_config
+Start-Service sshd
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;make-git-for-windows-use-ssh-agent&#34;&gt;Make Git for Windows use ssh-agent&lt;/h2&gt;
+&lt;p&gt;Search for &lt;code&gt;env&lt;/code&gt; in start and choose the &lt;code&gt;Edit environment variables for your account&lt;/code&gt; option.
+&lt;img src=&#34;https://markramige.com/images/using-ssh-on-windows-10-and-wsl-2/start-menu-edit-environment-variables.png&#34; alt=&#34;Search for env on the start menu and choose Edit the system environment variables&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Create a new variable named &lt;code&gt;GIT_SSH&lt;/code&gt; with a value of &lt;code&gt;C:\Windows\System32\OpenSSH\ssh.exe&lt;/code&gt;
+&lt;img src=&#34;https://markramige.com/images/using-ssh-on-windows-10-and-wsl-2/windows-add-git-ssh-environment-variable.png&#34; alt=&#34;Add the GIT_SSH variable&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;set-up-wsl-2-distributions-to-use-ssh-agent&#34;&gt;Set up WSL 2 distributions to use ssh-agent&lt;/h2&gt;
+&lt;p&gt;Download &lt;a href=&#34;https://github.com/rupor-github/wsl-ssh-agent/releases/download/v1.4.2/wsl-ssh-agent.7z&#34;&gt;wsl-ssh-agent.7z&lt;/a&gt; and extract &lt;code&gt;npiperelay.exe&lt;/code&gt; to a new directory called &lt;code&gt;.wsl&lt;/code&gt; in your Windows user&amp;rsquo;s home folder.&lt;/p&gt;
+&lt;p&gt;In your WSL distribution, run &lt;code&gt;ln -s /mnt/c/Users/YOURWINDOWSUSERNAME ~/winhome&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Create a &lt;code&gt;.ssh&lt;/code&gt; folder and &lt;code&gt;chmod 700 ~/.ssh&lt;/code&gt; if it doesn&amp;rsquo;t already exist.&lt;/p&gt;
+&lt;p&gt;Run &lt;code&gt;sudo apt install socat&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Add this snippet to the &lt;code&gt;.bashrc&lt;/code&gt; file in your WSL distribution.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;export SSH_AUTH_SOCK&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;$HOME/.ssh/agent.sock
+ss -a | grep -q $SSH_AUTH_SOCK
+&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt; $? -ne &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;   &lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt;; &lt;span style=&#34;color:#66d9ef&#34;&gt;then&lt;/span&gt;
+    rm -f $SSH_AUTH_SOCK
+    &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt; setsid socat UNIX-LISTEN:$SSH_AUTH_SOCK,fork EXEC:&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;$HOME&lt;span style=&#34;color:#e6db74&#34;&gt;/winhome/.wsl/npiperelay.exe -ei -s //./pipe/openssh-ssh-agent&amp;#34;&lt;/span&gt;,nofork &amp;amp; &lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; &amp;gt;/dev/null 2&amp;gt;&amp;amp;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;fi&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;future-improvements&#34;&gt;Future improvements&lt;/h2&gt;
+&lt;p&gt;I would like to sync up my ssh config file between Windows and WSL. Symlinking the file inside WSL doesn&amp;rsquo;t work because it needs 600 permissions or ssh will give you an error.&lt;/p&gt;
+&lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;I like the added benefit of being able to run native Windows commands via SSH and being able to access multiple WSL distributions with the same SSH server. I think if you are already using sshd inside a WSL distribution and don&amp;rsquo;t need these benefits, then it&amp;rsquo;s not worth switching to native Windows OpenSSH.&lt;/p&gt;
+</content>
     </item>
     
     <item>
@@ -35,6 +242,99 @@ Contents  Install sshd, ssh, and ssh-agent Run sshd and ssh-agent at boot Start 
       <guid>https://markramige.com/posts/tryhackme-linux-privesc-write-up/</guid>
       <description>This TryHackMe room gives us a vulnerable Debian virtual machine and demonstrates many different types of Linux privilege escalation techniques. There aren&amp;rsquo;t many challenges included in the room, but just knowing how many different ways attackers can root Linux boxes is valuable. In addition, several tools are provided that show us how easy it is to automate checking for privesc vulnerabilities on Linux.
 Contents  Service Exploits Weak File Permissions Sudo Cron Jobs SUID/SGID Executables Passwords &amp;amp; Keys NFS Kernel Exploits Privilege Escalation Scripts  Service Exploits Task 2 Follow the instructions given and you will end up with a setuid copy of bash to use to escalate your privileges.</description>
+      <content>&lt;p&gt;This &lt;a href=&#34;https://tryhackme.com/room/linuxprivesc&#34;&gt;TryHackMe room&lt;/a&gt; gives us a vulnerable Debian virtual machine and demonstrates many different types of Linux privilege escalation techniques. There aren&amp;rsquo;t many challenges included in the room, but just knowing how many different ways attackers can root Linux boxes is valuable. In addition, several tools are provided that show us how easy it is to automate checking for privesc vulnerabilities on Linux.&lt;/p&gt;
+&lt;h2 id=&#34;contents&#34;&gt;Contents&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#service-exploits&#34;&gt;Service Exploits&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#weak-file-permissions&#34;&gt;Weak File Permissions&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#sudo&#34;&gt;Sudo&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#cron-jobs&#34;&gt;Cron Jobs&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#suidsgid-executables&#34;&gt;SUID/SGID Executables&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#passwords--keys&#34;&gt;Passwords &amp;amp; Keys&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#nfs&#34;&gt;NFS&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#kernel-exploits&#34;&gt;Kernel Exploits&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#privilege-escalation-scripts&#34;&gt;Privilege Escalation Scripts&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;service-exploits&#34;&gt;Service Exploits&lt;/h2&gt;
+&lt;h3 id=&#34;task-2&#34;&gt;Task 2&lt;/h3&gt;
+&lt;p&gt;Follow the instructions given and you will end up with a setuid copy of bash to use to escalate your privileges.&lt;/p&gt;
+&lt;h2 id=&#34;weak-file-permissions&#34;&gt;Weak File Permissions&lt;/h2&gt;
+&lt;h3 id=&#34;task-3&#34;&gt;Task 3&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;What is the root user&amp;rsquo;s password hash?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;It&amp;rsquo;s the text you copied from the &lt;code&gt;/etc/shadow&lt;/code&gt; file between the first and second colons.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What hashing algorithm was used to produce the root user&amp;rsquo;s password hash?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Run the john the ripper command given and the output will tell you what password hash was used. I had to &lt;code&gt;gunzip&lt;/code&gt; the rockyou.txt.gz file on Kali before I could use it with &lt;code&gt;john&lt;/code&gt;.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What is the root user&amp;rsquo;s password?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The password is given in the output of &lt;code&gt;john&lt;/code&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;task-4&#34;&gt;Task 4&lt;/h3&gt;
+&lt;p&gt;Follow the instructions and you should end up being able to log in as &lt;code&gt;root&lt;/code&gt; with your own password.&lt;/p&gt;
+&lt;h3 id=&#34;task-5&#34;&gt;Task 5&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Run the &amp;ldquo;id&amp;rdquo; command as the newroot user. What is the result?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Follow the instructions and we can now log in as root using the password generated with &lt;code&gt;openssl&lt;/code&gt; and inserted into &lt;code&gt;/etc/passwd&lt;/code&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;sudo&#34;&gt;Sudo&lt;/h2&gt;
+&lt;h3 id=&#34;task-6&#34;&gt;Task 6&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;How many programs is &amp;ldquo;user&amp;rdquo; allowed to run via sudo?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Count up the number of programs listed at the bottom of the output from &lt;code&gt;sudo -l&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;One program on the list doesn&amp;rsquo;t have a shell escape sequence on &lt;a href=&#34;https://gtfobins.github.io&#34;&gt;GTFOBins&lt;/a&gt;. Which is it?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Search all the programs on &lt;a href=&#34;https://gtfobins.github.io&#34;&gt;GTFOBins&lt;/a&gt; and find the one which doesn&amp;rsquo;t provide any ways to escalate.&lt;/p&gt;
+&lt;h3 id=&#34;task-7&#34;&gt;Task 7&lt;/h3&gt;
+&lt;p&gt;Follow the instructions and you will end up with a root shell by abusing LD_PRELOAD to escalate privileges.&lt;/p&gt;
+&lt;h2 id=&#34;cron-jobs&#34;&gt;Cron Jobs&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;What is the value of the PATH variable in /etc/crontab?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;task-8&#34;&gt;Task 8&lt;/h3&gt;
+&lt;p&gt;Follow the instructions given and you will end up with a root shell using netcat and cron.&lt;/p&gt;
+&lt;h3 id=&#34;task-9&#34;&gt;Task 9&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;What is the value of the PATH variable in /etc/crontab?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Look at the top of /etc/crontab to answer this. This is a problem because cron executes with root permissions, so if a normal user is able to drop a script or program in cron&amp;rsquo;s path then it will be executed as root.&lt;/p&gt;
+&lt;h3 id=&#34;task-10&#34;&gt;Task 10&lt;/h3&gt;
+&lt;p&gt;Follow the instruction in the task text. You will use the fact that the &lt;code&gt;tar&lt;/code&gt; command is run by cron with a wildcard &lt;code&gt;*&lt;/code&gt; character. This allows you to generate a reverse shell binary that will connect to your netcat listener and give you root access.&lt;/p&gt;
+&lt;h2 id=&#34;suidsgid-executables&#34;&gt;SUID/SGID Executables&lt;/h2&gt;
+&lt;h3 id=&#34;task-11&#34;&gt;Task 11&lt;/h3&gt;
+&lt;p&gt;For this task we&amp;rsquo;ll find that &lt;code&gt;exim&lt;/code&gt; is SUID and the version included on this box is &lt;a href=&#34;https://www.exploit-db.com/exploits/39535&#34;&gt;vulnerable&lt;/a&gt;. The script to exploit this vulnerability is already included on the box so we just have to run it to get root access.&lt;/p&gt;
+&lt;h3 id=&#34;task-12&#34;&gt;Task 12&lt;/h3&gt;
+&lt;p&gt;In this task we execute a SUID executable which is trying to open a shared object file in our home directory. We create an object file which spawns a root shell.&lt;/p&gt;
+&lt;h3 id=&#34;task-13&#34;&gt;Task 13&lt;/h3&gt;
+&lt;p&gt;This task takes advantage of a SUID executable that attempts to execute a program without specifying an absolute path. We can then create an executable in our path that the SUID program will call and give us a root shell.&lt;/p&gt;
+&lt;h3 id=&#34;task-14&#34;&gt;Task 14&lt;/h3&gt;
+&lt;p&gt;Similar to task 13, we have a SUID executable. This time it does specify an absolute path, but our version of Bash is not updated so it allows us to define a shell function that resembles that path and executable which will then run instead of the actual executable and give us a root shell.&lt;/p&gt;
+&lt;h3 id=&#34;task-15&#34;&gt;Task 15&lt;/h3&gt;
+&lt;p&gt;This task takes advantage of another flaw in older versions of Bash. We&amp;rsquo;re going to run a SUID executable with bash debugging enabled which executes a copy of the bash executable with root privileges.&lt;/p&gt;
+&lt;h2 id=&#34;passwords--keys&#34;&gt;Passwords &amp;amp; Keys&lt;/h2&gt;
+&lt;h3 id=&#34;task-16&#34;&gt;Task 16&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;What is the full mysql command the user executed?
+The user should have executed the &lt;code&gt;mysql&lt;/code&gt; command without the password included and it would&amp;rsquo;ve prompted for a password that would not be included in the &lt;code&gt;.history&lt;/code&gt; file.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;task-17&#34;&gt;Task 17&lt;/h3&gt;
+&lt;p&gt;It&amp;rsquo;s important to set the correct permissions on config files, especially those that contain credentials. This file is world readable which makes it easy to view the root password as a normal user.&lt;/p&gt;
+&lt;h3 id=&#34;task-18&#34;&gt;Task 18&lt;/h3&gt;
+&lt;p&gt;Usually &lt;code&gt;ssh&lt;/code&gt; will give you an error if your keys do not have the correct permissions. In this case, a user backed up the root SSH keys without the correct permissions and the file ended up being world readable.&lt;/p&gt;
+&lt;h2 id=&#34;nfs&#34;&gt;NFS&lt;/h2&gt;
+&lt;h3 id=&#34;task-19&#34;&gt;Task 19&lt;/h3&gt;
+&lt;p&gt;We have root on our Kali box, so we&amp;rsquo;re going to create a SUID executable that will also have root permissions on our Debian VM since the /tmp directory doesn&amp;rsquo;t have root squashing enabled.&lt;/p&gt;
+&lt;h2 id=&#34;kernel-exploits&#34;&gt;Kernel Exploits&lt;/h2&gt;
+&lt;h3 id=&#34;task-20&#34;&gt;Task 20&lt;/h3&gt;
+&lt;p&gt;Our Debian VM is vulnerable to the Dirty COW vulnerability since it is running a kernel &amp;lt;4.8.3 and hasn&amp;rsquo;t been patched. We can exploit this vulnerability to gain a root shell.&lt;/p&gt;
+&lt;h2 id=&#34;privilege-escalation-scripts&#34;&gt;Privilege Escalation Scripts&lt;/h2&gt;
+&lt;h3 id=&#34;task-21&#34;&gt;Task 21&lt;/h3&gt;
+&lt;p&gt;All three of these tools check for most of the vulnerabilities that we&amp;rsquo;ve experimented with. Automated scanning tools make it extremely easy for an attacker or penetration tester to find vulnerabilities on a Linux box.&lt;/p&gt;
+</content>
     </item>
     
   </channel>

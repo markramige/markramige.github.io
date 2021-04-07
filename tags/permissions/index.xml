@@ -16,6 +16,59 @@
       <guid>https://markramige.com/posts/tryhackme-windows-privesc-write-up/</guid>
       <description>This TryHackMe room gives us a vulnerable Windows Server 2019 virtual machine and demonstrates many different types of Windows privilege escalation techniques. There aren&amp;rsquo;t many challenges included in the room, but just knowing how many different ways attackers can gain elevated privileges on a Windows machine is valuable. In addition, several tools are provided that show us how easy it is to automate checking for privesc vulnerabilities on Windows.
 Contents  Service Exploits Registry Passwords Scheduled Tasks Insecure GUI Apps Startup Apps Token Impersonation Privilege Escalation Scripts  Service Exploits Task 3 First off, we&amp;rsquo;re checking permission on the daclsvc service.</description>
+      <content>&lt;p&gt;This &lt;a href=&#34;https://tryhackme.com/room/windows10privesc&#34;&gt;TryHackMe room&lt;/a&gt; gives us a vulnerable Windows Server 2019 virtual machine and demonstrates many different types of Windows privilege escalation techniques. There aren&amp;rsquo;t many challenges included in the room, but just knowing how many different ways attackers can gain elevated privileges on a Windows machine is valuable. In addition, several tools are provided that show us how easy it is to automate checking for privesc vulnerabilities on Windows.&lt;/p&gt;
+&lt;h2 id=&#34;contents&#34;&gt;Contents&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#service-exploits&#34;&gt;Service Exploits&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#registry&#34;&gt;Registry&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#passwords&#34;&gt;Passwords&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#scheduled-tasks&#34;&gt;Scheduled Tasks&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#insecure-gui-apps&#34;&gt;Insecure GUI Apps&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#startup-apps&#34;&gt;Startup Apps&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#token-impersonation&#34;&gt;Token Impersonation&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#privilege-escalation-scripts&#34;&gt;Privilege Escalation Scripts&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;service-exploits&#34;&gt;Service Exploits&lt;/h2&gt;
+&lt;h3 id=&#34;task-3&#34;&gt;Task 3&lt;/h3&gt;
+&lt;p&gt;First off, we&amp;rsquo;re checking permission on the &lt;code&gt;daclsvc&lt;/code&gt; service. We notice that we have &lt;code&gt;SERVICE_CHANGE_CONFIG&lt;/code&gt; permissions and that the service runs with SYSTEM privileges. All we have to do is change the &lt;code&gt;BINARY_PATH_NAME&lt;/code&gt; of the service to make it run our reverse shell when the service starts.&lt;/p&gt;
+&lt;h3 id=&#34;task-4&#34;&gt;Task 4&lt;/h3&gt;
+&lt;p&gt;Similar to Task 3, we check the permissions of the directory containing the &lt;code&gt;unquotedsvc&lt;/code&gt; service and notice that we can write to the directory. Since the &lt;code&gt;BINARY_PATH_NAME&lt;/code&gt; is unquoted, we copy our reverse shell to the directory and rename it to &lt;code&gt;common.exe&lt;/code&gt;. Since Windows will find &lt;code&gt;common.exe&lt;/code&gt; before &lt;code&gt;Common Files&lt;/code&gt; it executes it instead of the intended service.&lt;/p&gt;
+&lt;h3 id=&#34;task-5&#34;&gt;Task 5&lt;/h3&gt;
+&lt;p&gt;We find that the registry entry for the &lt;code&gt;regsvc&lt;/code&gt; service has weak permissions. We can change the location of the service executable in the registry so that it runs our reverse shell.&lt;/p&gt;
+&lt;h3 id=&#34;task-6&#34;&gt;Task 6&lt;/h3&gt;
+&lt;p&gt;The &lt;code&gt;filepermsvc&lt;/code&gt; executable located at &lt;code&gt;C:\Program Files\File Permissions Service\filepermservice.exe&lt;/code&gt; is writeable by all users. All we have to do is replace it with our reverse shell executable and start the service.&lt;/p&gt;
+&lt;h2 id=&#34;registry&#34;&gt;Registry&lt;/h2&gt;
+&lt;h3 id=&#34;task-7&#34;&gt;Task 7&lt;/h3&gt;
+&lt;p&gt;In this task we&amp;rsquo;re checking the registry for programs that are set to run automatically at boot. These will be run with admin privileges. We notice that one program is writeable by all users. We can replace this program with our reverse shell and restart the machine to gain admin access.&lt;/p&gt;
+&lt;h3 id=&#34;task-8&#34;&gt;Task 8&lt;/h3&gt;
+&lt;p&gt;We query the registry and find that the &lt;code&gt;AlwaysInstallElevated&lt;/code&gt; key is enabled. We can generate an installer that will automatically run with elevated privileges when it is installed.&lt;/p&gt;
+&lt;h2 id=&#34;passwords&#34;&gt;Passwords&lt;/h2&gt;
+&lt;h3 id=&#34;task-9&#34;&gt;Task 9&lt;/h3&gt;
+&lt;p&gt;We can query the registry for the string &lt;code&gt;password&lt;/code&gt; to find user credentials. We find admin AutoLogin credentials and use the &lt;code&gt;winexe&lt;/code&gt; command in Kali to log on to the machine.&lt;/p&gt;
+&lt;h3 id=&#34;task-10&#34;&gt;Task 10&lt;/h3&gt;
+&lt;p&gt;A local admin user has saved their login credentials on the machine. We use the &lt;code&gt;cmdkey /list&lt;/code&gt; command to check for credentials and then the &lt;code&gt;runas /savecred&lt;/code&gt; command to take advantage of the saved credentials to run our reverse shell with admin privileges.&lt;/p&gt;
+&lt;h3 id=&#34;task-11&#34;&gt;Task 11&lt;/h3&gt;
+&lt;p&gt;We have access to backup copies of the &lt;code&gt;SAM&lt;/code&gt; and &lt;code&gt;SYSTEM&lt;/code&gt; files for our machine. We can use &lt;code&gt;creddump7&lt;/code&gt; to extract the NTLM hashes of the users on the system. We then use &lt;code&gt;hashcat&lt;/code&gt; to crack the admin password using a wordlist.&lt;/p&gt;
+&lt;h3 id=&#34;task-12&#34;&gt;Task 12&lt;/h3&gt;
+&lt;p&gt;Since we have the NTLM hash, we can now use &lt;code&gt;pass the hash&lt;/code&gt; to login to the system without even needing to crack the hash to obtain the password.&lt;/p&gt;
+&lt;h2 id=&#34;scheduled-tasks&#34;&gt;Scheduled Tasks&lt;/h2&gt;
+&lt;h3 id=&#34;task-13&#34;&gt;Task 13&lt;/h3&gt;
+&lt;p&gt;The machine has a task set to run a PowerShell script every minute with SYSTEM privileges. In addition, we have permission to write to this file. All we have to do is add a line to the script to run our reverse shell executable.&lt;/p&gt;
+&lt;h2 id=&#34;insecure-gui-apps&#34;&gt;Insecure GUI Apps&lt;/h2&gt;
+&lt;h3 id=&#34;task-14&#34;&gt;Task 14&lt;/h3&gt;
+&lt;p&gt;Pasting in a file location in the navigation input of the file open dialog bypasses the file type check that the application usually performs when opening a file. Since the application is running with admin privileges, it will also run our &lt;code&gt;cmd.exe&lt;/code&gt; with admin privileges.&lt;/p&gt;
+&lt;h2 id=&#34;startup-apps&#34;&gt;Startup Apps&lt;/h2&gt;
+&lt;h3 id=&#34;task-15&#34;&gt;Task 15&lt;/h3&gt;
+&lt;p&gt;We have permissions to write to the admin startup directory. We&amp;rsquo;re going to create a new shortcut to our reverse shell executable in the startup directory so that it will run the next time the admin user logs on.&lt;/p&gt;
+&lt;h2 id=&#34;token-impersonation&#34;&gt;Token Impersonation&lt;/h2&gt;
+&lt;h3 id=&#34;task-16&#34;&gt;Task 16&lt;/h3&gt;
+&lt;p&gt;For this task we&amp;rsquo;re exploiting a vulnerability in Windows to get local privilege execution. It turns out that if our user has &lt;code&gt;SeImpersonate&lt;/code&gt; or &lt;code&gt;SeAssignPrimaryToken&lt;/code&gt; privileges, we can use those to gain &lt;code&gt;SYSTEM&lt;/code&gt; privileges.&lt;/p&gt;
+&lt;h3 id=&#34;task-17&#34;&gt;Task 17&lt;/h3&gt;
+&lt;p&gt;We&amp;rsquo;re again abusing &lt;code&gt;SeImpersonatePrivilege&lt;/code&gt; with the PrintSpoofer vulnerability to escalate local access to &lt;code&gt;SYSTEM&lt;/code&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;privilege-escalation-scripts&#34;&gt;Privilege Escalation Scripts&lt;/h2&gt;
+&lt;h3 id=&#34;task-18&#34;&gt;Task 18&lt;/h3&gt;
+&lt;p&gt;All four of these tools check for most of the vulnerabilities that we&amp;rsquo;ve experimented with. Automated tools make it extremely easy for an attacker or penetration tester to find vulnerabilities on a Windows machine.&lt;/p&gt;
+</content>
     </item>
     
     <item>
@@ -26,6 +79,99 @@ Contents  Service Exploits Registry Passwords Scheduled Tasks Insecure GUI Apps 
       <guid>https://markramige.com/posts/tryhackme-linux-privesc-write-up/</guid>
       <description>This TryHackMe room gives us a vulnerable Debian virtual machine and demonstrates many different types of Linux privilege escalation techniques. There aren&amp;rsquo;t many challenges included in the room, but just knowing how many different ways attackers can root Linux boxes is valuable. In addition, several tools are provided that show us how easy it is to automate checking for privesc vulnerabilities on Linux.
 Contents  Service Exploits Weak File Permissions Sudo Cron Jobs SUID/SGID Executables Passwords &amp;amp; Keys NFS Kernel Exploits Privilege Escalation Scripts  Service Exploits Task 2 Follow the instructions given and you will end up with a setuid copy of bash to use to escalate your privileges.</description>
+      <content>&lt;p&gt;This &lt;a href=&#34;https://tryhackme.com/room/linuxprivesc&#34;&gt;TryHackMe room&lt;/a&gt; gives us a vulnerable Debian virtual machine and demonstrates many different types of Linux privilege escalation techniques. There aren&amp;rsquo;t many challenges included in the room, but just knowing how many different ways attackers can root Linux boxes is valuable. In addition, several tools are provided that show us how easy it is to automate checking for privesc vulnerabilities on Linux.&lt;/p&gt;
+&lt;h2 id=&#34;contents&#34;&gt;Contents&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#service-exploits&#34;&gt;Service Exploits&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#weak-file-permissions&#34;&gt;Weak File Permissions&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#sudo&#34;&gt;Sudo&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#cron-jobs&#34;&gt;Cron Jobs&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#suidsgid-executables&#34;&gt;SUID/SGID Executables&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#passwords--keys&#34;&gt;Passwords &amp;amp; Keys&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#nfs&#34;&gt;NFS&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#kernel-exploits&#34;&gt;Kernel Exploits&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#privilege-escalation-scripts&#34;&gt;Privilege Escalation Scripts&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;service-exploits&#34;&gt;Service Exploits&lt;/h2&gt;
+&lt;h3 id=&#34;task-2&#34;&gt;Task 2&lt;/h3&gt;
+&lt;p&gt;Follow the instructions given and you will end up with a setuid copy of bash to use to escalate your privileges.&lt;/p&gt;
+&lt;h2 id=&#34;weak-file-permissions&#34;&gt;Weak File Permissions&lt;/h2&gt;
+&lt;h3 id=&#34;task-3&#34;&gt;Task 3&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;What is the root user&amp;rsquo;s password hash?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;It&amp;rsquo;s the text you copied from the &lt;code&gt;/etc/shadow&lt;/code&gt; file between the first and second colons.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What hashing algorithm was used to produce the root user&amp;rsquo;s password hash?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Run the john the ripper command given and the output will tell you what password hash was used. I had to &lt;code&gt;gunzip&lt;/code&gt; the rockyou.txt.gz file on Kali before I could use it with &lt;code&gt;john&lt;/code&gt;.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What is the root user&amp;rsquo;s password?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The password is given in the output of &lt;code&gt;john&lt;/code&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;task-4&#34;&gt;Task 4&lt;/h3&gt;
+&lt;p&gt;Follow the instructions and you should end up being able to log in as &lt;code&gt;root&lt;/code&gt; with your own password.&lt;/p&gt;
+&lt;h3 id=&#34;task-5&#34;&gt;Task 5&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Run the &amp;ldquo;id&amp;rdquo; command as the newroot user. What is the result?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Follow the instructions and we can now log in as root using the password generated with &lt;code&gt;openssl&lt;/code&gt; and inserted into &lt;code&gt;/etc/passwd&lt;/code&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;sudo&#34;&gt;Sudo&lt;/h2&gt;
+&lt;h3 id=&#34;task-6&#34;&gt;Task 6&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;How many programs is &amp;ldquo;user&amp;rdquo; allowed to run via sudo?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Count up the number of programs listed at the bottom of the output from &lt;code&gt;sudo -l&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;One program on the list doesn&amp;rsquo;t have a shell escape sequence on &lt;a href=&#34;https://gtfobins.github.io&#34;&gt;GTFOBins&lt;/a&gt;. Which is it?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Search all the programs on &lt;a href=&#34;https://gtfobins.github.io&#34;&gt;GTFOBins&lt;/a&gt; and find the one which doesn&amp;rsquo;t provide any ways to escalate.&lt;/p&gt;
+&lt;h3 id=&#34;task-7&#34;&gt;Task 7&lt;/h3&gt;
+&lt;p&gt;Follow the instructions and you will end up with a root shell by abusing LD_PRELOAD to escalate privileges.&lt;/p&gt;
+&lt;h2 id=&#34;cron-jobs&#34;&gt;Cron Jobs&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;What is the value of the PATH variable in /etc/crontab?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;task-8&#34;&gt;Task 8&lt;/h3&gt;
+&lt;p&gt;Follow the instructions given and you will end up with a root shell using netcat and cron.&lt;/p&gt;
+&lt;h3 id=&#34;task-9&#34;&gt;Task 9&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;What is the value of the PATH variable in /etc/crontab?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Look at the top of /etc/crontab to answer this. This is a problem because cron executes with root permissions, so if a normal user is able to drop a script or program in cron&amp;rsquo;s path then it will be executed as root.&lt;/p&gt;
+&lt;h3 id=&#34;task-10&#34;&gt;Task 10&lt;/h3&gt;
+&lt;p&gt;Follow the instruction in the task text. You will use the fact that the &lt;code&gt;tar&lt;/code&gt; command is run by cron with a wildcard &lt;code&gt;*&lt;/code&gt; character. This allows you to generate a reverse shell binary that will connect to your netcat listener and give you root access.&lt;/p&gt;
+&lt;h2 id=&#34;suidsgid-executables&#34;&gt;SUID/SGID Executables&lt;/h2&gt;
+&lt;h3 id=&#34;task-11&#34;&gt;Task 11&lt;/h3&gt;
+&lt;p&gt;For this task we&amp;rsquo;ll find that &lt;code&gt;exim&lt;/code&gt; is SUID and the version included on this box is &lt;a href=&#34;https://www.exploit-db.com/exploits/39535&#34;&gt;vulnerable&lt;/a&gt;. The script to exploit this vulnerability is already included on the box so we just have to run it to get root access.&lt;/p&gt;
+&lt;h3 id=&#34;task-12&#34;&gt;Task 12&lt;/h3&gt;
+&lt;p&gt;In this task we execute a SUID executable which is trying to open a shared object file in our home directory. We create an object file which spawns a root shell.&lt;/p&gt;
+&lt;h3 id=&#34;task-13&#34;&gt;Task 13&lt;/h3&gt;
+&lt;p&gt;This task takes advantage of a SUID executable that attempts to execute a program without specifying an absolute path. We can then create an executable in our path that the SUID program will call and give us a root shell.&lt;/p&gt;
+&lt;h3 id=&#34;task-14&#34;&gt;Task 14&lt;/h3&gt;
+&lt;p&gt;Similar to task 13, we have a SUID executable. This time it does specify an absolute path, but our version of Bash is not updated so it allows us to define a shell function that resembles that path and executable which will then run instead of the actual executable and give us a root shell.&lt;/p&gt;
+&lt;h3 id=&#34;task-15&#34;&gt;Task 15&lt;/h3&gt;
+&lt;p&gt;This task takes advantage of another flaw in older versions of Bash. We&amp;rsquo;re going to run a SUID executable with bash debugging enabled which executes a copy of the bash executable with root privileges.&lt;/p&gt;
+&lt;h2 id=&#34;passwords--keys&#34;&gt;Passwords &amp;amp; Keys&lt;/h2&gt;
+&lt;h3 id=&#34;task-16&#34;&gt;Task 16&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;What is the full mysql command the user executed?
+The user should have executed the &lt;code&gt;mysql&lt;/code&gt; command without the password included and it would&amp;rsquo;ve prompted for a password that would not be included in the &lt;code&gt;.history&lt;/code&gt; file.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;task-17&#34;&gt;Task 17&lt;/h3&gt;
+&lt;p&gt;It&amp;rsquo;s important to set the correct permissions on config files, especially those that contain credentials. This file is world readable which makes it easy to view the root password as a normal user.&lt;/p&gt;
+&lt;h3 id=&#34;task-18&#34;&gt;Task 18&lt;/h3&gt;
+&lt;p&gt;Usually &lt;code&gt;ssh&lt;/code&gt; will give you an error if your keys do not have the correct permissions. In this case, a user backed up the root SSH keys without the correct permissions and the file ended up being world readable.&lt;/p&gt;
+&lt;h2 id=&#34;nfs&#34;&gt;NFS&lt;/h2&gt;
+&lt;h3 id=&#34;task-19&#34;&gt;Task 19&lt;/h3&gt;
+&lt;p&gt;We have root on our Kali box, so we&amp;rsquo;re going to create a SUID executable that will also have root permissions on our Debian VM since the /tmp directory doesn&amp;rsquo;t have root squashing enabled.&lt;/p&gt;
+&lt;h2 id=&#34;kernel-exploits&#34;&gt;Kernel Exploits&lt;/h2&gt;
+&lt;h3 id=&#34;task-20&#34;&gt;Task 20&lt;/h3&gt;
+&lt;p&gt;Our Debian VM is vulnerable to the Dirty COW vulnerability since it is running a kernel &amp;lt;4.8.3 and hasn&amp;rsquo;t been patched. We can exploit this vulnerability to gain a root shell.&lt;/p&gt;
+&lt;h2 id=&#34;privilege-escalation-scripts&#34;&gt;Privilege Escalation Scripts&lt;/h2&gt;
+&lt;h3 id=&#34;task-21&#34;&gt;Task 21&lt;/h3&gt;
+&lt;p&gt;All three of these tools check for most of the vulnerabilities that we&amp;rsquo;ve experimented with. Automated scanning tools make it extremely easy for an attacker or penetration tester to find vulnerabilities on a Linux box.&lt;/p&gt;
+</content>
     </item>
     
     <item>
@@ -36,6 +182,45 @@ Contents  Service Exploits Weak File Permissions Sudo Cron Jobs SUID/SGID Execut
       <guid>https://markramige.com/posts/tryhackme-windows-privesc-arena-write-up/</guid>
       <description>The Windows PrivEsc Arena TryHackMe room includes a vulnerable Windows 7 virtual machine and demonstrates several types of privilege escalation techniques. There aren&amp;rsquo;t many challenges included in the room, but just knowing how many different ways attackers can gain elevated privileges on a Windows machine is valuable. Also, many of the tasks show us how to use features of Metasploit to exploit Windows machines.
 Contents  Registry Escalation Service Escalation Privilege Escalation Potato Escalation Password Mining Escalation  Registry Escalation Task 3 In this task we notice that C:\Program Files\Autorun Program\program.</description>
+      <content>&lt;p&gt;The Windows PrivEsc Arena &lt;a href=&#34;https://tryhackme.com/room/windowsprivescarena&#34;&gt;TryHackMe room&lt;/a&gt; includes a vulnerable Windows 7 virtual machine and demonstrates several types of privilege escalation techniques. There aren&amp;rsquo;t many challenges included in the room, but just knowing how many different ways attackers can gain elevated privileges on a Windows machine is valuable. Also, many of the tasks show us how to use features of Metasploit to exploit Windows machines.&lt;/p&gt;
+&lt;h2 id=&#34;contents&#34;&gt;Contents&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#registry-escalation&#34;&gt;Registry Escalation&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#service-escalation&#34;&gt;Service Escalation&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#privilege-escalation&#34;&gt;Privilege Escalation&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#potato-escalation&#34;&gt;Potato Escalation&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#password-mining-escalation&#34;&gt;Password Mining Escalation&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;registry-escalation&#34;&gt;Registry Escalation&lt;/h2&gt;
+&lt;h3 id=&#34;task-3&#34;&gt;Task 3&lt;/h3&gt;
+&lt;p&gt;In this task we notice that &lt;code&gt;C:\Program Files\Autorun Program\program.exe&lt;/code&gt; is set to run at startup with administrator privileges. We also notice that the &lt;code&gt;Everyone&lt;/code&gt; user group has &lt;code&gt;FILE_ALL_ACCESS&lt;/code&gt; permission on &lt;code&gt;program.exe&lt;/code&gt;. This means we can replace the file with our own version and have that run at startup instead. Next we use &lt;code&gt;Metasploit&lt;/code&gt; to open a listener on our Kali box and generate a reverse shell to place on the Windows system as &lt;code&gt;program.exe&lt;/code&gt;. The next time we log on the reverse shell will run and we will be connected with administrator privileges.&lt;/p&gt;
+&lt;h3 id=&#34;task-4&#34;&gt;Task 4&lt;/h3&gt;
+&lt;p&gt;We check the registry for the &lt;code&gt;AlwaysInstallElevated&lt;/code&gt; key and notice that it is set to &lt;code&gt;1&lt;/code&gt;. This means anything we install will have elevated privileges even if we install it as a normal user. We can generate a reverse shell installer with Metasploit and install it on our Windows machine. This will automatically connect to our listener and give us elevated permissions after installation.&lt;/p&gt;
+&lt;h2 id=&#34;service-escalation&#34;&gt;Service Escalation&lt;/h2&gt;
+&lt;h3 id=&#34;task-5&#34;&gt;Task 5&lt;/h3&gt;
+&lt;p&gt;The ability to control the registry entry for a Windows service means we can replace that executable file that is run when the service starts. In this task, we create a custom service executable that adds our normal user to the &lt;code&gt;administrators&lt;/code&gt; group. After we start the service, our user will have elevated privileges.&lt;/p&gt;
+&lt;h3 id=&#34;task-6&#34;&gt;Task 6&lt;/h3&gt;
+&lt;p&gt;This task is similar to Task 5, but we don&amp;rsquo;t need registry permissions. We check the &lt;code&gt;filepermsvc&lt;/code&gt; executable and notice that the &lt;code&gt;Everyone&lt;/code&gt; group has &lt;code&gt;FILE_ALL_ACCESS&lt;/code&gt; permissions. This means we can just replace the executable with the same one we used in Task 5 and then start the service.&lt;/p&gt;
+&lt;h3 id=&#34;task-8&#34;&gt;Task 8&lt;/h3&gt;
+&lt;p&gt;Using &lt;code&gt;procmon&lt;/code&gt;, we notice that &lt;code&gt;dllsvc&lt;/code&gt; is calling &lt;code&gt;C:\Temp\hijackme.dll&lt;/code&gt;, but it is not found. We know that &lt;code&gt;C:\Temp&lt;/code&gt; is a writeable location, so we generate a reverse shell using Metasploit and copy it to that location. We can then start &lt;code&gt;dllsvc&lt;/code&gt; and our reverse shell will connect.&lt;/p&gt;
+&lt;h3 id=&#34;task-9&#34;&gt;Task 9&lt;/h3&gt;
+&lt;p&gt;Having permissions to configure a Windows service means we can change the command that runs when the service starts. We&amp;rsquo;re going to change the &lt;code&gt;daclsvc&lt;/code&gt; to run &lt;code&gt;net localgroup administrators user /add&lt;/code&gt;. This will add our user to the administrators group so that we have elevated privileges.&lt;/p&gt;
+&lt;h3 id=&#34;task-10&#34;&gt;Task 10&lt;/h3&gt;
+&lt;p&gt;When looking at the details of the &lt;code&gt;unquotedsvc&lt;/code&gt;, we notice that the &lt;code&gt;BINARY_PATH_NAME&lt;/code&gt; is unquoted. Because there&amp;rsquo;s a space in the path and we can write to that directory, we can make Windows execute &lt;code&gt;C:\Program Files\Unquoted Path Service\common.exe&lt;/code&gt; instead of &lt;code&gt;C:\Program Files\Unquoted Path Service\Common Files\unquotedpathservice.exe&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id=&#34;privilege-escalation&#34;&gt;Privilege Escalation&lt;/h2&gt;
+&lt;h3 id=&#34;task-7&#34;&gt;Task 7&lt;/h3&gt;
+&lt;p&gt;We notice that as a normal user we can write to the &lt;code&gt;C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup&lt;/code&gt; directory. Any programs that we add here will be run with administrator privileges. We create a reverse shell and place it in that directory and the log back in to connect to our listener with elevated privileges.&lt;/p&gt;
+&lt;h3 id=&#34;task-14&#34;&gt;Task 14&lt;/h3&gt;
+&lt;p&gt;In this task we&amp;rsquo;re using Metasploit to suggest exploits to use based on our Windows machine version and update status. It suggests using &lt;code&gt;exploit/windows/local/ms16_014_wmi_recv_notif&lt;/code&gt;. We then run the exploit and gain elevated privileges in our reverse shell.&lt;/p&gt;
+&lt;h2 id=&#34;potato-escalation&#34;&gt;Potato Escalation&lt;/h2&gt;
+&lt;h3 id=&#34;task-11&#34;&gt;Task 11&lt;/h3&gt;
+&lt;p&gt;The &lt;a href=&#34;https://github.com/foxglovesec/Potato&#34;&gt;Potato exploit&lt;/a&gt; allows us to run an arbitrary command with elevated privileges. For this task we&amp;rsquo;re going to use Potato to run &lt;code&gt;net localgroup administrators user /add&lt;/code&gt; which gives our normal user administrator privileges.&lt;/p&gt;
+&lt;h2 id=&#34;password-mining-escalation&#34;&gt;Password Mining Escalation&lt;/h2&gt;
+&lt;h3 id=&#34;task-12&#34;&gt;Task 12&lt;/h3&gt;
+&lt;p&gt;This task has us look at a config file for possible secrets. We notice that the &lt;code&gt;&amp;lt;Password&amp;gt;&lt;/code&gt; property value is base64 encoded. We can decode it to find the account password in clear text.&lt;/p&gt;
+&lt;h3 id=&#34;task-13&#34;&gt;Task 13&lt;/h3&gt;
+&lt;p&gt;We&amp;rsquo;re going to capture a memory dump of the running &lt;code&gt;iexplore.exe&lt;/code&gt; process. Running &lt;code&gt;strings&lt;/code&gt; on the dump file allows us to extract base64 encoded passwords that have been sent to a website.&lt;/p&gt;
+</content>
     </item>
     
   </channel>
