@@ -6,8 +6,116 @@
     <description>Recent content on Mark Ramige: Cybersecurity and Linux, mostly</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <copyright>© 2021 &lt;a href=&#39;https://github.com/markramige/markramigecom&#39;&gt;Mark Ramige&lt;/a&gt; :: &lt;a href=&#39;https://creativecommons.org/licenses/by/4.0/?ref=chooser-v1&#39;&gt;CC BY 4.0&lt;/a&gt; Licensed :: Powered by &lt;a href=&#39;http://gohugo.io&#39;&gt;Hugo&lt;/a&gt;</copyright>
-    <lastBuildDate>Sun, 04 Oct 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://markramige.com/index.xml" rel="self" type="application/rss+xml" />
+    <copyright>© 2021 &lt;a href=&#39;https://github.com/markramige/markramige.com&#39;&gt;Mark Ramige&lt;/a&gt; :: &lt;a href=&#39;https://creativecommons.org/licenses/by/4.0/?ref=chooser-v1&#39;&gt;CC BY 4.0&lt;/a&gt; Licensed :: Powered by &lt;a href=&#39;http://gohugo.io&#39;&gt;Hugo&lt;/a&gt;</copyright>
+    <lastBuildDate>Sat, 10 Apr 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://markramige.com/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Securely Booting Ubuntu Desktop</title>
+      <link>https://markramige.com/posts/securely-booting-ubuntu-desktop/</link>
+      <pubDate>Sat, 10 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://markramige.com/posts/securely-booting-ubuntu-desktop/</guid>
+      <description>UEFI secure boot has been supported out of the box by almost all major Linux distributions for many years. I always disabled it out of habit because I saw it as a hassle in the early days. Recently I&amp;rsquo;ve been learning more about the advantages of keeping secure boot enabled. The advantages really depend on how many steps you take to modify your installation.
+Ubuntu includes the shim bootloader which is signed by Microsoft and verified by your computer&amp;rsquo;s firmware when you boot.</description>
+      <content>&lt;p&gt;&lt;a href=&#34;https://wiki.ubuntu.com/UEFI/SecureBoot&#34;&gt;UEFI secure boot&lt;/a&gt; has been supported out of the box by almost all major Linux distributions for many years. I always disabled it out of habit because I saw it as a hassle in the early days. Recently I&amp;rsquo;ve been learning more about the advantages of keeping secure boot enabled. The advantages really depend on how many steps you take to modify your installation.&lt;/p&gt;
+&lt;p&gt;Ubuntu includes the &lt;code&gt;shim&lt;/code&gt; bootloader which is signed by Microsoft and verified by your computer&amp;rsquo;s firmware when you boot. Canonical signs all of their kernel and GRUB (bootloader) releases with their own key which is verified by the &lt;code&gt;shim&lt;/code&gt; bootloader. As of kernel 5.4, which is included by default in Ubuntu 20.04, enabling secure boot also enables kernel lockdown. This &lt;a href=&#34;http://manpages.ubuntu.com/manpages/hirsute/man7/kernel_lockdown.7.html&#34;&gt;disables access to several kernel features&lt;/a&gt; which could be exploited by an attacker. Secure boot does not verify your initrd images which are generated on your PC and can change depending on your settings and installed software.&lt;/p&gt;
+&lt;p&gt;The boot process simplified:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;UEFI firmware -&amp;gt; shim -&amp;gt; GRUB -&amp;gt; kernel -&amp;gt; initramfs -&amp;gt; systemd&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Enabling full disk encryption in the Ubuntu installer only encrypts your system partition which contains all of the OS files and home directories. It does not encrypt your boot partition which contains all of your kernel and initrd files.&lt;/p&gt;
+&lt;p&gt;This guide will cover making sure secure boot and kernel lockdown are enabled, enabling the full disk encryption options in the Ubuntu installer, moving your boot files to an encrypted partition and adding key files to your boot and system partitions so that you only need to enter one password at boot.&lt;/p&gt;
+&lt;h2 id=&#34;contents&#34;&gt;Contents&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#installation&#34;&gt;Installation&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#crypto-setup&#34;&gt;Crypto setup&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#future-improvements&#34;&gt;Future improvements&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#conclusion&#34;&gt;Conclusion&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;installation&#34;&gt;Installation&lt;/h2&gt;
+&lt;p&gt;This guide assumes that you&amp;rsquo;re installing Ubuntu 20.04. The steps can be adapted for other Debian-based distributions, but kernel lockdown requires at least kernel 5.4.&lt;/p&gt;
+&lt;p&gt;Install Ubuntu and at the disk partitioning step check &amp;ldquo;Use LVM with the new Ubuntu installation&amp;rdquo; and &amp;ldquo;Encrypt the new Ubuntu installation for security.&amp;rdquo;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/securely-booting-ubuntu-desktop/enable-fde.png&#34; alt=&#34;Enable FDE in the Ubuntu installer&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Enter a password that you will need to enter at each boot.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/securely-booting-ubuntu-desktop/enter-password.png&#34; alt=&#34;Enter FDE password&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Continue the installation and reboot your machine when it&amp;rsquo;s completed.&lt;/p&gt;
+&lt;p&gt;Run &lt;code&gt;sudo apt update &amp;amp;&amp;amp; sudo apt full-upgrade -y&lt;/code&gt; and reboot when the upgrade is finished.&lt;/p&gt;
+&lt;p&gt;After installation is finished you can run &lt;code&gt;mokutil --sb-state&lt;/code&gt; to verify that secure boot is enabled and &lt;code&gt;cat /sys/kernel/security/lockdown&lt;/code&gt; to check the kernel lockdown status.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/securely-booting-ubuntu-desktop/verify-secure-boot.png&#34; alt=&#34;Check secure boot and lockdown status&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;crypto-setup&#34;&gt;Crypto setup&lt;/h2&gt;
+&lt;p&gt;The default Ubuntu install creates a FAT EFI partition, an unencrypted boot partition, and an encrypted system partition using LUKS2.&lt;/p&gt;
+&lt;p&gt;We need to encrypt the boot partition using LUKS1 since the version of GRUB included in Ubuntu 20.04 doesn&amp;rsquo;t support LUKS2 encryption. LUKS1 uses PBKDF2 and LUKS2 uses argon2 which is memory-hard and makes it more expensive to crack your password. LUKS1 is still secure as long as your password is random and long.&lt;/p&gt;
+&lt;p&gt;The default Ubuntu FDE boot process simplified:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;UEFI firmware -&amp;gt; shim -&amp;gt; GRUB -&amp;gt; kernel -&amp;gt; initramfs -&amp;gt; *enter password* -&amp;gt; systemd&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;After our modifications it changes to:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;UEFI firmware -&amp;gt; shim -&amp;gt; GRUB -&amp;gt; *enter password* -&amp;gt; kernel -&amp;gt; initramfs -&amp;gt; systemd&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Start by finding out where your boot drive is located&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;sudo fdisk -l&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;For example, I&amp;rsquo;m running Ubuntu in a VM for testing and mine is &lt;code&gt;/dev/vda&lt;/code&gt;. It should have three partitions. Replace &lt;code&gt;vda&lt;/code&gt; in the following steps with your actual drive.&lt;/p&gt;
+&lt;p&gt;Umount the EFI partition&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;sudo umount /boot/efi&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Make a temporary directory to store the boot files while we format and encrypt the new partition.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;mkdir ~/boottemp&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Copy the boot files&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;sudo cp -r /boot/* ~/boottemp&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Umount the boot partition&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;sudo umount /boot&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Enable encryption on the boot partition.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;sudo cryptsetup luksFormat --type luks1 /dev/vda2&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Copy the UUID to your clipboard for later to make it easier.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;sudo blkid /dev/vda2&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://markramige.com/images/securely-booting-ubuntu-desktop/boot-partition-uuid.png&#34; alt=&#34;Copy the boot partition UUID&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Open the encrypted partition (replace my UUID with yours)&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;sudo cryptsetup luksOpen /dev/vda2 luks-808a8028-5ad2-494b-aadd-6bcf9a67f43d&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Format the boot partition&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;sudo mkfs.ext4 /dev/mapper/luks-808a8028-5ad2-494b-aadd-6bcf9a67f43d&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Mount the boot partition&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;sudo mount /dev/mapper/luks-808a8028-5ad2-494b-aadd-6bcf9a67f43d /boot&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Copy the boot files back to the boot partition&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;sudo cp -r ~/boottemp/* /boot/&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Mount the EFI partition&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;sudo mount /dev/vda1 /boot/efi&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Remove the temporary files directory&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;sudo rm -r ~/boottemp&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Make a new directory for the key files&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;sudo mkdir /etc/keys&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Set the permissions on the directory so that it&amp;rsquo;s only readable by root&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;sudo chmod 700 /etc/keys&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Create 64-byte random key files&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;sudo dd if=/dev/urandom of=/etc/keys/boot.key bs=64 count=1&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;sudo dd if=/dev/urandom of=/etc/keys/system.key bs=64 count=1&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Set the permissions on the key files so they&amp;rsquo;re only readable by root&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;sudo chmod 400 /etc/keys/boot.key&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;sudo chmod 400 /etc/keys/system.key&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Add the boot.key file to the boot partition&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;sudo cryptsetup luksAddKey /dev/vda2 /etc/keys/boot.key&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Enter your current password for the boot partition.&lt;/p&gt;
+&lt;p&gt;Add the system.key file to the system partition&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;sudo cryptsetup luksAddKey /dev/vda3 /etc/keys/system.key&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Now enter your current password for the system partition to add the key file.&lt;/p&gt;
+&lt;p&gt;Modify the system encryption setup in /etc/crypttab to include the key file so that it will automatically be decrypted&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;sudo sed -i &#39;s+none+/etc/keys/system.key+&#39; /etc/crypttab&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Add the line for the encrypted boot partition (change the UUID to the one previously used)&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;echo &#39;boot_crypt UUID=808a8028-5ad2-494b-aadd-6bcf9a67f43d /etc/keys/boot.key luks,discard&#39; | sudo tee -a /etc/crypttab&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Edit your /etc/fstab to change the previous /boot partition to the new encrypted one&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;sudo sed -i &#39;s+^UUID=.*/boot .*+/dev/mapper/boot_crypt /boot ext4 defaults 0 2+&#39; /etc/fstab&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Add LUKS1 support to GRUB&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;echo &#39;GRUB_ENABLE_CRYPTODISK=y&#39; | sudo tee -a /etc/default/grub&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Add the key files to the initramfs image&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;echo &#39;KEYFILE_PATTERN=&amp;quot;/etc/keys/*.key&amp;quot;&#39; | sudo tee -a /etc/cryptsetup-initramfs/conf-hook&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Make sure the new initramfs image file is only readable by root since it contains the LUKS key files&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;echo &#39;UMASK=0077&#39; | sudo tee -a /etc/initramfs-tools/initramfs.conf&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Reinstall GRUB with the added LUKS1 support&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;sudo grub-install /dev/vda&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Update the initramfs images to contain the LUKS key files&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;sudo update-initramfs -uk all&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Update the grub config&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;sudo update-grub&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Reboot your machine. You will be prompted by GRUB to enter your LUKS password and then all of the other partitions will be unlocked automatically.&lt;/p&gt;
+&lt;h2 id=&#34;future-improvements&#34;&gt;Future improvements&lt;/h2&gt;
+&lt;p&gt;I&amp;rsquo;d like to enable use of the TPM chip in the boot process on Linux. I haven&amp;rsquo;t done enough research on how to enable this yet, but I will update the guide later.&lt;/p&gt;
+&lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;Enabling secure boot and encrypting your boot partition limits the attack surface of your machine at system boot. The default Ubuntu setup supports secure boot, but there is no way to encrypt your boot partition in the installer. Entering a few commands after the installation allows your boot files to be protected using full disk encryption.&lt;/p&gt;
+</content>
+    </item>
+    
     <item>
       <title>Installing and Optimizing Kali Linux on Hyper-V</title>
       <link>https://markramige.com/posts/installing-kali-linux-on-hyperv/</link>
